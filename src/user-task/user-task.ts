@@ -13,42 +13,42 @@ export class ParentUserTask implements UserTask {
         id: string;
         parents: string[];
         text: string;
-        children: Signal<UserTask[]>;
+        subtasks: Signal<UserTask[]>;
     }) {
         this.id = opts.id;
         this.parents = opts.parents;
         this.text = opts.text;
-        this.children = opts.children;
+        this.subtasks = opts.subtasks;
         this.status = computed(() =>
-            inheritStatus(opts.children.value.map((task) => task.status.value)),
+            inheritStatus(opts.subtasks.value.map((task) => task.status.value)),
         );
     }
 
-    static fromTasks(opts: {
+    static fromContext(opts: {
         id: string;
         parents: string[];
         text: string;
-        getTasks: () => UserTask[];
-    }) {
-        const children = computed(() =>
-            opts.getTasks().filter((t) => t.parents.includes(opts.id)),
+        getContext: () => UserTask[];
+    }): ParentUserTask {
+        const subtasks = computed(() =>
+            opts.getContext().filter((t) => t.parents.includes(opts.id)),
         );
 
         return new ParentUserTask({
             ...opts,
-            children,
+            subtasks: subtasks,
         });
     }
 
     id: string;
     parents: string[];
     text: string;
-    children: Signal<UserTask[]>;
+    subtasks: Signal<UserTask[]>;
     status: ReadonlySignal<TaskStatus>;
 }
 
 export function splitTasksByStatus(tasks: UserTask[]) {
-    const statusToTasks = new Map<string, UserTask[]>();
+    const statusToTasks = new Map<TaskStatus, UserTask[]>();
 
     TaskStatuses.forEach((status) => {
         const tasksWithStatus = tasks.filter(

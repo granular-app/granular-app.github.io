@@ -1,14 +1,8 @@
 import { computed, signal } from '@preact/signals-react';
-import { allTasks } from '../user-task/all-tasks';
-import { rootTask } from '../user-task/root-task';
+import { environment } from '../task/all-tasks';
+import { rootTaskId } from '../task/task';
 
-export const currentTaskId = signal(rootTask.id);
-export const currentTask = computed(
-    () => allTasks.value.find((t) => t.id === currentTaskId.value)!,
-);
-export const currentTaskParents = computed(() =>
-    allTasks.value.filter((t) => currentTask.value.parents.includes(t.id)),
-);
-export const currentTaskChildren = computed(() =>
-    allTasks.value.filter((t) => t.parents.includes(currentTaskId.value)),
+export const currentTaskId = signal<string>(rootTaskId);
+export const currentTask = computed(() =>
+    environment.getTask(currentTaskId.value),
 );

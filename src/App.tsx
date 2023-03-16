@@ -3,46 +3,72 @@ import { useState } from 'react';
 import { environment } from './task/all-tasks';
 import { TaskArray } from './task/array';
 import { getAlternativeStatuses, TaskStatus } from './task/status';
-import { rootTaskId, Task } from './task/task';
-import { currentTask, currentTaskId } from './ui-state/current-task';
+import { Task } from './task/task';
+import { taskRouter } from './ui-state/current-task';
 
 export function App() {
     return (
         <>
-            <TaskHeading />
-            {currentTaskId.value !== rootTaskId && <TaskParentListView />}
+            <Breadcrumbs />
+            {!taskRouter.task.isRoot && <TaskParentListView />}
             <AddableParentsView />
             <TaskKanban />
         </>
     );
 }
 
+function Breadcrumbs() {
+    const path = taskRouter.path;
+
+    return (
+        <>
+            {path
+                .map((id) => environment.getTask(id))
+                .map((task, i) => (
+                    <span key={task.id}>
+                        {i > 0 && <>&gt;&gt;</>}
+                        {i + 1 === taskRouter.depth ? (
+                            <TaskHeading />
+                        ) : (
+                            <button onClick={() => taskRouter.setDepth(i + 1)}>
+                                {task.text}
+                            </button>
+                        )}
+                    </span>
+                ))}
+        </>
+    );
+}
+
 function TaskHeading() {
-    const task = currentTask.value;
+    const task = taskRouter.task;
 
     return (
         <h1>
-            {task.text} <span className="font-bold">({task.status.value})</span>
+            {task.text} <span className="font-bold">({task.status})</span>
             <TaskActions task={task} />
         </h1>
     );
 }
 
 function TaskParentListView() {
-    const task = currentTask.value;
-    const parents = task.parents;
+    const { parents, hasExtraParents } = taskRouter.task;
+    const path = taskRouter.path;
+    const parentRouteId = path[path.length - 1];
 
     return (
         <>
-            Parents:
+            Other parents:
             <ul>
-                {parents.value.map((p) => (
-                    <TaskParentListViewItem
-                        key={p.id}
-                        parent={p}
-                        removeButtonEnabled={task.canRemoveParents}
-                    />
-                ))}
+                {parents
+                    .filter((p) => p.id !== parentRouteId)
+                    .map((p) => (
+                        <TaskParentListViewItem
+                            key={p.id}
+                            parent={p}
+                            removeButtonEnabled={hasExtraParents}
+                        />
+                    ))}
             </ul>
         </>
     );
@@ -57,11 +83,11 @@ function TaskParentListViewItem({
 }) {
     return (
         <li>
-            <button onClick={() => (currentTaskId.value = parent.id)}>
+            <button onClick={() => taskRouter.viewParent(parent.id)}>
                 {parent.text}
             </button>
             {removeButtonEnabled && (
-                <button onClick={() => currentTask.value.removeParent(parent.id)}>
+                <button onClick={() => taskRouter.task.removeParent(parent.id)}>
                     -
                 </button>
             )}
@@ -70,7 +96,7 @@ function TaskParentListViewItem({
 }
 
 function AddableParentsView() {
-    const task = currentTask.value;
+    const task = taskRouter.task;
     const addableParents = task.getAddableParents();
 
     if (addableParents.length === 0) return <></>;
@@ -88,7 +114,7 @@ function AddableParentsView() {
 }
 
 function TaskKanban() {
-    const task = currentTask.value;
+    const task = taskRouter.task;
     const children = task.children.value;
     const childrenByStatus = new TaskArray(children).splitByStatus();
 
@@ -120,7 +146,7 @@ function TaskForm({ status }: { status: TaskStatus }) {
 
     function addTask() {
         environment.addTask({
-            parentIds: signal(new Set([currentTaskId.value])),
+            parentIds: signal(new Set([taskRouter.taskId])),
             text,
             staticStatus: signal(status),
         });
@@ -147,9 +173,7 @@ function TaskForm({ status }: { status: TaskStatus }) {
 function TaskColumnItem({ task }: { task: Task }) {
     return (
         <li>
-            <button onClick={() => (currentTaskId.value = task.id)}>
-                {task.text}
-            </button>
+            <button onClick={() => taskRouter.push(task.id)}>{task.text}</button>
             <TaskActions task={task} />
         </li>
     );
@@ -157,7 +181,7 @@ function TaskColumnItem({ task }: { task: Task }) {
 
 function TaskActions({ task }: { task: Task }) {
     const hasChildren = task.children.value.length > 0;
-    const alternativeStatuses = getAlternativeStatuses(task.status.value);
+    const alternativeStatuses = getAlternativeStatuses(task.status);
     const setStatusButtons = alternativeStatuses.map((status) => (
         <SetStaticStatus key={status} status={status} task={task} />
     ));
@@ -174,6 +198,16 @@ function TaskActions({ task }: { task: Task }) {
                 </button>
             )}
             {task.usesStaticStatus && setStatusButtons}
+            {!task.isRoot && (
+                <button
+                    onClick={() => {
+                        taskRouter.pop();
+                        environment.deleteTask(task.id);
+                    }}
+                >
+                    Delete
+                </button>
+            )}
         </div>
     );
 }

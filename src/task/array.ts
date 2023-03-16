@@ -14,7 +14,7 @@ export class TaskArray {
         taskStatuses.forEach((status) => {
             result.push([
                 status,
-                ...this.array.filter((t) => t.status.value === status),
+                ...this.array.filter((t) => t.statusSignal.value === status),
             ]);
         });
 

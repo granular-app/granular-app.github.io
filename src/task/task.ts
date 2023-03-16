@@ -32,16 +32,14 @@ export class Task {
         staticStatus,
         prefersStaticStatus,
     }: TaskParams) {
-        if (parentIds.value.size === 0 && id !== rootTaskId)
-            throw Error(
-                'All tasks, except the root task, must have at least 1 group.',
-            );
+        this.id = id ?? generateTaskId();
+        this.parentIds = parentIds;
+        if (this.hasExtraParents && this.isRoot)
+            throw new TaskMustHaveAtLeastOneParentError();
 
         this.environment = environment;
-        this.id = id ?? generateTaskId();
         this.text = text;
-        this.parentIds = parentIds;
-        this.parents = computed(() =>
+        this.parentsSignal = computed(() =>
             environment.value.filter((task) => this.parentIds.value.has(task.id)),
         );
         this.children = computed(() =>
@@ -60,14 +58,24 @@ export class Task {
     }
 
     environment: TaskEnvironment;
+
     id: string;
+    get isRoot() {
+        return this.id === rootTaskId;
+    }
+
     text: string;
+
     private parentIds: Signal<Set<string>>;
-    parents: TaskEnvironment;
+    parentsSignal: TaskEnvironment;
+    get parents() {
+        return this.parentsSignal.value;
+    }
+
     children: TaskEnvironment;
 
     private dynamicStatus: ReadonlySignal<TaskStatus | null> = computed(() => {
-        const memberStatuses = this.children.value.map((m) => m.status.value);
+        const memberStatuses = this.children.value.map((m) => m.statusSignal.value);
 
         return inheritStatus(memberStatuses);
     });
@@ -77,26 +85,29 @@ export class Task {
     get usesStaticStatus() {
         return this.prefersStaticStatus.value || this.dynamicStatus.value === null;
     }
-    status: ReadonlySignal<TaskStatus> = computed(() => {
+    statusSignal: ReadonlySignal<TaskStatus> = computed(() => {
         return this.usesStaticStatus
             ? this.staticStatus.value
             : (this.dynamicStatus.value as TaskStatus);
     });
+    get status() {
+        return this.statusSignal.value;
+    }
 
     addParent(parentId: string) {
-        if (this.id === rootTaskId) throw new Error("Root task can't have parents");
+        if (this.id === rootTaskId) throw new RootTaskMustHaveNoParentsError();
 
         this.parentIds.value = produce(this.parentIds.value, (draft) => {
             draft.add(parentId);
         });
     }
 
-    get canRemoveParents() {
+    get hasExtraParents() {
         return this.parentIds.value.size > 1;
     }
 
     removeParent(parentId: string) {
-        if (!this.canRemoveParents) throw new Error("Can't remove parents");
+        if (!this.hasExtraParents) throw new TaskMustHaveAtLeastOneParentError();
 
         this.parentIds.value = produce(this.parentIds.value, (draft) => {
             draft.delete(parentId);
@@ -125,3 +136,7 @@ export class Task {
         );
     }
 }
+
+export interface TaskError { }
+export class TaskMustHaveAtLeastOneParentError implements TaskError { }
+export class RootTaskMustHaveNoParentsError implements TaskError { }

@@ -1,20 +1,19 @@
 import { signal } from '@preact/signals-react';
 import { TaskEnvironmentWrapper } from './environment';
-import { rootTaskId } from './task';
 
 export const environment = new TaskEnvironmentWrapper(signal([]));
 
-environment.addRoot({
+const rootTask = environment.addRoot({
     text: 'All tasks',
 });
 
 const taskC = environment.addTask({
-    parentIds: signal(new Set([rootTaskId])),
+    parentIds: signal(new Set([rootTask.id])),
     text: 'C',
 });
 
 const taskD = environment.addTask({
-    parentIds: signal(new Set([rootTaskId])),
+    parentIds: signal(new Set([rootTask.id])),
     text: 'D',
 });
 

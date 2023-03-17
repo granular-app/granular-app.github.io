@@ -1,126 +1,129 @@
 import { signal } from '@preact/signals-react';
 import { useState } from 'react';
-import { environment } from './task/all-tasks';
-import { TaskArray } from './task/array';
-import { getAlternativeStatuses, TaskStatus } from './task/status';
-import { Task } from './task/task';
-import { taskRouter } from './ui-state/current-task';
+import { TaskBase } from './task/base';
+import { taskContext } from './task/context';
+import { getOtherStatuses, TaskStatus } from './task/status';
+import { Task, TaskArray } from './task/task';
+import { taskRouter } from './ui-state/task-router';
 
 export function App() {
     return (
         <>
             <Breadcrumbs />
-            {!taskRouter.task.isRoot && <TaskParentListView />}
-            <AddableParentsView />
+            <TaskParentListView />
+            <AddParentsView />
             <TaskKanban />
         </>
     );
 }
 
 function Breadcrumbs() {
-    const path = taskRouter.path;
+    const { path } = taskRouter;
+    const tasks = path.map((id) => taskContext.get(id));
 
     return (
         <>
-            {path
-                .map((id) => environment.getTask(id))
-                .map((task, i) => (
-                    <span key={task.id}>
-                        {i > 0 && <>&gt;&gt;</>}
-                        {i + 1 === taskRouter.depth ? (
-                            <TaskHeading />
-                        ) : (
-                            <button onClick={() => taskRouter.setDepth(i + 1)}>
-                                {task.text}
-                            </button>
-                        )}
-                    </span>
-                ))}
+            {tasks.map((task, depth) => (
+                <Breadcrumb key={task.base.id} depth={depth} task={task} />
+            ))}
         </>
     );
 }
 
+function Breadcrumb({ task, depth }: { task: Task; depth: number }) {
+    const delimiter = '>>';
+    const taskIsViewedNow = task === taskRouter.task;
+
+    return (
+        <span>
+            {!task.isRoot && delimiter}
+            {taskIsViewedNow ? (
+                <TaskHeading />
+            ) : (
+                <button onClick={() => taskRouter.setDepth(depth)}>
+                    {task.base.text}
+                </button>
+            )}
+        </span>
+    );
+}
+
 function TaskHeading() {
-    const task = taskRouter.task;
+    const { task } = taskRouter;
 
     return (
         <h1>
-            {task.text} <span className="font-bold">({task.status})</span>
+            {task.base.text} <span className="font-bold">({task.status})</span>
             <TaskActions task={task} />
         </h1>
     );
 }
 
 function TaskParentListView() {
-    const { parents, hasExtraParents } = taskRouter.task;
-    const path = taskRouter.path;
-    const parentRouteId = path[path.length - 1];
+    const { task } = taskRouter;
+
+    if (task.isChildOfRoot) return <></>;
+
+    const listItems = task.parents.map((parent) => (
+        <TaskParentListViewItem key={parent.base.id} parent={parent} />
+    ));
 
     return (
         <>
-            Other parents:
-            <ul>
-                {parents
-                    .filter((p) => p.id !== parentRouteId)
-                    .map((p) => (
-                        <TaskParentListViewItem
-                            key={p.id}
-                            parent={p}
-                            removeButtonEnabled={hasExtraParents}
-                        />
-                    ))}
-            </ul>
+            Parents:
+            <ul>{listItems}</ul>
         </>
     );
 }
 
-function TaskParentListViewItem({
-    parent,
-    removeButtonEnabled,
-}: {
-    parent: Task;
-    removeButtonEnabled: boolean;
-}) {
+function TaskParentListViewItem({ parent }: { parent: Task }) {
+    const { task, viewTask } = taskRouter;
+    const removeParentButton = (
+        <button onClick={() => task.base.removeParent(parent.base.id)}>
+            Remove parent
+        </button>
+    );
+
     return (
         <li>
-            <button onClick={() => taskRouter.viewParent(parent.id)}>
-                {parent.text}
+            <button onClick={() => viewTask(parent.base.id)}>
+                {parent.base.text}
             </button>
-            {removeButtonEnabled && (
-                <button onClick={() => taskRouter.task.removeParent(parent.id)}>
-                    -
-                </button>
-            )}
+            {removeParentButton}
         </li>
     );
 }
 
-function AddableParentsView() {
-    const task = taskRouter.task;
-    const addableParents = task.getAddableParents();
+function AddParentsView() {
+    const { task } = taskRouter;
+    const candidates = task.findParentCandidates();
 
-    if (addableParents.length === 0) return <></>;
+    if (candidates.length === 0) return <></>;
+
+    const addParentButtons = candidates.map((candidate) => (
+        <button
+            key={candidate.base.id}
+            onClick={() => task.base.addParent(candidate.base.id)}
+        >
+            {candidate.base.text}
+        </button>
+    ));
 
     return (
         <p>
             Add parents:
-            {addableParents.map((parent) => (
-                <button key={parent.id} onClick={() => task.addParent(parent.id)}>
-                    {parent.text}
-                </button>
-            ))}
+            {addParentButtons}
         </p>
     );
 }
 
 function TaskKanban() {
-    const task = taskRouter.task;
-    const children = task.children.value;
-    const childrenByStatus = new TaskArray(children).splitByStatus();
+    const { task } = taskRouter;
+    const childrenByStatus = new TaskArray(task.children).splitByStatus();
 
     return (
         <>
-            {childrenByStatus.map(([status, ...children]) => (
+            {childrenByStatus.map(([status, children]) => (
                 <TaskColumn key={status} status={status} tasks={children} />
             ))}
         </>
@@ -128,14 +131,19 @@ function TaskKanban() {
 }
 
 function TaskColumn({ status, tasks }: { status: TaskStatus; tasks: Task[] }) {
+    const heading = <h3>{status}</h3>;
+    const taskList = (
+        <ul>
+            {tasks.map((task) => (
+                <TaskColumnItem key={task.base.id} task={task} />
+            ))}
+        </ul>
+    );
+
     return (
         <section>
-            <h3>{status}</h3>
-            <ul>
-                {tasks.map((task) => (
-                    <TaskColumnItem key={task.id} task={task} />
-                ))}
-            </ul>
+            {heading}
+            {taskList}
             <TaskForm status={status} />
         </section>
     );
@@ -144,76 +152,82 @@ function TaskColumn({ status, tasks }: { status: TaskStatus; tasks: Task[] }) {
 function TaskForm({ status }: { status: TaskStatus }) {
     const [text, setText] = useState('');
 
-    function addTask() {
-        environment.addTask({
-            parentIds: signal(new Set([taskRouter.taskId])),
-            text,
-            staticStatus: signal(status),
-        });
-        setText('');
-    }
-
     return (
         <div role="form">
             <textarea
                 value={text}
                 onInput={(e) => setText(e.currentTarget.value)}
-                onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        addTask();
-                    }
-                }}
+                onKeyDown={triggerTextInputKeybindings}
             />
             <button onClick={addTask}>Add task</button>
         </div>
     );
+
+    function triggerTextInputKeybindings(
+        e: React.KeyboardEvent<HTMLTextAreaElement>,
+    ) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            addTask();
+        }
+    }
+
+    function addTask() {
+        const parent = taskRouter.task;
+        const childTaskBase = new TaskBase({
+            text,
+            parentIds: signal(new Set(parent.isRoot ? [] : [parent.base.id])),
+            staticStatus: signal(status),
+        });
+
+        taskContext.add(childTaskBase);
+        setText('');
+    }
 }
 
 function TaskColumnItem({ task }: { task: Task }) {
     return (
         <li>
-            <button onClick={() => taskRouter.push(task.id)}>{task.text}</button>
+            <button onClick={() => taskRouter.push(task.base.id)}>
+                {task.base.text}
+            </button>
             <TaskActions task={task} />
         </li>
     );
 }
 
 function TaskActions({ task }: { task: Task }) {
-    const hasChildren = task.children.value.length > 0;
-    const alternativeStatuses = getAlternativeStatuses(task.status);
-    const setStatusButtons = alternativeStatuses.map((status) => (
-        <SetStaticStatus key={status} status={status} task={task} />
+    const taskIsViewedNow = task.base.id === taskRouter.taskId;
+
+    const showsStaticStatusToggle = taskIsViewedNow && task.hasDynamicStatus;
+    const staticStatusToggle = (
+        <button onClick={() => task.base.togglePrefersStatisStatus()}>
+            Use {task.usesDynamicStatus ? 'static' : 'dynamic'} status
+        </button>
+    );
+
+    const otherStatuses = getOtherStatuses(task.status);
+    const setStatusButtons = otherStatuses.map((otherStatus) => (
+        <button onClick={() => (task.base.staticStatus = otherStatus)}>
+            {otherStatus}
+        </button>
     ));
+
+    const deleteTaskButton = <button onClick={deleteTask}>Delete</button>;
+    function deleteTask() {
+        if (taskIsViewedNow) taskRouter.pop();
+        taskContext.delete(task.base.id);
+    }
 
     return (
         <div className="ml-3 inline-flex space-x-2">
-            {hasChildren && (
-                <button
-                    onClick={() =>
-                        (task.prefersStaticStatus.value = !task.prefersStaticStatus.value)
-                    }
-                >
-                    Use {task.usesStaticStatus ? 'dynamic' : 'static'} status
-                </button>
-            )}
-            {task.usesStaticStatus && setStatusButtons}
+            {showsStaticStatusToggle && staticStatusToggle}
             {!task.isRoot && (
-                <button
-                    onClick={() => {
-                        taskRouter.pop();
-                        environment.deleteTask(task.id);
-                    }}
-                >
-                    Delete
-                </button>
+                <>
+                    {!task.usesDynamicStatus && setStatusButtons}
+                    {deleteTaskButton}
+                </>
             )}
         </div>
-    );
-}
-
-function SetStaticStatus({ task, status }: { task: Task; status: TaskStatus }) {
-    return (
-        <button onClick={() => (task.staticStatus.value = status)}>{status}</button>
     );
 }

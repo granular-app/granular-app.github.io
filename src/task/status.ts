@@ -13,14 +13,17 @@ const priorityOrder = [
     TaskStatus.Done,
 ] as const;
 
-export function inheritStatus(statuses: TaskStatus[]): TaskStatus | null {
-    if (statuses.length === 0) return null;
+export function pickParentStatus(
+    statuses: TaskStatus[],
+    fallbackStatus: TaskStatus = TaskStatus.ToDo,
+): TaskStatus {
+    if (statuses.length === 0) return fallbackStatus;
 
     return priorityOrder[
         Math.min(...statuses.map((s) => priorityOrder.indexOf(s)))
     ];
 }
 
-export function getAlternativeStatuses(status: TaskStatus) {
+export function getOtherStatuses(status: TaskStatus) {
     return taskStatuses.filter((s) => s !== status);
 }

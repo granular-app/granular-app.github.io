@@ -1,142 +1,133 @@
-import {
-    computed,
-    ReadonlySignal,
-    signal,
-    Signal,
-} from '@preact/signals-react';
-import produce from 'immer';
-import { nanoid } from 'nanoid';
-import { TaskEnvironment } from './environment';
-import { inheritStatus, TaskStatus } from './status';
+import { computed, ReadonlySignal } from '@preact/signals-react';
+import { TaskBase } from './base';
+import { TaskContext } from './context';
+import { pickParentStatus, TaskStatus, taskStatuses } from './status';
 
 export const rootTaskId = 'root';
-export const generateTaskId = nanoid;
-
-export type TaskParams = {
-    environment: TaskEnvironment;
-    id?: string;
-    parentIds: Signal<Set<string>>;
-    text: string;
-    staticStatus?: Signal<TaskStatus>;
-    prefersStaticStatus?: Signal<boolean>;
-};
-
-export type RootTaskParams = Omit<TaskParams, 'id' | 'parentIds'>;
 
 export class Task {
-    constructor({
-        environment,
-        id,
-        parentIds,
-        text,
-        staticStatus,
-        prefersStaticStatus,
-    }: TaskParams) {
-        this.id = id ?? generateTaskId();
-        this.parentIds = parentIds;
-        if (this.hasExtraParents && this.isRoot)
-            throw new TaskMustHaveAtLeastOneParentError();
-
-        this.environment = environment;
-        this.text = text;
-        this.parentsSignal = computed(() =>
-            environment.value.filter((task) => this.parentIds.value.has(task.id)),
-        );
-        this.children = computed(() =>
-            environment.value.filter((task) => task.parentIds.value.has(this.id)),
-        );
-        this.staticStatus = staticStatus ?? signal(TaskStatus.ToDo);
-        this.prefersStaticStatus = prefersStaticStatus ?? signal(false);
+    constructor({ base, context }: { base: TaskBase; context: TaskContext }) {
+        this.base = base;
+        this.context = context;
     }
 
-    static root(params: RootTaskParams) {
-        return new Task({
-            ...params,
-            id: rootTaskId,
-            parentIds: computed(() => new Set()),
-        });
+    base: TaskBase;
+    context: TaskContext;
+    get tasks() {
+        return this.context.tasks;
     }
 
-    environment: TaskEnvironment;
-
-    id: string;
     get isRoot() {
-        return this.id === rootTaskId;
+        return this.base.id === rootTaskId;
     }
 
-    text: string;
+    get isChildOfRoot() {
+        return this.base.parentIds.size === 0;
+    }
 
-    private parentIds: Signal<Set<string>>;
-    parentsSignal: TaskEnvironment;
+    private parentsState: ReadonlySignal<Task[]> = computed(() => {
+        if (this.isRoot) return [];
+        if (this.isChildOfRoot) return [this.context.rootTask];
+
+        return this.tasks.filter((task) => this.base.parentIds.has(task.base.id));
+    });
     get parents() {
-        return this.parentsSignal.value;
+        return this.parentsState.value;
     }
 
-    children: TaskEnvironment;
-
-    private dynamicStatus: ReadonlySignal<TaskStatus | null> = computed(() => {
-        const memberStatuses = this.children.value.map((m) => m.statusSignal.value);
-
-        return inheritStatus(memberStatuses);
-    });
-    staticStatus: Signal<TaskStatus>;
-
-    prefersStaticStatus: Signal<boolean>;
-    get usesStaticStatus() {
-        return this.prefersStaticStatus.value || this.dynamicStatus.value === null;
+    private childrenState: ReadonlySignal<Task[]> = computed(() =>
+        this.isRoot
+            ? this.tasks.filter((task) => task.isChildOfRoot)
+            : this.tasks.filter((task) => task.base.parentIds.has(this.base.id)),
+    );
+    get children() {
+        return this.childrenState.value;
     }
-    statusSignal: ReadonlySignal<TaskStatus> = computed(() => {
-        return this.usesStaticStatus
-            ? this.staticStatus.value
-            : (this.dynamicStatus.value as TaskStatus);
-    });
-    get status() {
-        return this.statusSignal.value;
+    get hasChildren() {
+        return this.children.length > 0;
     }
 
-    addParent(parentId: string) {
-        if (this.id === rootTaskId) throw new RootTaskMustHaveNoParentsError();
+    listDescendants(): Set<Task> {
+        if (this.isRoot) {
+            return new Set(this.context.tasks);
+        }
 
-        this.parentIds.value = produce(this.parentIds.value, (draft) => {
-            draft.add(parentId);
-        });
-    }
-
-    get hasExtraParents() {
-        return this.parentIds.value.size > 1;
-    }
-
-    removeParent(parentId: string) {
-        if (!this.hasExtraParents) throw new TaskMustHaveAtLeastOneParentError();
-
-        this.parentIds.value = produce(this.parentIds.value, (draft) => {
-            draft.delete(parentId);
-        });
-    }
-
-    getAddableParents(): Task[] {
-        const nestedTaskIds = [...this.getNestedTasks()].map((t) => t.id);
-
-        const isAddable = (task: Task): boolean => {
-            return !(
-                task.id === this.id ||
-                this.parentIds.value.has(task.id) ||
-                nestedTaskIds.includes(task.id)
-            );
-        };
-
-        return this.environment.value.filter(isAddable);
-    }
-
-    getNestedTasks(): Set<Task> {
         return new Set(
-            this.children.value.flatMap((t) => {
-                return [t, ...t.getNestedTasks()];
+            this.children.flatMap((child) => {
+                return [child, ...child.listDescendants()];
             }),
         );
     }
+
+    private dynamicStatusState: ReadonlySignal<TaskStatus | null> = computed(
+        () => {
+            if (!this.hasDynamicStatus) return null;
+
+            const childStatuses = this.children.map((child) => child.status);
+
+            return pickParentStatus(childStatuses);
+        },
+    );
+    private get dynamicStatus() {
+        return this.dynamicStatusState.value;
+    }
+    get hasDynamicStatus() {
+        return !this.isRoot && this.children.length > 0;
+    }
+    get usesDynamicStatus() {
+        return this.hasDynamicStatus && !this.base.prefersStaticStatus;
+    }
+
+    statusState: ReadonlySignal<TaskStatus> = computed(() => {
+        return this.usesDynamicStatus
+            ? (this.dynamicStatus as TaskStatus)
+            : this.base.staticStatus;
+    });
+    get status() {
+        return this.statusState.value;
+    }
+
+    findParentCandidates(): Task[] {
+        if (this.isRoot) return [];
+
+        const descendantIds = [...this.listDescendants()].map(
+            ({ base: task }) => task.id,
+        );
+        const canBeParent = (other: Task): boolean => {
+            const otherId = other.base.id;
+            const isItself = this.base.id === otherId;
+            const isAlreadyParent = this.base.parentIds.has(otherId);
+            const isDescendant = descendantIds.includes(otherId);
+
+            return !isItself && !isAlreadyParent && !isDescendant;
+        };
+
+        return this.tasks.filter(canBeParent);
+    }
 }
 
-export interface TaskError { }
-export class TaskMustHaveAtLeastOneParentError implements TaskError { }
-export class RootTaskMustHaveNoParentsError implements TaskError { }
+export class TaskArray {
+    constructor(array: Task[]) {
+        this.array = array;
+    }
+
+    array: Task[];
+
+    splitByStatus(): [TaskStatus, Task[]][] {
+        const result: [TaskStatus, Task[]][] = [];
+
+        taskStatuses.forEach((nextStatus) => {
+            const tasksWithStatus = this.array.filter(
+                ({ status }) => status === nextStatus,
+            );
+
+            result.push([nextStatus, tasksWithStatus]);
+        });
+
+        return result;
+    }
+
+    get(id: string): Task {
+        return this.array.find(({ base }) => base.id === id)!;
+    }
+}

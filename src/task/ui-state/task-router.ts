@@ -1,7 +1,7 @@
 import { computed, effect, signal, Signal } from '@preact/signals-react';
 import produce from 'immer';
-import { taskContext } from '../task/context';
-import { rootTaskId } from '../task/task';
+import { taskContext } from '../entity/context';
+import { rootTaskId } from '../entity/task';
 
 export class TaskRouter {
     constructor(path: Signal<string[]>) {

@@ -22,6 +22,7 @@ export class Task {
     }
 
     get isChildOfRoot() {
+        if (this.isRoot) return false;
         return this.base.parentIds.size === 0;
     }
 

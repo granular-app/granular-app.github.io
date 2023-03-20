@@ -72,7 +72,7 @@ export class TaskBase {
     set prefersStaticStatus(newValue: boolean) {
         this.prefersStaticStatusState.value = newValue;
     }
-    togglePrefersStatisStatus() {
+    togglePrefersStaticStatus() {
         this.prefersStaticStatus = !this.prefersStaticStatus;
     }
 }

@@ -1,90 +1,85 @@
 import { computed, effect, signal, Signal } from '@preact/signals-react';
-import produce from 'immer';
-import { taskContext } from '../entity/context';
+import { TaskContext } from '../entity/context';
 import { rootTaskId } from '../entity/task';
 
 export class TaskRouter {
-    constructor(path: Signal<string[]>) {
-        this.internalPathState = path;
+	constructor({ taskContext }: { taskContext: TaskContext }) {
+		this.taskContext = taskContext;
+		effect(() => this.ensureConsistency()); // TODO: unsubscribe
+	}
 
-        effect(() => this.ensureConsistency());
-    }
+	private taskContext: TaskContext;
+	private internalPathState: Signal<string[]> = signal([]);
+	private pathState = computed(() => [rootTaskId, ...this.internalPath]);
+	private taskIdState = computed(() => {
+		return this.path[this.path.length - 1];
+	});
+	currentTaskState = computed(() => {
+		return this.taskContext.get(this.taskId);
+	});
 
-    private internalPathState: Signal<string[]>;
-    get internalPath() {
-        return this.internalPathState.value;
-    }
+	private get internalPath() {
+		return this.internalPathState.value;
+	}
+	get path() {
+		return this.pathState.value;
+	}
+	get taskId() {
+		return this.taskIdState.value;
+	}
+	get currentTask() {
+		return this.currentTaskState.value;
+	}
+	get depth() {
+		return this.internalPath.length;
+	}
 
-    private pathState = computed(() => [rootTaskId, ...this.internalPath]);
-    get path() {
-        return this.pathState.value;
-    }
+	push(id: string) {
+		this.internalPathState.value = [...this.internalPath, id];
+	}
 
-    private taskIdState = computed(() => {
-        return this.path[this.path.length - 1];
-    });
-    get taskId() {
-        return this.taskIdState.value;
-    }
+	pop(n: number = 1) {
+		this.setDepth(-n);
+	}
 
-    private taskState = computed(() => {
-        return taskContext.get(this.taskId);
-    });
-    get task() {
-        return this.taskState.value;
-    }
+	setDepth(depth: number) {
+		if (depth >= this.depth) throw Error();
 
-    get depth() {
-        return this.internalPath.length;
-    }
+		this.internalPathState.value = this.internalPath.slice(0, depth);
+	}
 
-    push(id: string) {
-        this.internalPathState.value = [...this.internalPath, id];
-    }
+	viewTask(id: string) {
+		this.internalPathState.value = this.buildInternalPathTo(id);
+	}
 
-    pop(n: number = 1) {
-        this.internalPathState.value = produce(this.internalPath, (draft) => {
-            draft.splice(this.depth - n);
-        });
-    }
+	buildInternalPathTo(id: string) {
+		if (id === rootTaskId) return [];
 
-    setDepth(depth: number) {
-        if (depth >= this.depth) throw Error();
+		const reversePath = [id];
 
-        this.internalPathState.value = this.internalPath.slice(0, depth);
-    }
+		while (true) {
+			const taskId = reversePath[reversePath.length - 1];
+			const task = this.taskContext.get(taskId);
+			if (task.isChildOfRoot) {
+				break;
+			} else {
+				reversePath.push(task.parents[0].base.id);
+			}
+		}
 
-    viewTask(id: string) {
-        this.internalPathState.value = this.buildPathTo(id);
-    }
+		return reversePath.reverse();
+	}
 
-    buildPathTo(id: string) {
-        const result = [id];
+	get isConsistent() {
+		if (this.currentTask.isRoot) return this.internalPath.length === 0;
+		if (this.currentTask.isChildOfRoot) return this.internalPath.length === 1;
 
-        while (true) {
-            const parent = taskContext.get(result[0]);
+		return this.internalPath.length > 1;
+	}
 
-            if (parent.isChildOfRoot) break;
-
-            result.splice(0, 0, parent.parents[0].base.id);
-        }
-
-        return result;
-    }
-
-    get isConsistent() {
-        return (
-            (this.task.isRoot && this.internalPath.length === 0) ||
-            (this.task.isChildOfRoot && this.internalPath.length === 1) ||
-            (!this.task.isChildOfRoot && this.internalPath.length !== 1)
-        );
-    }
-
-    ensureConsistency() {
-        if (!this.isConsistent) {
-            this.viewTask(this.task.base.id);
-        }
-    }
+	ensureConsistency() {
+		if (!this.isConsistent) {
+			this.viewTask(this.currentTask.base.id);
+		}
+	}
 }
-
-export const taskRouter = new TaskRouter(signal([]));

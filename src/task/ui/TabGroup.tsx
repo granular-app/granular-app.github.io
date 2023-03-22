@@ -1,16 +1,16 @@
 import { signal } from '@preact/signals-react';
 import classNames from 'classnames';
 import { useMemo } from 'react';
-import { taskRouter } from '../ui-state/task-router';
 import { AddParentsView } from './AddParentsView';
+import { useCurrentTask } from './hooks/use-current-task';
 import { TaskKanban } from './TaskKanban';
 import { TaskParentListView } from './TaskParentListView';
 
 export function TabGroup() {
-	const { task } = taskRouter;
+	const currentTask = useCurrentTask();
 	const tabs = [
 		{ name: 'Child tasks', view: () => <TaskKanban /> },
-		...(!task.isRoot
+		...(!currentTask.isRoot
 			? [
 					{
 						name: 'Parent tasks',
@@ -24,7 +24,7 @@ export function TabGroup() {
 			  ]
 			: []),
 	] as const;
-	const tabIndex = useMemo(() => signal(0), [task.base.id]);
+	const tabIndex = useMemo(() => signal(0), [currentTask.id]);
 
 	return (
 		<div>

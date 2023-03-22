@@ -1,22 +1,24 @@
 import { Task } from '../entity/task';
-import { taskRouter } from '../ui-state/task-router';
+import { useTaskRouter } from './hooks/use-task-router';
 
 export function TaskParentListView() {
-	const { task } = taskRouter;
+	const { currentTask } = useTaskRouter();
 
-	if (task.isChildOfRoot) return <></>;
+	if (currentTask.isChildOfRoot) return <></>;
 
-	const listItems = task.parents.map((parent) => (
+	const listItems = currentTask.parents.map((parent) => (
 		<TaskParentListViewItem key={parent.base.id} parent={parent} />
 	));
 
 	return <ul className="list-disc pl-5">{listItems}</ul>;
 }
 function TaskParentListViewItem({ parent }: { parent: Task }) {
-	const { task } = taskRouter;
+	const taskRouter = useTaskRouter();
+	const { currentTask } = taskRouter;
+
 	const removeParentButton = (
 		<button
-			onClick={() => task.base.removeParent(parent.base.id)}
+			onClick={() => currentTask.base.removeParent(parent.base.id)}
 			className="text-red-600 hover:text-red-800 focus:outline-none"
 		>
 			Remove parent

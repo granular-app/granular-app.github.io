@@ -1,10 +1,12 @@
-import { TaskArray } from '../entity/task';
-import { taskRouter } from '../ui-state/task-router';
+import { TaskUIModelArray } from '../ui-model/task';
+import { useCurrentTask } from './hooks/use-current-task';
 import { TaskColumn } from './TaskColumn';
 
 export function TaskKanban() {
-	const { task } = taskRouter;
-	const childrenByStatus = new TaskArray(task.children).splitByStatus();
+	const currentTask = useCurrentTask();
+	const childrenByStatus = new TaskUIModelArray(
+		currentTask.children,
+	).splitByStatus();
 
 	return (
 		<div className="flex snap-x snap-mandatory overflow-x-auto rounded bg-white py-3 sm:snap-none">

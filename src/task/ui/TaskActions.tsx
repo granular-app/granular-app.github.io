@@ -3,10 +3,10 @@ import classNames from 'classnames';
 import React, { useState } from 'react';
 import { FloatingWindow } from '../../ui/FloatingWindow';
 import { TaskStatus, taskStatuses } from '../entity/status';
-import { Task } from '../entity/task';
-import { deleteTask } from '../ui-controller/deleteTask';
+import { TaskUIModel } from '../ui-model/task';
+import { useTaskController } from './hooks/use-task-controller';
 
-export function TaskActions({ task }: { task: Task }) {
+export function TaskActions({ task }: { task: TaskUIModel }) {
 	if (task.isRoot) return <></>;
 
 	return (
@@ -17,7 +17,7 @@ export function TaskActions({ task }: { task: Task }) {
 	);
 }
 
-function StatusPicker({ task }: { task: Task }) {
+function StatusPicker({ task }: { task: TaskUIModel }) {
 	const [selectIsVisible, setSelectIsVisible] = useState(false);
 	const selectData = FloatingUI.useFloating({
 		placement: 'bottom-end',
@@ -28,7 +28,7 @@ function StatusPicker({ task }: { task: Task }) {
 	return (
 		<div>
 			<StatusPickerButton
-				ref={refs.setReference}
+				innerRef={refs.setReference}
 				task={task}
 				onClick={toggleSelect}
 			/>
@@ -37,7 +37,7 @@ function StatusPicker({ task }: { task: Task }) {
 				setIsVisible={setSelectIsVisible}
 			>
 				<StatusPickerSelect
-					ref={refs.setFloating}
+					innerRef={refs.setFloating}
 					task={task}
 					selectData={selectData}
 				/>
@@ -50,13 +50,18 @@ function StatusPicker({ task }: { task: Task }) {
 	}
 }
 
-const StatusPickerButton = React.forwardRef<
-	HTMLButtonElement,
-	{ task: Task; onClick?: React.MouseEventHandler<HTMLButtonElement> }
->(({ task, onClick }, ref) => {
+function StatusPickerButton({
+	innerRef,
+	task,
+	onClick,
+}: {
+	innerRef: (node: HTMLElement | null) => void;
+	task: TaskUIModel;
+	onClick?: React.MouseEventHandler<HTMLButtonElement>;
+}) {
 	return (
 		<button
-			ref={ref}
+			ref={innerRef}
 			onClick={onClick}
 			className="flex rounded bg-zinc-200 py-0.5 px-1.5"
 		>
@@ -64,15 +69,17 @@ const StatusPickerButton = React.forwardRef<
 			<i className="ri-arrow-down-s-line"></i>
 		</button>
 	);
-});
+}
 
-const StatusPickerSelect = React.forwardRef<
-	HTMLDivElement,
-	{
-		task: Task;
-		selectData: ReturnType<typeof FloatingUI.useFloating>;
-	}
->(({ task, selectData }, ref) => {
+function StatusPickerSelect({
+	innerRef,
+	task,
+	selectData,
+}: {
+	innerRef: (node: HTMLElement | null) => void;
+	task: TaskUIModel;
+	selectData: ReturnType<typeof FloatingUI.useFloating>;
+}) {
 	const dynamicStyles = {
 		position: selectData.strategy,
 		top: selectData.y ?? 0,
@@ -93,7 +100,7 @@ const StatusPickerSelect = React.forwardRef<
 	return (
 		<FloatingUI.FloatingFocusManager context={selectData.context}>
 			<div
-				ref={ref}
+				ref={innerRef}
 				style={dynamicStyles}
 				className="w-max rounded bg-white p-4 shadow"
 			>
@@ -103,18 +110,20 @@ const StatusPickerSelect = React.forwardRef<
 			</div>
 		</FloatingUI.FloatingFocusManager>
 	);
-});
+}
 
 function SetStatusButton({
 	task,
 	newStatus,
 }: {
-	task: Task;
+	task: TaskUIModel;
 	newStatus: TaskStatus;
 }) {
+	const taskController = useTaskController(task.id);
+
 	return (
 		<button
-			onClick={() => (task.base.staticStatus = newStatus)}
+			onClick={() => taskController.setStaticStatus(newStatus)}
 			className={classNames('text-xs text-zinc-500', {
 				'font-bold': task.status === newStatus,
 			})}
@@ -125,13 +134,14 @@ function SetStatusButton({
 	);
 }
 
-function StatusModeToggle({ task }: { task: Task }) {
+function StatusModeToggle({ task }: { task: TaskUIModel }) {
+	const taskController = useTaskController(task.id);
 	const nextStatusMode = task.usesDynamicStatus ? 'static' : 'dynamic';
 	const label = `Use ${nextStatusMode} status`;
 
 	return (
 		<button
-			onClick={() => task.base.togglePrefersStaticStatus()}
+			onClick={() => taskController.togglePrefersStaticStatus()}
 			className="text-xs text-zinc-500"
 		>
 			{label}
@@ -139,10 +149,12 @@ function StatusModeToggle({ task }: { task: Task }) {
 	);
 }
 
-function DeleteTaskButton({ task }: { task: Task }) {
+function DeleteTaskButton({ task }: { task: TaskUIModel }) {
+	const taskController = useTaskController(task.id);
+
 	return (
 		<button
-			onClick={() => deleteTask(task.base.id)}
+			onClick={() => taskController.deleteTask()}
 			className="ml-2 text-xs text-red-500"
 		>
 			<i className="ri-delete-bin-line"></i>

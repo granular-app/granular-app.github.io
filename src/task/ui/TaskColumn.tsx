@@ -1,6 +1,6 @@
 import { TaskStatus } from '../entity/status';
-import { Task } from '../entity/task';
-import { taskRouter } from '../ui-state/task-router';
+import { TaskUIModel } from '../ui-model/task';
+import { useTaskRouter } from './hooks/use-task-router';
 import { TaskForm } from './TaskForm';
 
 export function TaskColumn({
@@ -8,13 +8,13 @@ export function TaskColumn({
 	tasks,
 }: {
 	status: TaskStatus;
-	tasks: Task[];
+	tasks: TaskUIModel[];
 }) {
 	const heading = <h3 className="mb-4 pl-2 text-lg font-semibold">{status}</h3>;
 	const taskList = (
 		<ul>
 			{tasks.map((task) => (
-				<TaskColumnItem key={task.base.id} task={task} />
+				<TaskColumnItem key={task.id} task={task} />
 			))}
 		</ul>
 	);
@@ -27,14 +27,16 @@ export function TaskColumn({
 		</section>
 	);
 }
-function TaskColumnItem({ task }: { task: Task }) {
+function TaskColumnItem({ task }: { task: TaskUIModel }) {
+	const taskRouter = useTaskRouter();
+
 	return (
 		<li className="mb-2 rounded bg-white py-1 px-4">
 			<button
-				onClick={() => taskRouter.push(task.base.id)}
+				onClick={() => taskRouter.push(task.id)}
 				className="font-semibold text-blue-600 hover:underline"
 			>
-				{task.base.text}
+				{task.text}
 			</button>
 		</li>
 	);

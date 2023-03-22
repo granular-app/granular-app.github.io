@@ -1,11 +1,9 @@
-import { signal } from '@preact/signals-react';
 import { useState } from 'react';
-import { TaskBase } from '../entity/base';
-import { taskContext } from '../entity/context';
 import { TaskStatus } from '../entity/status';
-import { taskRouter } from '../ui-state/task-router';
+import { useCurrentTaskController } from './hooks/use-task-controller';
 
 export function TaskForm({ status }: { status: TaskStatus }) {
+	const taskController = useCurrentTaskController();
 	const [showForm, setShowForm] = useState(false);
 	const [text, setText] = useState('');
 
@@ -25,11 +23,12 @@ export function TaskForm({ status }: { status: TaskStatus }) {
 			<textarea
 				value={text}
 				onInput={(e) => setText(e.currentTarget.value)}
-				onKeyDown={triggerTextInputKeybindings}
+				onKeyDown={testSubmitFormTrigger}
 				className="h-24 w-full resize-none rounded px-4 py-2"
+				autoFocus
 			/>
 			<button
-				onClick={addTask}
+				onClick={submitForm}
 				className="mt-2 rounded bg-blue-600 px-4 py-2 text-white shadow-md hover:bg-blue-700"
 			>
 				Add task
@@ -37,24 +36,15 @@ export function TaskForm({ status }: { status: TaskStatus }) {
 		</div>
 	);
 
-	function triggerTextInputKeybindings(
-		e: React.KeyboardEvent<HTMLTextAreaElement>,
-	) {
+	function testSubmitFormTrigger(e: React.KeyboardEvent<HTMLTextAreaElement>) {
 		if (e.key === 'Enter') {
 			e.preventDefault();
-			addTask();
+			submitForm();
 		}
 	}
 
-	function addTask() {
-		const parent = taskRouter.task;
-		const childTaskBase = new TaskBase({
-			text,
-			parentIds: signal(new Set(parent.isRoot ? [] : [parent.base.id])),
-			staticStatus: signal(status),
-		});
-
-		taskContext.add(childTaskBase);
+	function submitForm() {
+		taskController.addChildTask({ text, status });
 		setText('');
 		setShowForm(false);
 	}

@@ -24,3 +24,4 @@ taskContext.add(
 		parentIds: signal(new Set([taskC.id, taskD.id])),
 	}),
 );
+taskContext.add(new TaskBase({ text: 'E' }));

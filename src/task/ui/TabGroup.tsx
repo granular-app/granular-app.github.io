@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { useMemo } from 'react';
 import { AddParentsView } from './AddParentsView';
 import { useCurrentTask } from './hooks/use-current-task';
-import { TaskKanban } from './TaskKanban';
+import { TaskKanban } from './TaskKanban/TaskKanban';
 import { TaskParentListView } from './TaskParentListView';
 
 export function TabGroup() {

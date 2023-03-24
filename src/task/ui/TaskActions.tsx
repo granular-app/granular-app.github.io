@@ -1,6 +1,7 @@
 import * as FloatingUI from '@floating-ui/react';
+import { signal } from '@preact/signals-react';
 import classNames from 'classnames';
-import React, { useState } from 'react';
+import React from 'react';
 import { FloatingWindow } from '../../ui/FloatingWindow';
 import { TaskStatus, taskStatuses } from '../entity/status';
 import { TaskUIModel } from '../ui-model/task';
@@ -18,7 +19,7 @@ export function TaskActions({ task }: { task: TaskUIModel }) {
 }
 
 function StatusPicker({ task }: { task: TaskUIModel }) {
-	const [selectIsVisible, setSelectIsVisible] = useState(false);
+	const selectIsVisible = signal(false);
 	const selectData = FloatingUI.useFloating({
 		placement: 'bottom-end',
 		middleware: [FloatingUI.offset(5), FloatingUI.shift()],
@@ -32,10 +33,7 @@ function StatusPicker({ task }: { task: TaskUIModel }) {
 				task={task}
 				onClick={toggleSelect}
 			/>
-			<FloatingWindow
-				isVisible={selectIsVisible}
-				setIsVisible={setSelectIsVisible}
-			>
+			<FloatingWindow isVisible={selectIsVisible}>
 				<StatusPickerSelect
 					innerRef={refs.setFloating}
 					task={task}
@@ -46,7 +44,7 @@ function StatusPicker({ task }: { task: TaskUIModel }) {
 	);
 
 	function toggleSelect() {
-		setSelectIsVisible((value) => !value);
+		selectIsVisible.value = !selectIsVisible.value;
 	}
 }
 

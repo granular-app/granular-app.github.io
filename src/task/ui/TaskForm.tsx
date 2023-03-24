@@ -1,17 +1,17 @@
-import { useState } from 'react';
+import { useSignal } from '@preact/signals-react';
 import { TaskStatus } from '../entity/status';
 import { useCurrentTaskController } from './hooks/use-task-controller';
 
 export function TaskForm({ status }: { status: TaskStatus }) {
 	const taskController = useCurrentTaskController();
-	const [showForm, setShowForm] = useState(false);
-	const [text, setText] = useState('');
+	const showForm = useSignal(false);
+	const text = useSignal('');
 
-	if (!showForm) {
+	if (!showForm.value) {
 		return (
 			<button
 				className="w-full rounded py-1 px-4 text-left text-zinc-700 hover:bg-zinc-50"
-				onClick={() => setShowForm((value) => !value)}
+				onClick={() => (showForm.value = !showForm.value)}
 			>
 				Add task
 			</button>
@@ -21,8 +21,8 @@ export function TaskForm({ status }: { status: TaskStatus }) {
 	return (
 		<div role="form" className="mt-4">
 			<textarea
-				value={text}
-				onInput={(e) => setText(e.currentTarget.value)}
+				value={text.value}
+				onChange={(e) => (text.value = e.target.value)}
 				onKeyDown={testSubmitFormTrigger}
 				className="h-24 w-full resize-none rounded px-4 py-2"
 				autoFocus
@@ -44,8 +44,8 @@ export function TaskForm({ status }: { status: TaskStatus }) {
 	}
 
 	function submitForm() {
-		taskController.addChildTask({ text, status });
-		setText('');
-		setShowForm(false);
+		taskController.addChildTask({ text: text.value, status });
+		text.value = '';
+		showForm.value = false;
 	}
 }

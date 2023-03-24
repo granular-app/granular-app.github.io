@@ -1,22 +1,21 @@
 import * as FloatingUI from '@floating-ui/react';
+import { Signal } from '@preact/signals-react';
 import React from 'react';
 
 export function FloatingWindow({
 	isVisible,
-	setIsVisible,
 	children,
 }: {
-	isVisible: boolean;
-	setIsVisible: (isVisible: boolean) => void;
+	isVisible: Signal<boolean>;
 	children: React.ReactNode;
 }) {
 	return (
 		<>
-			{isVisible && (
-				<FloatingUI.FloatingOverlay onClick={() => setIsVisible(false)} />
+			{isVisible.value && (
+				<FloatingUI.FloatingOverlay onClick={() => (isVisible.value = false)} />
 			)}
 			<FloatingUI.FloatingPortal>
-				{isVisible && children}
+				{isVisible.value && children}
 			</FloatingUI.FloatingPortal>
 		</>
 	);

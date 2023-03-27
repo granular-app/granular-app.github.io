@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import { ElementType } from 'react';
 import { Draggable } from '../../../ui/drag-and-drop/Draggable';
 import { TaskUIModel } from '../../ui-model/task';
+import { DynamicStatusIcon } from '../DynamicStatusToggle';
 import { useTaskRouter } from '../hooks/use-task-router';
 
 export function TaskKanbanColumnItem(props: {
@@ -42,9 +43,7 @@ export function TaskKanbanColumnItemPresentation(props: {
 			>
 				{props.task.text}
 			</button>
-			{props.task.usesDynamicStatus && (
-				<i className="ri-lock-2-line ml-2 text-xs"></i>
-			)}
+			{props.task.usesDynamicStatus && <DynamicStatusIcon active />}
 		</Element>
 	);
 }

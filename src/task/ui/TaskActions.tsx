@@ -1,17 +1,17 @@
-import * as FloatingUI from '@floating-ui/react';
-import { signal } from '@preact/signals-react';
+import { shift, useFloating } from '@floating-ui/react';
+import { Listbox } from '@headlessui/react';
 import classNames from 'classnames';
-import React from 'react';
-import { FloatingWindow } from '../../ui/FloatingWindow';
-import { TaskStatus, taskStatuses } from '../entity/status';
+import { Fragment } from 'react';
+import { taskStatuses } from '../entity/status';
 import { TaskUIModel } from '../ui-model/task';
+import { DynamicStatusToggle } from './DynamicStatusToggle';
 import { useTaskController } from './hooks/use-task-controller';
 
 export function TaskActions({ task }: { task: TaskUIModel }) {
 	if (task.isRoot) return <></>;
 
 	return (
-		<div className="ml-3 inline-flex space-x-2">
+		<div className="ml-3 inline-flex">
 			<StatusPicker task={task} />
 			<DeleteTaskButton task={task} />
 		</div>
@@ -19,131 +19,77 @@ export function TaskActions({ task }: { task: TaskUIModel }) {
 }
 
 function StatusPicker({ task }: { task: TaskUIModel }) {
-	const selectIsVisible = signal(false);
-	const selectData = FloatingUI.useFloating({
-		placement: 'bottom-end',
-		middleware: [FloatingUI.offset(5), FloatingUI.shift()],
-	});
-	const refs = selectData.refs;
-
 	return (
-		<div>
-			<StatusPickerButton
-				innerRef={refs.setReference}
-				task={task}
-				onClick={toggleSelect}
-			/>
-			<FloatingWindow isVisible={selectIsVisible}>
-				<StatusPickerSelect
-					innerRef={refs.setFloating}
-					task={task}
-					selectData={selectData}
-				/>
-			</FloatingWindow>
+		<div className="flex">
+			<StatusPickerListbox task={task} />
+			<StatusPickerDynamicStatusToggle task={task} />
 		</div>
 	);
-
-	function toggleSelect() {
-		selectIsVisible.value = !selectIsVisible.value;
-	}
 }
 
-function StatusPickerButton({
-	innerRef,
-	task,
-	onClick,
-}: {
-	innerRef: (node: HTMLElement | null) => void;
-	task: TaskUIModel;
-	onClick?: React.MouseEventHandler<HTMLButtonElement>;
-}) {
+function StatusPickerListbox({ task }: { task: TaskUIModel }) {
+	const selectData = useFloating({
+		placement: 'bottom-end',
+		middleware: [shift()],
+	});
+	const refs = selectData.refs;
+	const taskController = useTaskController(task.id);
+
 	return (
-		<button
-			ref={innerRef}
-			onClick={onClick}
-			className="flex rounded bg-zinc-200 py-0.5 px-1.5"
+		<Listbox
+			value={task.status}
+			onChange={(newStatus) => taskController.setStaticStatus(newStatus)}
+			disabled={task.usesDynamicStatus}
 		>
-			<span>{task.status}</span>
-			<i className="ri-arrow-down-s-line"></i>
-		</button>
-	);
-}
-
-function StatusPickerSelect({
-	innerRef,
-	task,
-	selectData,
-}: {
-	innerRef: (node: HTMLElement | null) => void;
-	task: TaskUIModel;
-	selectData: ReturnType<typeof FloatingUI.useFloating>;
-}) {
-	const dynamicStyles = {
-		position: selectData.strategy,
-		top: selectData.y ?? 0,
-		left: selectData.x ?? 0,
-	};
-
-	const setStatusButtonListIsVisible = !task.usesDynamicStatus;
-	const setStatusButtonList = (
-		<ul>
-			{taskStatuses.map((status) => (
-				<li key={status}>
-					<SetStatusButton task={task} newStatus={status} />
-				</li>
-			))}
-		</ul>
-	);
-
-	return (
-		<FloatingUI.FloatingFocusManager context={selectData.context}>
-			<div
-				ref={innerRef}
-				style={dynamicStyles}
-				className="w-max rounded bg-white p-4 shadow"
+			<Listbox.Button
+				ref={refs.setReference}
+				className={classNames(
+					'rounded border px-3 py-1',
+					task.usesDynamicStatus && 'border-cyan-300 bg-cyan-50 text-cyan-700',
+				)}
 			>
-				{setStatusButtonListIsVisible && setStatusButtonList}
-				{setStatusButtonListIsVisible && <hr />}
-				<StatusModeToggle task={task} />
-			</div>
-		</FloatingUI.FloatingFocusManager>
+				{task.status}
+			</Listbox.Button>
+
+			<Listbox.Options
+				ref={refs.setFloating}
+				style={{
+					position: selectData.strategy,
+					top: selectData.y ?? 0,
+					left: selectData.x ?? 0,
+				}}
+				className="w-max rounded bg-white shadow"
+			>
+				{taskStatuses.map((status) => (
+					<Listbox.Option key={status} value={status} as={Fragment}>
+						{({ active, selected }) => (
+							<li
+								className={classNames(
+									'cursor-pointer px-3 py-1',
+									active && 'bg-blue-50',
+									selected && 'font-bold',
+								)}
+							>
+								{status}
+							</li>
+						)}
+					</Listbox.Option>
+				))}
+			</Listbox.Options>
+		</Listbox>
 	);
 }
 
-function SetStatusButton({
-	task,
-	newStatus,
-}: {
-	task: TaskUIModel;
-	newStatus: TaskStatus;
-}) {
-	const taskController = useTaskController(task.id);
-
+function StatusPickerDynamicStatusToggle({ task }: { task: TaskUIModel }) {
 	return (
-		<button
-			onClick={() => taskController.setStaticStatus(newStatus)}
-			className={classNames('text-xs text-zinc-500', {
-				'font-bold': task.status === newStatus,
-			})}
-			disabled={task.status === newStatus}
+		<div
+			className={classNames(
+				'flex items-center before:contents before:h-px before:w-2',
+				task.usesDynamicStatus ? 'before:bg-cyan-300' : 'before:bg-zinc-300',
+			)}
 		>
-			{newStatus}
-		</button>
-	);
-}
-
-function StatusModeToggle({ task }: { task: TaskUIModel }) {
-	const taskController = useTaskController(task.id);
-	const nextStatusMode = task.usesDynamicStatus ? 'static' : 'dynamic';
-	const label = `Use ${nextStatusMode} status`;
-
-	return (
-		<button
-			onClick={() => taskController.togglePrefersStaticStatus()}
-			className="text-xs text-zinc-500"
-		>
-			{label}
-		</button>
+			<DynamicStatusToggle task={task} />
+		</div>
 	);
 }
 

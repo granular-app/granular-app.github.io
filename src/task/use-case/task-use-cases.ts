@@ -23,4 +23,12 @@ export class TaskUseCases {
 	togglePrefersStaticStatus() {
 		this.task.base.togglePrefersStaticStatus();
 	}
+
+	setPrefersStaticStatus() {
+		this.task.base.prefersStaticStatus = true;
+	}
+
+	setPrefersDynamicStatus() {
+		this.task.base.prefersStaticStatus = false;
+	}
 }

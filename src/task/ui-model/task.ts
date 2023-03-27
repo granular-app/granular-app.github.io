@@ -17,6 +17,9 @@ export class TaskUIModel {
 	get status() {
 		return this.task.status;
 	}
+	get hasDynamicStatus() {
+		return this.task.hasDynamicStatus;
+	}
 	get usesDynamicStatus() {
 		return this.task.usesDynamicStatus;
 	}

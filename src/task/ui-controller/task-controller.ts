@@ -46,6 +46,14 @@ export class TaskController {
 	togglePrefersStaticStatus() {
 		this.useCases.togglePrefersStaticStatus();
 	}
+
+	setPrefersStaticStatus() {
+		this.useCases.setPrefersStaticStatus();
+	}
+
+	setPrefersDynamicStatus() {
+		this.useCases.setPrefersDynamicStatus();
+	}
 }
 
 type DeleteTask = () => void;

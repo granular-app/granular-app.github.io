@@ -2,7 +2,6 @@ import classNames from 'classnames';
 import { ElementType } from 'react';
 import { Draggable } from '../../../ui/drag-and-drop/Draggable';
 import { TaskUIModel } from '../../ui-model/task';
-import { DynamicStatusIcon } from '../DynamicStatusToggle';
 import { useTaskRouter } from '../hooks/use-task-router';
 
 export function TaskKanbanColumnItem(props: {
@@ -34,6 +33,7 @@ export function TaskKanbanColumnItemPresentation(props: {
 		<Element
 			className={classNames(
 				'mb-2 flex items-center rounded bg-white py-1 px-4',
+				props.task.usesDynamicStatus && 'border-l-4 border-cyan-400',
 				props.extraClassName,
 			)}
 		>
@@ -43,7 +43,6 @@ export function TaskKanbanColumnItemPresentation(props: {
 			>
 				{props.task.text}
 			</button>
-			{props.task.usesDynamicStatus && <DynamicStatusIcon active />}
 		</Element>
 	);
 }

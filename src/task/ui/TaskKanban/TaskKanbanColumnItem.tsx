@@ -44,14 +44,14 @@ export function TaskKanbanColumnItemPresentation(props: {
 	return (
 		<Element
 			className={classNames(
-				'group relative mb-2 rounded bg-white',
-				props.task.usesDynamicStatus && 'border-l-4 border-cyan-400',
+				'group relative mb-2 rounded border-l-4 bg-white',
+				props.task.usesDynamicStatus && 'border-cyan-400',
 				props.extraClassName,
 			)}
 		>
 			<button
 				onClick={() => taskRouter.push(props.task.id)}
-				className="w-full rounded py-1 px-4 text-left hover:bg-zinc-200"
+				className="w-full rounded-r py-1 px-4 text-left hover:bg-zinc-200"
 			>
 				{props.task.text}
 			</button>

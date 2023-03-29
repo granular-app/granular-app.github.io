@@ -1,24 +1,26 @@
-import { Task } from '../entity/task';
+import { TaskUIModel } from '../ui-model/task';
+import { useCurrentTask } from './hooks/use-current-task';
+import { useCurrentTaskController } from './hooks/use-task-controller';
 import { useTaskRouter } from './hooks/use-task-router';
 
 export function TaskParentListView() {
-	const { currentTask } = useTaskRouter();
+	const currentTask = useCurrentTask();
 
 	if (currentTask.isChildOfRoot) return <></>;
 
 	const listItems = currentTask.parents.map((parent) => (
-		<TaskParentListViewItem key={parent.base.id} parent={parent} />
+		<TaskParentListViewItem key={parent.id} parent={parent} />
 	));
 
 	return <ul className="list-disc pl-5">{listItems}</ul>;
 }
-function TaskParentListViewItem({ parent }: { parent: Task }) {
+function TaskParentListViewItem({ parent }: { parent: TaskUIModel }) {
 	const taskRouter = useTaskRouter();
-	const { currentTask } = taskRouter;
+	const currentTaskController = useCurrentTaskController();
 
 	const removeParentButton = (
 		<button
-			onClick={() => currentTask.base.removeParent(parent.base.id)}
+			onClick={() => currentTaskController.removeParent(parent.id)}
 			className="text-red-600 hover:text-red-800 focus:outline-none"
 		>
 			Remove parent
@@ -28,10 +30,10 @@ function TaskParentListViewItem({ parent }: { parent: Task }) {
 	return (
 		<li className="mb-1">
 			<button
-				onClick={() => taskRouter.viewTask(parent.base.id)}
+				onClick={() => taskRouter.viewTask(parent.id)}
 				className="mr-3 text-blue-600 hover:text-blue-800 focus:outline-none"
 			>
-				{parent.base.text}
+				{parent.text}
 			</button>
 			{removeParentButton}
 		</li>

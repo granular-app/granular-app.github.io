@@ -35,6 +35,18 @@ export class TaskController {
 	useCases: TaskUseCases;
 	deleteTask: DeleteTask;
 
+	setText(text: string) {
+		this.useCases.setText(text);
+	}
+
+	addParent(id: string) {
+		this.useCases.addParent(id);
+	}
+
+	removeParent(id: string) {
+		this.useCases.removeParent(id);
+	}
+
 	addChildTask(params: { text: string; status: TaskStatus }) {
 		this.useCases.addChildTask(params);
 	}

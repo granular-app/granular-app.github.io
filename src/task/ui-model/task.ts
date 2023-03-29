@@ -35,6 +35,12 @@ export class TaskUIModel {
 	get isChildOfRoot() {
 		return this.task.isChildOfRoot;
 	}
+
+	findParentCandidates() {
+		return this.task
+			.findParentCandidates()
+			.map((candidate) => new TaskUIModel(candidate));
+	}
 }
 
 export class TaskUIModelArray {

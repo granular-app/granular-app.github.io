@@ -5,22 +5,22 @@ import { TaskStatus } from './status';
 
 export type TaskBaseTemplate = {
 	id?: string;
-	text: string;
-	parentIds?: Signal<Set<string>>;
-	staticStatus?: Signal<TaskStatus>;
-	prefersStaticStatus?: Signal<boolean>;
+	textState: Signal<string>;
+	parentIdsState?: Signal<Set<string>>;
+	staticStatusState?: Signal<TaskStatus>;
+	prefersStaticStatusState?: Signal<boolean>;
 };
 
 export class TaskBase {
 	constructor({
 		id,
-		text,
-		parentIds,
-		staticStatus,
-		prefersStaticStatus,
+		textState: text,
+		parentIdsState: parentIds,
+		staticStatusState: staticStatus,
+		prefersStaticStatusState: prefersStaticStatus,
 	}: TaskBaseTemplate) {
 		this.id = id ?? TaskBase.generateId();
-		this.text = text;
+		this.textState = text;
 		this.parentIdsState = parentIds ?? signal(new Set());
 		this.staticStatusState = staticStatus ?? signal(TaskStatus.ToDo);
 		this.prefersStaticStatusState = prefersStaticStatus ?? signal(false);
@@ -29,7 +29,14 @@ export class TaskBase {
 	private static generateId = nanoid;
 
 	id: string;
-	text: string;
+
+	private textState: Signal<string>;
+	get text() {
+		return this.textState.value;
+	}
+	set text(value: string) {
+		this.textState.value = value;
+	}
 
 	/* Parents */
 

@@ -8,6 +8,18 @@ export class TaskUseCases {
 
 	private task: Task;
 
+	setText(text: string) {
+		this.task.base.text = text;
+	}
+
+	addParent(id: string) {
+		this.task.base.addParent(id);
+	}
+
+	removeParent(id: string) {
+		this.task.base.removeParent(id);
+	}
+
 	addChildTask(params: { text: string; status: TaskStatus }) {
 		this.task.addChildTask(params);
 	}

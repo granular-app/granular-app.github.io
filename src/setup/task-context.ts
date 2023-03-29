@@ -7,21 +7,21 @@ export const taskContext = new TaskContext({
 	state: signal([]),
 });
 
-const taskC = new TaskBase({ text: 'C' });
-const taskD = new TaskBase({ text: 'D' });
+const taskC = new TaskBase({ textState: signal('C') });
+const taskD = new TaskBase({ textState: signal('D') });
 
 taskContext.add(taskC);
 taskContext.add(taskD);
 taskContext.add(
 	new TaskBase({
-		text: 'A',
-		parentIds: signal(new Set([taskC.id])),
+		textState: signal('A'),
+		parentIdsState: signal(new Set([taskC.id])),
 	}),
 );
 taskContext.add(
 	new TaskBase({
-		text: 'B',
-		parentIds: signal(new Set([taskC.id, taskD.id])),
+		textState: signal('B'),
+		parentIdsState: signal(new Set([taskC.id, taskD.id])),
 	}),
 );
-taskContext.add(new TaskBase({ text: 'E' }));
+taskContext.add(new TaskBase({ textState: signal('E') }));

@@ -1,23 +1,19 @@
 import { useSignal } from '@preact/signals-react';
-import { TaskStatus } from '../entity/status';
-import { useCurrentTaskController } from './hooks/use-task-controller';
+import { TaskUIModel } from '../ui-model/task';
+import { useTaskController } from './hooks/use-task-controller';
 
-export function TaskForm({ status }: { status: TaskStatus }) {
-	const taskController = useCurrentTaskController();
-	const showForm = useSignal(false);
-	const text = useSignal('');
-
-	if (!showForm.value) {
-		return (
-			<button
-				className="flex w-full justify-between rounded py-1 px-4 text-left text-zinc-700 hover:bg-zinc-50"
-				onClick={() => (showForm.value = !showForm.value)}
-			>
-				<span>Add task</span>
-				<i className="ri-add-line"></i>
-			</button>
-		);
-	}
+export function TaskForm({
+	initialText = '',
+	submitLabel,
+	onSubmit,
+	onClose,
+}: {
+	initialText?: string;
+	submitLabel: string;
+	onSubmit: (text: string) => void;
+	onClose: () => void;
+}) {
+	const text = useSignal(initialText);
 
 	return (
 		<div role="form" className="mt-4">
@@ -39,7 +35,7 @@ export function TaskForm({ status }: { status: TaskStatus }) {
 					onClick={submitForm}
 					className="rounded bg-blue-600 px-3 py-1 text-white shadow-md hover:bg-blue-700"
 				>
-					Add task
+					{submitLabel}
 				</button>
 			</div>
 		</div>
@@ -53,12 +49,35 @@ export function TaskForm({ status }: { status: TaskStatus }) {
 	}
 
 	function submitForm() {
-		taskController.addChildTask({ text: text.value, status });
+		onSubmit(text.value);
 		closeForm();
 	}
 
 	function closeForm() {
 		text.value = '';
-		showForm.value = false;
+		onClose();
+	}
+}
+
+export function EditTaskForm({
+	task,
+	onCloseForm,
+}: {
+	task: TaskUIModel;
+	onCloseForm: () => void;
+}) {
+	const taskController = useTaskController(task.id);
+
+	return (
+		<TaskForm
+			initialText={task.text}
+			submitLabel="Save"
+			onSubmit={setText}
+			onClose={onCloseForm}
+		/>
+	);
+
+	function setText(text: string) {
+		taskController.setText(text);
 	}
 }

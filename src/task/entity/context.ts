@@ -1,4 +1,9 @@
-import { computed, ReadonlySignal, Signal } from '@preact/signals-react';
+import {
+	computed,
+	ReadonlySignal,
+	signal,
+	Signal,
+} from '@preact/signals-react';
 import { TaskBase } from './base';
 import { rootTaskId, Task, TaskArray } from './task';
 
@@ -15,7 +20,7 @@ export class TaskContext {
 			new Task({
 				base: new TaskBase({
 					id: rootTaskId,
-					text: this.name,
+					textState: signal(this.name),
 				}),
 				context: this,
 			}),

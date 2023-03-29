@@ -108,9 +108,9 @@ export class Task {
 
 	addChildTask({ text, status }: { text: string; status: TaskStatus }) {
 		const childTaskBase = new TaskBase({
-			text,
-			parentIds: signal(new Set(this.isRoot ? [] : [this.base.id])),
-			staticStatus: signal(status),
+			textState: signal(text),
+			parentIdsState: signal(new Set(this.isRoot ? [] : [this.base.id])),
+			staticStatusState: signal(status),
 		});
 		this.context.add(childTaskBase);
 	}

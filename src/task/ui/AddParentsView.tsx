@@ -1,18 +1,20 @@
-import { useTaskRouter } from './hooks/use-task-router';
+import { useCurrentTask } from './hooks/use-current-task';
+import { useCurrentTaskController } from './hooks/use-task-controller';
 
 export function AddParentsView() {
-	const { currentTask } = useTaskRouter();
+	const currentTask = useCurrentTask();
+	const currentTaskController = useCurrentTaskController();
 	const candidates = currentTask.findParentCandidates();
 
 	if (candidates.length === 0) return <></>;
 
 	const addParentButtons = candidates.map((candidate) => (
 		<button
-			key={candidate.base.id}
-			onClick={() => currentTask.base.addParent(candidate.base.id)}
+			key={candidate.id}
+			onClick={() => currentTaskController.addParent(candidate.id)}
 			className="ml-2 rounded bg-blue-600 py-1 px-3 text-xs text-white shadow-md hover:bg-blue-700"
 		>
-			{candidate.base.text}
+			{candidate.text}
 		</button>
 	));
 

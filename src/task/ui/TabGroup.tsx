@@ -9,7 +9,10 @@ import { TaskParentListView } from './TaskParentListView';
 export function TabGroup() {
 	const currentTask = useCurrentTask();
 	const tabs = [
-		{ name: 'Child tasks', view: () => <TaskKanban /> },
+		{
+			name: 'Child tasks',
+			view: () => <TaskKanban />,
+		},
 		...(!currentTask.isRoot
 			? [
 					{
@@ -27,7 +30,7 @@ export function TabGroup() {
 	const tabIndex = useMemo(() => signal(0), [currentTask.id]);
 
 	return (
-		<div>
+		<div className="max-w-full grid-rows-[auto_1fr] tall:grid tall:max-h-full tall:overflow-y-hidden">
 			<ul className="mt-2 mb-1 flex space-x-1 pl-3">
 				{tabs.map((tab, i) => (
 					<li key={i}>
@@ -42,7 +45,7 @@ export function TabGroup() {
 					</li>
 				))}
 			</ul>
-			<div className="rounded bg-white shadow-sm">
+			<div className="rounded shadow-sm tall:max-h-full tall:overflow-y-hidden">
 				{tabs[tabIndex.value].view()}
 			</div>
 		</div>

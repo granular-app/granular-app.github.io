@@ -20,7 +20,7 @@ export function App({
 		<TaskRouterProvider value={taskRouter}>
 			<TaskControllerFactoryProvider value={taskControllerFactory}>
 				<GetTaskProvider value={getTask}>
-					<div className="flex min-h-screen flex-col gap-2 bg-zinc-100 p-2">
+					<div className="h-screen max-h-screen grid-rows-[auto_1fr] gap-2 bg-zinc-100 p-2 tall:grid">
 						<TaskHeader />
 						<TabGroup />
 					</div>

@@ -37,6 +37,7 @@ export function TaskKanbanColumnItemPresentation(props: {
 			<EditTaskForm
 				task={props.task}
 				onCloseForm={() => (renameModeEnabled.value = false)}
+				extraClassName="mb-2"
 			/>
 		);
 	}

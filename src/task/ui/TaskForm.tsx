@@ -1,4 +1,5 @@
 import { useSignal } from '@preact/signals-react';
+import classNames from 'classnames';
 import { TaskUIModel } from '../ui-model/task';
 import { useTaskController } from './hooks/use-task-controller';
 
@@ -7,16 +8,18 @@ export function TaskForm({
 	submitLabel,
 	onSubmit,
 	onClose,
+	extraClassName,
 }: {
 	initialText?: string;
 	submitLabel: string;
 	onSubmit: (text: string) => void;
 	onClose: () => void;
+	extraClassName?: string;
 }) {
 	const text = useSignal(initialText);
 
 	return (
-		<div role="form" className="mt-4">
+		<div role="form" className={classNames('mt-4', extraClassName)}>
 			<textarea
 				value={text.value}
 				onChange={(e) => (text.value = e.target.value)}
@@ -62,9 +65,11 @@ export function TaskForm({
 export function EditTaskForm({
 	task,
 	onCloseForm,
+	extraClassName,
 }: {
 	task: TaskUIModel;
 	onCloseForm: () => void;
+	extraClassName?: string;
 }) {
 	const taskController = useTaskController(task.id);
 
@@ -74,6 +79,7 @@ export function EditTaskForm({
 			submitLabel="Save"
 			onSubmit={setText}
 			onClose={onCloseForm}
+			extraClassName={extraClassName}
 		/>
 	);
 

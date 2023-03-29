@@ -21,12 +21,13 @@ export function TaskKanbanColumn({
 	return (
 		<section
 			ref={droppable.setNodeRef}
-			className={classNames('rounded bg-zinc-100 p-2', {
-				'ring-2 ring-zinc-500': droppable.isOver,
-			})}
+			className={classNames(
+				'flex flex-col rounded bg-zinc-100 p-2 tall:max-h-full',
+				droppable.isOver && 'ring-2 ring-zinc-500',
+			)}
 		>
 			<h3 className="mb-4 pl-2 text-lg font-semibold">{status}</h3>
-			<ul>
+			<ul className="mb-1 h-full overflow-y-auto">
 				{tasks.map((task) => (
 					<TaskKanbanColumnItem key={task.id} task={task} element="li" />
 				))}

@@ -24,4 +24,11 @@ taskContext.add(
 		parentIdsState: signal(new Set([taskC.id, taskD.id])),
 	}),
 );
-taskContext.add(new TaskBase({ textState: signal('E') }));
+
+for (let i = 1; i <= 10; i++) {
+	taskContext.add(
+		new TaskBase({
+			textState: signal(`Test task ${i}`),
+		}),
+	);
+}

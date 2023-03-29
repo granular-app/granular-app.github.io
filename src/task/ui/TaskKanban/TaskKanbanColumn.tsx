@@ -43,11 +43,11 @@ function AddChildTaskForm({ status }: { status: TaskStatus }) {
 	if (!showForm.value) {
 		return (
 			<button
-				className="flex w-full justify-between rounded py-1 px-4 text-left text-zinc-700 hover:bg-zinc-50"
+				className="flex w-full items-center rounded py-1 px-2 text-left text-zinc-500 hover:bg-zinc-50 hover:text-zinc-700"
 				onClick={() => (showForm.value = !showForm.value)}
 			>
-				<span>Add task</span>
 				<i className="ri-add-line"></i>
+				<span className="ml-2">Add task</span>
 			</button>
 		);
 	}

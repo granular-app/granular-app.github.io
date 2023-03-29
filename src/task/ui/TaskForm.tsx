@@ -10,10 +10,11 @@ export function TaskForm({ status }: { status: TaskStatus }) {
 	if (!showForm.value) {
 		return (
 			<button
-				className="w-full rounded py-1 px-4 text-left text-zinc-700 hover:bg-zinc-50"
+				className="flex w-full justify-between rounded py-1 px-4 text-left text-zinc-700 hover:bg-zinc-50"
 				onClick={() => (showForm.value = !showForm.value)}
 			>
-				Add task
+				<span>Add task</span>
+				<i className="ri-add-line"></i>
 			</button>
 		);
 	}
@@ -24,15 +25,23 @@ export function TaskForm({ status }: { status: TaskStatus }) {
 				value={text.value}
 				onChange={(e) => (text.value = e.target.value)}
 				onKeyDown={testSubmitFormTrigger}
-				className="h-24 w-full resize-none rounded px-4 py-2"
+				className="h-max w-full resize-y rounded px-4 py-2"
 				autoFocus
 			/>
-			<button
-				onClick={submitForm}
-				className="mt-2 rounded bg-blue-600 px-4 py-2 text-white shadow-md hover:bg-blue-700"
-			>
-				Add task
-			</button>
+			<div className="mt-2 flex justify-end space-x-2">
+				<button
+					onClick={closeForm}
+					className="rounded px-3 py-1 hover:bg-zinc-200"
+				>
+					Cancel
+				</button>
+				<button
+					onClick={submitForm}
+					className="rounded bg-blue-600 px-3 py-1 text-white shadow-md hover:bg-blue-700"
+				>
+					Add task
+				</button>
+			</div>
 		</div>
 	);
 
@@ -45,6 +54,10 @@ export function TaskForm({ status }: { status: TaskStatus }) {
 
 	function submitForm() {
 		taskController.addChildTask({ text: text.value, status });
+		closeForm();
+	}
+
+	function closeForm() {
 		text.value = '';
 		showForm.value = false;
 	}

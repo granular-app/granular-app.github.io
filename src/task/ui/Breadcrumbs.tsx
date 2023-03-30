@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { TaskUIModel } from '../ui-model/task';
 import { useGetTask } from './hooks/use-task-getter';
 import { useTaskRouter } from './hooks/use-task-router';
@@ -6,8 +7,7 @@ export function Breadcrumbs() {
 	const getTask = useGetTask();
 	const taskRouter = useTaskRouter();
 	const { path } = taskRouter;
-	const pathWithoutTip = path.slice(0, -1);
-	const breadcrumbTasks = pathWithoutTip.map(getTask);
+	const breadcrumbTasks = path.map(getTask);
 
 	return (
 		<div className="text-sm">
@@ -19,17 +19,21 @@ export function Breadcrumbs() {
 }
 function Breadcrumb({ task, depth }: { task: TaskUIModel; depth: number }) {
 	const taskRouter = useTaskRouter();
+	const isCurrentTask = task.id === taskRouter.taskId;
 	const delimiter = '/';
 
 	return (
 		<div className="inline">
+			{depth > 0 && <span className="mx-2 text-zinc-400">{delimiter}</span>}
 			<button
 				onClick={() => taskRouter.setDepth(depth)}
-				className="text-blue-600 hover:text-blue-800 focus:outline-none"
+				className={classNames(
+					!isCurrentTask && 'text-blue-600 hover:text-blue-800',
+				)}
+				disabled={isCurrentTask}
 			>
 				{task.text}
 			</button>
-			<span className="mx-2 text-zinc-400">{delimiter}</span>
 		</div>
 	);
 }

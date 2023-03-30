@@ -2,6 +2,7 @@ import { shift, useFloating } from '@floating-ui/react';
 import { Listbox } from '@headlessui/react';
 import classNames from 'classnames';
 import { Fragment } from 'react';
+import { say } from '../../localization/ui-localization/localization';
 import { taskStatuses } from '../entity/status';
 import { TaskUIModel } from '../ui-model/task';
 import { DynamicStatusToggle } from './DynamicStatusToggle';
@@ -48,7 +49,7 @@ function StatusPickerListbox({ task }: { task: TaskUIModel }) {
 					task.usesDynamicStatus && 'border-cyan-300 bg-cyan-50 text-cyan-700',
 				)}
 			>
-				{task.status}
+				{say(task.status)}
 			</Listbox.Button>
 
 			<Listbox.Options
@@ -70,7 +71,7 @@ function StatusPickerListbox({ task }: { task: TaskUIModel }) {
 									selected && 'font-bold',
 								)}
 							>
-								{status}
+								{say(status)}
 							</li>
 						)}
 					</Listbox.Option>
@@ -100,6 +101,7 @@ function DeleteTaskButton({ task }: { task: TaskUIModel }) {
 		<button
 			onClick={() => taskController.deleteTask()}
 			className="ml-2 text-xs text-red-500"
+			title={say('delete')}
 		>
 			<i className="ri-delete-bin-line"></i>
 		</button>

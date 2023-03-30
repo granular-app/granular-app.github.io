@@ -1,6 +1,7 @@
 import { signal } from '@preact/signals-react';
 import classNames from 'classnames';
 import { useMemo } from 'react';
+import { say } from '../../localization/ui-localization/localization';
 import { AddParentsView } from './AddParentsView';
 import { useCurrentTask } from './hooks/use-current-task';
 import { TaskKanban } from './TaskKanban/TaskKanban';
@@ -8,15 +9,16 @@ import { TaskParentListView } from './TaskParentListView';
 
 export function TabGroup() {
 	const currentTask = useCurrentTask();
+
 	const tabs = [
 		{
-			name: 'Child tasks',
+			name: say('child-tasks'),
 			view: () => <TaskKanban />,
 		},
 		...(!currentTask.isRoot
 			? [
 					{
-						name: 'Parent tasks',
+						name: say('parent-tasks'),
 						view: () => (
 							<div className="p-3">
 								<TaskParentListView />

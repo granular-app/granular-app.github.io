@@ -1,5 +1,6 @@
 import { useSignal } from '@preact/signals-react';
 import classNames from 'classnames';
+import { say } from '../../localization/ui-localization/localization';
 import { TaskUIModel } from '../ui-model/task';
 import { useTaskController } from './hooks/use-task-controller';
 
@@ -32,7 +33,7 @@ export function TaskForm({
 					onClick={closeForm}
 					className="rounded px-3 py-1 hover:bg-zinc-200"
 				>
-					Cancel
+					{say('cancel')}
 				</button>
 				<button
 					onClick={submitForm}
@@ -76,7 +77,7 @@ export function EditTaskForm({
 	return (
 		<TaskForm
 			initialText={task.text}
-			submitLabel="Save"
+			submitLabel={say('save')}
 			onSubmit={setText}
 			onClose={onCloseForm}
 			extraClassName={extraClassName}

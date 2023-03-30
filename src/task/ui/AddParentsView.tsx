@@ -1,3 +1,4 @@
+import { say } from '../../localization/ui-localization/localization';
 import { useCurrentTask } from './hooks/use-current-task';
 import { useCurrentTaskController } from './hooks/use-task-controller';
 
@@ -20,8 +21,8 @@ export function AddParentsView() {
 
 	return (
 		<div>
-			<p className="mb-1 font-semibold">Add this task to:</p>
-			<div className="space-x-2">{addParentButtons}</div>
+			<p className="mb-1 font-semibold">{say('add-parent-tasks')}:</p>
+			<div className="space-x-2 space-y-2">{addParentButtons}</div>
 		</div>
 	);
 }

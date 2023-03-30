@@ -23,7 +23,7 @@ function TaskParentListViewItem({ parent }: { parent: TaskUIModel }) {
 			onClick={() => currentTaskController.removeParent(parent.id)}
 			className="text-red-600 hover:text-red-800 focus:outline-none"
 		>
-			Remove parent
+			<i className="ri-subtract-line"></i>
 		</button>
 	);
 

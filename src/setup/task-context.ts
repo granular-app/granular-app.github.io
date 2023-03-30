@@ -4,7 +4,7 @@ import { TaskContext } from '../task/entity/context';
 import { taskStatuses } from '../task/entity/status';
 
 export const taskContext = new TaskContext({
-	name: 'All tasks',
+	name: 'all-tasks',
 	state: signal([]),
 });
 

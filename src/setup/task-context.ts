@@ -1,5 +1,8 @@
 import { signal } from '@preact/signals-react';
-import { TaskBase } from '../task/entity/base';
+import {
+	PartialStatelessTaskBaseTemplate,
+	TaskBase,
+} from '../task/entity/base';
 import { TaskContext } from '../task/entity/context';
 import { taskStatuses } from '../task/entity/status';
 
@@ -141,16 +144,13 @@ const exampleTasks = [
 
 exampleTasks
 	.map(
-		(exampleTask) =>
-			new TaskBase({
-				id: `${exampleTask.id}`,
-				textState: signal(exampleTask.text),
-				parentIdsState: signal(
-					new Set(exampleTask.parentIds.map((id) => `${id}`)),
-				),
-				staticStatusState: signal(
-					taskStatuses[Math.floor(taskStatuses.length * Math.random())],
-				),
-			}),
+		(exampleTask): PartialStatelessTaskBaseTemplate => ({
+			id: `${exampleTask.id}`,
+			text: exampleTask.text,
+			parentIds: new Set(exampleTask.parentIds.map((id) => `${id}`)),
+			staticStatus:
+				taskStatuses[Math.floor(taskStatuses.length * Math.random())],
+		}),
 	)
+	.map(TaskBase.fromStatelessTemplate)
 	.forEach((taskBase) => taskContext.add(taskBase));

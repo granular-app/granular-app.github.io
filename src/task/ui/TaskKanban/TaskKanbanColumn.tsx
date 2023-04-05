@@ -63,6 +63,6 @@ function AddChildTaskForm({ status }: { status: TaskStatus }) {
 	);
 
 	function addChildTask(text: string) {
-		taskController.addChildTask({ text, status });
+		taskController.addChildTask({ text, staticStatus: status });
 	}
 }

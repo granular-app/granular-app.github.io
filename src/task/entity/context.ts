@@ -1,9 +1,4 @@
-import {
-	computed,
-	ReadonlySignal,
-	signal,
-	Signal,
-} from '@preact/signals-react';
+import { computed, ReadonlySignal, Signal } from '@preact/signals-react';
 import { TaskBase } from './base';
 import { rootTaskId, Task, TaskArray } from './task';
 
@@ -18,9 +13,9 @@ export class TaskContext {
 	private rootTaskState = computed(
 		() =>
 			new Task({
-				base: new TaskBase({
+				base: TaskBase.fromStatelessTemplate({
 					id: rootTaskId,
-					textState: signal(this.name),
+					text: this.name,
 				}),
 				context: this,
 			}),
@@ -54,6 +49,10 @@ export class TaskContext {
 	}
 
 	add(base: TaskBase) {
+		if (this.tasks.map((task) => task.base.id).includes(base.id)) {
+			throw Error('Tasks with duplicate IDs are not allowed');
+		}
+
 		this.updateState([...this.state.value, base]);
 	}
 
@@ -69,5 +68,9 @@ export class TaskContext {
 		});
 
 		this.updateState(this.state.value.filter((task) => task.id !== id));
+	}
+
+	clear() {
+		this.updateState([]);
 	}
 }

@@ -47,7 +47,7 @@ export class TaskController {
 		this.useCases.removeParent(id);
 	}
 
-	addChildTask(params: { text: string; status: TaskStatus }) {
+	addChildTask(params: { text: string; staticStatus: TaskStatus }) {
 		this.useCases.addChildTask(params);
 	}
 

@@ -1,5 +1,5 @@
-import { computed, ReadonlySignal, signal } from '@preact/signals-react';
-import { TaskBase } from './base';
+import { computed, ReadonlySignal } from '@preact/signals-react';
+import { PartialStatelessTaskBaseTemplate, TaskBase } from './base';
 import { TaskContext } from './context';
 import { pickParentStatus, TaskStatus } from './status';
 
@@ -39,7 +39,14 @@ export class Task {
 	private childrenState: ReadonlySignal<Task[]> = computed(() =>
 		this.isRoot
 			? this.tasks.filter((task) => task.isChildOfRoot)
-			: this.tasks.filter((task) => task.base.parentIds.has(this.base.id)),
+			: this.tasks.filter((task) => {
+					try {
+						return task.base.parentIds.has(this.base.id);
+					} catch (e) {
+						console.log(task.base);
+						debugger;
+					}
+			  }),
 	);
 	get children() {
 		return this.childrenState.value;
@@ -106,12 +113,21 @@ export class Task {
 		return this.tasks.filter(canBeParent);
 	}
 
-	addChildTask({ text, status }: { text: string; status: TaskStatus }) {
-		const childTaskBase = new TaskBase({
-			textState: signal(text),
-			parentIdsState: signal(new Set(this.isRoot ? [] : [this.base.id])),
-			staticStatusState: signal(status),
-		});
+	addChildTask({
+		text,
+		staticStatus,
+	}: {
+		text: string;
+		staticStatus: TaskStatus;
+	}) {
+		const parentIds = new Set(this.isRoot ? [] : [this.base.id]);
+		const template: PartialStatelessTaskBaseTemplate = {
+			text,
+			parentIds,
+			staticStatus,
+		};
+
+		const childTaskBase = TaskBase.fromStatelessTemplate(template);
 		this.context.add(childTaskBase);
 	}
 

@@ -20,7 +20,7 @@ export class TaskUseCases {
 		this.task.base.removeParent(id);
 	}
 
-	addChildTask(params: { text: string; status: TaskStatus }) {
+	addChildTask(params: { text: string; staticStatus: TaskStatus }) {
 		this.task.addChildTask(params);
 	}
 

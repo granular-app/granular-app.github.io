@@ -23,9 +23,8 @@ describe('Task', () => {
 	});
 
 	it('has a specified status', () => {
-		const goToShopTask = taskManager.createTask('Go to shop', {
-			status: TaskStatus.InProgress,
-		});
+		const goToShopTask = taskManager.createTask('Go to shop');
+		goToShopTask.staticStatus = TaskStatus.InProgress;
 		expect(goToShopTask.status).toBe(TaskStatus.InProgress);
 	});
 

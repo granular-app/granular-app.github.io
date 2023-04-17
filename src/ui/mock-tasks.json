@@ -1,0 +1,69 @@
+[
+	{
+		"id": 8,
+		"title": "Submit tax documents",
+		"description": "Gather receipts and complete tax forms",
+		"status": "In progress",
+		"dueDate": "2023-04-20",
+		"parentTasks": []
+	},
+	{
+		"id": 2,
+		"title": "Finish project report",
+		"description": "Complete the final draft and submit it",
+		"status": "In progress",
+		"dueDate": "2023-04-18",
+		"parentTasks": [
+			{ "id": 7, "title": "Plan project" },
+			{ "id": 8, "title": "Submit tax documents" }
+		]
+	},
+	{
+		"id": 4,
+		"title": "Prepare for meeting",
+		"description": "Review agenda and gather necessary documents",
+		"status": "In progress",
+		"dueDate": "2023-04-13",
+		"parentTasks": [{ "id": 7, "title": "Plan project" }]
+	},
+	{
+		"id": 1,
+		"title": "Grocery shopping",
+		"description": "Buy fruits, vegetables, and milk",
+		"status": "To do",
+		"dueDate": "2023-04-15",
+		"parentTasks": []
+	},
+	{
+		"id": 5,
+		"title": "Pick up dry cleaning",
+		"description": "Collect shirts and trousers from the dry cleaner",
+		"status": "To do",
+		"dueDate": "2023-04-14",
+		"parentTasks": []
+	},
+	{
+		"id": 7,
+		"title": "Plan vacation",
+		"description": "Research destinations and book flights and accommodations",
+		"status": "To do",
+		"dueDate": "2023-04-30",
+		"parentTasks": []
+	},
+	{
+		"id": 6,
+		"title": "Buy new headphones",
+		"description": "Look for noise-cancelling headphones online",
+		"status": "Completed",
+		"dueDate": "2023-04-11",
+		"parentTasks": []
+	},
+	{
+		"id": 3,
+		"title": "Call plumber",
+		"description": "Fix the kitchen sink",
+		"status": "Completed",
+		"dueDate": "2023-04-10",
+		"parentTasks": []
+	}
+]

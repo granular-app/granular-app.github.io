@@ -1,4 +1,4 @@
-import { TaskStatus } from './task-status';
+import { deriveTaskStatus, TaskStatus } from './task-status';
 
 export class Task {
 	constructor(public text: string, options?: { status: TaskStatus }) {
@@ -16,7 +16,7 @@ export class Task {
 	}
 
 	get derivedStatus(): TaskStatus {
-		return this.subtasks[0].status;
+		return deriveTaskStatus(this.subtasks.map((subtask) => subtask.status));
 	}
 
 	createSubtask(text: string, options?: { status: TaskStatus }) {

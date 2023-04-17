@@ -31,11 +31,19 @@ describe('Task', () => {
 
 	it('derives status from subtasks', () => {
 		const goToShopTask = taskManager.createTask('Go to shop');
-		const buyMilkTask = goToShopTask.createSubtask('Buy milk', {
-			status: TaskStatus.InProgress,
-		});
+		const buyMilkTask = goToShopTask.createSubtask('Buy milk');
+		const buyBreadTask = goToShopTask.createSubtask('Buy bread');
+
+		buyMilkTask.staticStatus = TaskStatus.InProgress;
 		expect(goToShopTask.status).toBe(TaskStatus.InProgress);
+
 		buyMilkTask.staticStatus = TaskStatus.Completed;
+		expect(goToShopTask.status).toBe(TaskStatus.ToDo); // We still need to buy bread
+
+		buyBreadTask.staticStatus = TaskStatus.InProgress;
+		expect(goToShopTask.status).toBe(TaskStatus.InProgress);
+
+		buyBreadTask.staticStatus = TaskStatus.Completed;
 		expect(goToShopTask.status).toBe(TaskStatus.Completed);
 	});
 });

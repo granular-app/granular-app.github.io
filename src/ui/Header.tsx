@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { TaskmapRoute } from './router';
 
 export function Header() {
 	return (
@@ -10,10 +11,10 @@ export function Header() {
 			<nav className="text-sm font-semibold text-gray-700">
 				<ul className="flex space-x-8">
 					<li>
-						<Link to="/kanban">Main Board</Link>
+						<Link to={TaskmapRoute.MainBoard}>Main Board</Link>
 					</li>
 					<li>
-						<Link to="/settings">Settings</Link>
+						<Link to={TaskmapRoute.Settings}>Settings</Link>
 					</li>
 				</ul>
 			</nav>

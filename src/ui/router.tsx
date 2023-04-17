@@ -3,16 +3,23 @@ import { App } from './App';
 import { NotFoundPage } from './NotFoundPage';
 import { TaskPage } from './TaskPage';
 
+export const TaskmapRoute = {
+	MainBoard: '/main-board',
+	Settings: '/settings',
+	SettingsExport: '/settings/export',
+	SettingsImport: '/settings/import',
+} as const;
+
 export const router = createBrowserRouter([
 	{
 		path: '/',
 		ErrorBoundary: NotFoundPage,
-		loader: () => redirect('/main-board'),
+		loader: () => redirect(TaskmapRoute.MainBoard),
 	},
 	{
-		path: '/settings',
+		path: TaskmapRoute.Settings,
 		ErrorBoundary: NotFoundPage,
-		loader: () => redirect('/settings/export'),
+		loader: () => redirect(TaskmapRoute.SettingsExport),
 	},
 	{
 		element: <App />,
@@ -20,15 +27,15 @@ export const router = createBrowserRouter([
 
 		children: [
 			{
-				path: 'main-board',
+				path: TaskmapRoute.MainBoard,
 				Component: TaskPage,
 			},
 			{
-				path: 'settings/export',
+				path: TaskmapRoute.SettingsExport,
 				element: <div>Export</div>,
 			},
 			{
-				path: 'settings/import',
+				path: TaskmapRoute.SettingsImport,
 				element: <div>Import</div>,
 			},
 		],

@@ -11,9 +11,8 @@ const mainBoard = new MainBoard(taskManager);
 export const mainBoardState = signal(Nothing);
 const mainBoardPresenter = new MainBoardPresenter(mainBoardState);
 
-const viewMainBoardUseCase = new ViewMainBoardUseCase(
-	mainBoard,
-	mainBoardPresenter.present,
+const viewMainBoardUseCase = new ViewMainBoardUseCase(mainBoard, (mainBoard) =>
+	mainBoardPresenter.present(mainBoard),
 );
 export const viewMainBoardController = new ViewMainBoardController(
 	viewMainBoardUseCase,

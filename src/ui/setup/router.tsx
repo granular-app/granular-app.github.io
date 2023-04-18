@@ -1,11 +1,16 @@
 import { createBrowserRouter, redirect } from 'react-router-dom';
 import { MainBoardPage } from '../../main-board/ui/MainBoardPage';
+import { TaskPage } from '../../task/ui/TaskPage';
 import { AppLayout } from '../AppLayout';
 import { NotFoundPage } from '../NotFoundPage';
 import { uiDependencies } from './ui-dependencies';
 
 export const TaskmapRoute = {
 	MainBoard: '/main-board',
+	Task: {
+		URLTemplate: `/task/:taskID`,
+		URL: (taskID: string) => `/task/${taskID}`,
+	},
 	Settings: '/settings',
 	SettingsExport: '/settings/export',
 	SettingsImport: '/settings/import',
@@ -34,6 +39,14 @@ export const router = createBrowserRouter([
 					return uiDependencies.mainBoardState.value.extract()!;
 				},
 				Component: MainBoardPage,
+			},
+			{
+				path: TaskmapRoute.Task.URLTemplate,
+				loader: ({ params }) => {
+					uiDependencies.viewTaskController.run(params.taskID!);
+					return uiDependencies.viewedTaskState.value.extract()!;
+				},
+				Component: TaskPage,
 			},
 			{
 				path: TaskmapRoute.SettingsExport,

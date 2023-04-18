@@ -1,6 +1,6 @@
 import { useUIDependencies } from '../../ui/ui-dependencies';
 
-export function useMainBoardState() {
+export function useMainBoard() {
 	const { mainBoardState } = useUIDependencies();
 
 	return mainBoardState.value

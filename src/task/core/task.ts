@@ -1,9 +1,16 @@
+import { nanoid } from 'nanoid';
 import { Maybe } from 'purify-ts';
 import { TaskManager } from './task-manager';
 import { deriveTaskStatus, TaskStatus } from './task-status';
 
 export class Task {
-	constructor(public text: string, public taskManager: TaskManager) {}
+	constructor(
+		public readonly id: string,
+		public text: string,
+		public taskManager: TaskManager,
+	) {}
+
+	static generateID = nanoid;
 
 	subtasks: Task[] = [];
 	staticStatus: TaskStatus = TaskStatus.ToDo;
@@ -30,7 +37,7 @@ export class Task {
 	}
 
 	createSubtask(text: string) {
-		const newSubtask = new Task(text, this.taskManager);
+		const newSubtask = this.taskManager.createTask(text);
 		this.subtasks.push(newSubtask);
 		return newSubtask;
 	}

@@ -9,18 +9,23 @@ export class MainBoardPresenter {
 	constructor(private state: Signal<Maybe<MainBoardUIModel>>) {}
 
 	present: ViewMainBoardUseCaseOutputPort = (mainBoard) => {
-		const directSubtasksCount = mainBoard.tasks.length;
-		const completedDirectSubtasksCount = mainBoard.tasks.filter(
+		const mainBoardTasksCount = mainBoard.tasks.length;
+		const mainBoardCompletedTasksCount = mainBoard.tasks.filter(
+			(task) => task.status === TaskStatus.Completed,
+		).length;
+		const allSubtasks = mainBoard.listAllSubtasks();
+		const allTasksCount = allSubtasks.length;
+		const allCompletedTasksCount = allSubtasks.filter(
 			(task) => task.status === TaskStatus.Completed,
 		).length;
 
 		this.state.value = Just({
 			status: presentTaskStatus(mainBoard.status),
-			allSubtasksCount: 0,
-			completedAllSubtasksCount: 0,
-			completedDirectSubtasksCount,
-			directSubtasksCount,
-			progress: completedDirectSubtasksCount / directSubtasksCount,
+			allTasksCount,
+			allCompletedTasksCount,
+			progress: allCompletedTasksCount / allTasksCount,
+			mainBoardTasksCount,
+			mainBoardCompletedTasksCount,
 			subtasks: {
 				toDo: mainBoard.tasks
 					.filter((task) => task.status === TaskStatus.ToDo)
@@ -38,10 +43,10 @@ export class MainBoardPresenter {
 
 export type MainBoardUIModel = {
 	status: string;
-	completedDirectSubtasksCount: number;
-	directSubtasksCount: number;
-	completedAllSubtasksCount: number;
-	allSubtasksCount: number;
+	mainBoardCompletedTasksCount: number;
+	mainBoardTasksCount: number;
+	allCompletedTasksCount: number;
+	allTasksCount: number;
 	progress: number;
 	subtasks: {
 		toDo: SubtaskUIModel[];

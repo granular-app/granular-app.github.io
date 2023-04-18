@@ -1,3 +1,4 @@
+import { Task } from '../../task/core/task';
 import { TaskManager } from '../../task/core/task-manager';
 import { deriveTaskStatus, TaskStatus } from '../../task/core/task-status';
 
@@ -12,5 +13,9 @@ export class MainBoard {
 		return deriveTaskStatus(this.tasks.map((task) => task.status)).orDefault(
 			TaskStatus.Completed,
 		);
+	}
+
+	listAllSubtasks(): Task[] {
+		return this.taskManager.allTasks;
 	}
 }

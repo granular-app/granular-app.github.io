@@ -34,4 +34,16 @@ export class Task {
 		this.subtasks.push(newSubtask);
 		return newSubtask;
 	}
+
+	private listAllSubtasksSet(): Set<Task> {
+		return new Set(
+			this.subtasks.flatMap((subtask) => {
+				return [subtask, ...subtask.listAllSubtasksSet()];
+			}),
+		);
+	}
+
+	listAllSubtasks() {
+		return [...this.listAllSubtasksSet()];
+	}
 }

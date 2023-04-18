@@ -41,16 +41,16 @@ function MainBoardSidebar() {
 			</div>
 			<dl className="divide-y divide-gray-100 text-sm text-gray-600">
 				<div className="grid grid-cols-2 py-px">
-					<dt>Direct subtasks</dt>
+					<dt>Main Board tasks</dt>
 					<dd>
-						{mainBoard.completedDirectSubtasksCount} /{' '}
-						{mainBoard.directSubtasksCount}
+						{mainBoard.mainBoardCompletedTasksCount} /{' '}
+						{mainBoard.mainBoardTasksCount}
 					</dd>
 				</div>
 				<div className="grid grid-cols-2 py-px">
-					<dt>All subtasks</dt>
+					<dt>All tasks</dt>
 					<dd>
-						{mainBoard.completedAllSubtasksCount} / {mainBoard.allSubtasksCount}
+						{mainBoard.allCompletedTasksCount} / {mainBoard.allTasksCount}
 					</dd>
 				</div>
 			</dl>

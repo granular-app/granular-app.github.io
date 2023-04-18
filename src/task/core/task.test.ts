@@ -45,4 +45,11 @@ describe('Task', () => {
 		buyBreadTask.staticStatus = TaskStatus.Completed;
 		expect(goToShopTask.status).toBe(TaskStatus.Completed);
 	});
+
+	it('lists parent tasks', () => {
+		const goToShopTask = taskManager.createTask('Go to shop');
+		const buyMilkTask = goToShopTask.createSubtask('Buy milk');
+		expect(buyMilkTask.parentTasks).toHaveLength(1);
+		expect(buyMilkTask.parentTasks[0]).toBe(goToShopTask);
+	});
 });

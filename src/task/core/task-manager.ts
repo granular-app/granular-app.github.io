@@ -1,11 +1,11 @@
 import { Task } from './task';
 
 export class TaskManager {
-	tasks: Task[] = [];
+	allTasks: Task[] = [];
 
 	createTask(text: string) {
-		const task: Task = new Task(text);
-		this.tasks.push(task);
+		const task: Task = new Task(text, this);
+		this.allTasks.push(task);
 		return task;
 	}
 }

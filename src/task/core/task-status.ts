@@ -1,3 +1,5 @@
+import { Just, Maybe, Nothing } from 'purify-ts';
+
 export const TaskStatus = {
 	ToDo: 'to-do',
 	InProgress: 'in-progress',
@@ -13,12 +15,16 @@ const taskStatusDeriviationPriority = [
 	// From biggest priority
 ] as const;
 
-export function deriveTaskStatus(statuses: TaskStatus[]): TaskStatus {
-	return taskStatusDeriviationPriority[
-		Math.max(
-			...statuses.map((status) =>
-				taskStatusDeriviationPriority.indexOf(status),
-			),
-		)
-	];
+export function deriveTaskStatus(statuses: TaskStatus[]): Maybe<TaskStatus> {
+	if (statuses.length === 0) return Nothing;
+
+	return Just(
+		taskStatusDeriviationPriority[
+			Math.max(
+				...statuses.map((status) =>
+					taskStatusDeriviationPriority.indexOf(status),
+				),
+			)
+		],
+	);
 }

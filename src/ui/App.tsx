@@ -1,11 +1,12 @@
-import { Outlet } from 'react-router-dom';
-import { Header } from './Header';
+import { RouterProvider } from 'react-router-dom';
+import { UIDependencies, UIDependenciesProvider } from './ui-dependencies';
 
-export function App() {
+type Router = Parameters<typeof RouterProvider>[0]['router'];
+
+export function App(props: { router: Router; uiDependencies: UIDependencies }) {
 	return (
-		<>
-			<Header />
-			<Outlet />
-		</>
+		<UIDependenciesProvider value={props.uiDependencies}>
+			<RouterProvider router={props.router} />
+		</UIDependenciesProvider>
 	);
 }

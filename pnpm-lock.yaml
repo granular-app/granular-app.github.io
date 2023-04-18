@@ -22,6 +22,7 @@ specifiers:
   prettier: ^2.8.4
   prettier-plugin-organize-imports: ^3.2.2
   prettier-plugin-tailwindcss: ^0.2.3
+  purify-ts: ^2.0.0
   react: ^18.2.0
   react-dom: ^18.2.0
   react-popper: ^2.3.0
@@ -45,6 +46,7 @@ dependencies:
   immer: 9.0.19
   lodash.memoize: 4.1.2
   nanoid: 4.0.1
+  purify-ts: 2.0.0
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
   react-popper: 2.3.0_d52dtujcogewjimhlbpfze4rs4
@@ -531,6 +533,10 @@ packages:
   /@types/chai/4.3.4:
     resolution: {integrity: sha512-KnRanxnpfpjUTqTCXslZSEdLfXExwgNxYPdiO2WGUj8+HDjFi8R3k5RVKPeSCzLjCcshCAtVO2QBbVuAV4kTnw==}
     dev: true
+
+  /@types/json-schema/7.0.11:
+    resolution: {integrity: sha512-wOuvG1SN4Us4rez+tylwwwCV1psiNVOkJeM3AUWUNWg/jDQY2+HE/444y5gc+jBmRqASOm2Oeh5c1axHobwRKQ==}
+    dev: false
 
   /@types/lodash.memoize/4.1.7:
     resolution: {integrity: sha512-lGN7WeO4vO6sICVpf041Q7BX/9k1Y24Zo3FY0aUezr1QlKznpjzsDk3T3wvH8ofYzoK0QupN9TWcFAFZlyPwQQ==}
@@ -1972,6 +1978,12 @@ packages:
       glob: 7.2.3
       postcss: 7.0.32
       postcss-selector-parser: 6.0.11
+    dev: false
+
+  /purify-ts/2.0.0:
+    resolution: {integrity: sha512-Iha3oFZgzFhqyv4KpJ1z98ZnLoNCzejgAxgXW3K3FRv8Fw8BHZN7u4phM1RC2Kkg7cB6ensEYNiC2ZkVMR+7Lw==}
+    dependencies:
+      '@types/json-schema': 7.0.11
     dev: false
 
   /queue-microtask/1.2.3:

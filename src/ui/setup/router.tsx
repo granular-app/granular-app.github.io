@@ -1,7 +1,8 @@
 import { createBrowserRouter, redirect } from 'react-router-dom';
-import { App } from './App';
-import { NotFoundPage } from './NotFoundPage';
-import { TaskPage } from './TaskPage';
+import { MainBoardPage } from '../../main-board/ui/MainBoardPage';
+import { AppLayout } from '../AppLayout';
+import { NotFoundPage } from '../NotFoundPage';
+import { uiDependencies } from './ui-dependencies';
 
 export const TaskmapRoute = {
 	MainBoard: '/main-board',
@@ -22,13 +23,17 @@ export const router = createBrowserRouter([
 		loader: () => redirect(TaskmapRoute.SettingsExport),
 	},
 	{
-		element: <App />,
+		element: <AppLayout />,
 		ErrorBoundary: NotFoundPage,
 
 		children: [
 			{
 				path: TaskmapRoute.MainBoard,
-				Component: TaskPage,
+				loader: () => {
+					uiDependencies.viewMainBoardController.run();
+					return uiDependencies.mainBoardState.value.extract()!;
+				},
+				Component: MainBoardPage,
 			},
 			{
 				path: TaskmapRoute.SettingsExport,

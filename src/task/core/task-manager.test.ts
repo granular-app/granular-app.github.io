@@ -9,10 +9,10 @@ describe('Task Manager', () => {
 	});
 
 	it('creates task', () => {
-		expect(taskManager.tasks).toHaveLength(0);
+		expect(taskManager.allTasks).toHaveLength(0);
 		const createdTask = taskManager.createTask('Test task');
-		expect(taskManager.tasks).toHaveLength(1);
-		expect(createdTask).toBe(taskManager.tasks[0]);
-		expect(taskManager.tasks[0].text).toBe('Test task');
+		expect(taskManager.allTasks).toHaveLength(1);
+		expect(createdTask).toBe(taskManager.allTasks[0]);
+		expect(taskManager.allTasks[0].text).toBe('Test task');
 	});
 });

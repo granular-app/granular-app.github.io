@@ -1,9 +1,10 @@
 import { enableMapSet } from 'immer';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { RouterProvider } from 'react-router-dom';
 import './index.css';
-import { router } from './ui/router';
+import { App } from './ui/App';
+import { router } from './ui/setup/router';
+import { uiDependencies } from './ui/setup/ui-dependencies';
 
 enableMapSet();
 
@@ -12,6 +13,6 @@ const root = ReactDOM.createRoot(rootElement);
 
 root.render(
 	<React.StrictMode>
-		<RouterProvider router={router} />
+		<App router={router} uiDependencies={uiDependencies} />
 	</React.StrictMode>,
 );

@@ -1,6 +1,6 @@
 import { SparklesIcon } from '@heroicons/react/24/solid';
-import { TaskKanban } from '../../task/ui/TaskKanban';
-import { Sidebar } from '../../ui/Sidebar';
+import { TaskKanban } from 'src/task/ui/TaskKanban';
+import { Sidebar } from 'src/ui/Sidebar';
 import { useMainBoard } from './use-main-board-state';
 
 export function MainBoardPage() {

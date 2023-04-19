@@ -1,4 +1,4 @@
-import { ViewTaskUseCase } from '../application/view-task-use-case';
+import { ViewTaskUseCase } from './view-task.use-case';
 
 export class ViewTaskController {
 	constructor(private viewTaskUseCase: ViewTaskUseCase) {}

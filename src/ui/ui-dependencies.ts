@@ -1,10 +1,10 @@
 import { Signal } from '@preact/signals-react';
 import { Maybe } from 'purify-ts';
 import { createContext, useContext } from 'react';
-import { ViewMainBoardController } from '../main-board/controllers/view-main-board-controller';
-import { MainBoardUIModel } from '../main-board/presenters/main-board-presenter';
-import { ViewTaskController } from '../task/controllers/view-task-controller';
-import { ViewedTaskUIModel } from '../task/presenters/viewed-task-presenter';
+import { MainBoardUIModel } from 'src/task/main-board.feature/main-board.presenter';
+import { ViewMainBoardController } from 'src/task/main-board.feature/view-main-board.controller';
+import { ViewTaskController } from 'src/task/view-task.feature/view-task.controller';
+import { ViewedTaskUIModel } from 'src/task/view-task/viewed-task.presenter';
 
 const UIDependenciesContext = createContext<UIDependencies | null>(null);
 

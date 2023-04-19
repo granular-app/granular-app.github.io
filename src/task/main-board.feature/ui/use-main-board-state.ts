@@ -1,4 +1,4 @@
-import { useUIDependencies } from '../../ui/ui-dependencies';
+import { useUIDependencies } from 'src/ui/ui-dependencies';
 
 export function useMainBoard() {
 	const { mainBoardState } = useUIDependencies();

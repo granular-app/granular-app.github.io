@@ -1,10 +1,10 @@
 import { signal } from '@preact/signals-react';
 import { Nothing } from 'purify-ts';
-import { taskManager } from '../task/setup';
-import { ViewMainBoardUseCase } from './application/view-main-board-use-case';
-import { ViewMainBoardController } from './controllers/view-main-board-controller';
-import { MainBoard } from './core/main-board';
-import { MainBoardPresenter } from './presenters/main-board-presenter';
+import { taskManager } from '../setup';
+import { MainBoard } from './main-board.entity';
+import { MainBoardPresenter } from './main-board.presenter';
+import { ViewMainBoardController } from './view-main-board.controller';
+import { ViewMainBoardUseCase } from './view-main-board.use-case';
 
 const mainBoard = new MainBoard(taskManager);
 

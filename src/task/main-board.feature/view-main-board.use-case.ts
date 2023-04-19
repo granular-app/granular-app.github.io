@@ -1,4 +1,4 @@
-import { MainBoard } from '../core/main-board';
+import { MainBoard } from './main-board.entity';
 
 export class ViewMainBoardUseCase {
 	constructor(

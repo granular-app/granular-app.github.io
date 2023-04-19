@@ -1,4 +1,4 @@
-import { useUIDependencies } from '../../ui/ui-dependencies';
+import { useUIDependencies } from '../../../ui/ui-dependencies';
 
 export function useViewedTask() {
 	const { viewedTaskState } = useUIDependencies();

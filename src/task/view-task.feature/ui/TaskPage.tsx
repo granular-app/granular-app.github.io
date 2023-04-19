@@ -4,9 +4,9 @@ import { EllipsisVerticalIcon, SparklesIcon } from '@heroicons/react/24/solid';
 import { useSignal } from '@preact/signals-react';
 import { usePopper } from 'react-popper';
 import { Link } from 'react-router-dom';
-import { TaskmapRoute } from '../../ui/setup/router';
-import { ParentTaskUIModel } from '../presenters/viewed-task-presenter';
-import { TaskKanban } from './TaskKanban';
+import { TaskmapRoute } from '../../../ui/setup/router';
+import { TaskKanban } from '../../ui/TaskKanban';
+import { ParentTaskUIModel } from '../viewed-task.presenter';
 import { useViewedTask } from './use-viewed-task';
 
 export function TaskPage() {

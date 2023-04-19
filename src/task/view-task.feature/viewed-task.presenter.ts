@@ -2,11 +2,11 @@ import { Signal } from '@preact/signals-react';
 import { Just, Maybe, Nothing } from 'purify-ts';
 import { Task } from '../core/task';
 import { TaskStatus } from '../core/task-status';
+import { presentTaskStatus } from '../presenters/present-task-status';
 import {
 	KanbanColumnsUIModel,
 	KanbanTaskUIModel,
 } from '../ui-models/kanban-task';
-import { presentTaskStatus } from './present-task-status';
 
 export class ViewedTaskPresenter {
 	constructor(private state: Signal<Maybe<ViewedTaskUIModel>>) {}

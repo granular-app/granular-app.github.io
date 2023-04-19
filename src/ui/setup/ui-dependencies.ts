@@ -1,8 +1,11 @@
 import {
 	mainBoardState,
 	viewMainBoardController,
-} from '../../main-board/setup';
-import { viewedTaskState, viewTaskController } from '../../task/setup';
+} from 'src/task/main-board.feature/setup';
+import {
+	viewedTaskState,
+	viewTaskController,
+} from 'src/task/view-task.feature/setup';
 import { UIDependencies } from '../ui-dependencies';
 
 export const uiDependencies: UIDependencies = {

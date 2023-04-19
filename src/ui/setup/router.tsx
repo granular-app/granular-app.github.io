@@ -1,6 +1,6 @@
 import { createBrowserRouter, redirect } from 'react-router-dom';
-import { MainBoardPage } from '../../main-board/ui/MainBoardPage';
-import { TaskPage } from '../../task/ui/TaskPage';
+import { MainBoardPage } from 'src/task/main-board.feature/ui/MainBoardPage';
+import { TaskPage } from '../../task/view-task.feature/ui/TaskPage';
 import { AppLayout } from '../AppLayout';
 import { NotFoundPage } from '../NotFoundPage';
 import { uiDependencies } from './ui-dependencies';

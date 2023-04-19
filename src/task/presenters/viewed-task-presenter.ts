@@ -1,5 +1,5 @@
 import { Signal } from '@preact/signals-react';
-import { Maybe } from 'purify-ts';
+import { Just, Maybe, Nothing } from 'purify-ts';
 import { Task } from '../core/task';
 import { TaskStatus } from '../core/task-status';
 import {
@@ -43,6 +43,8 @@ export class ViewedTaskPresenter {
 						.filter((task) => task.status === TaskStatus.Completed)
 						.map(KanbanTaskUIModel.fromTask),
 				},
+				maybeParentTasks:
+					task.parentTasks.length > 0 ? Just(task.parentTasks) : Nothing,
 			};
 		});
 	}
@@ -57,4 +59,10 @@ export type ViewedTaskUIModel = {
 	allSubtasksCount: number;
 	progress: number;
 	subtasks: KanbanColumnsUIModel;
+	maybeParentTasks: Maybe<ParentTaskUIModel[]>;
+};
+
+export type ParentTaskUIModel = {
+	id: string;
+	text: string;
 };

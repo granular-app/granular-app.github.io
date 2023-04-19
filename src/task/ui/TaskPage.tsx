@@ -3,6 +3,9 @@ import { PencilIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { EllipsisVerticalIcon, SparklesIcon } from '@heroicons/react/24/solid';
 import { useSignal } from '@preact/signals-react';
 import { usePopper } from 'react-popper';
+import { Link } from 'react-router-dom';
+import { TaskmapRoute } from '../../ui/setup/router';
+import { ParentTaskUIModel } from '../presenters/viewed-task-presenter';
 import { TaskKanban } from './TaskKanban';
 import { useViewedTask } from './use-viewed-task';
 
@@ -56,34 +59,52 @@ function TaskSidebar() {
 				</div>
 			</dl>
 			{/* <h3 className="mt-5 mb-1 text-sm font-bold text-gray-500">Note</h3>
-			<button className="button">Add note</button>
+			<button className="button">Add note</button> */}
 			<h3 className="mt-5 mb-1 text-sm font-bold text-gray-500">
 				Parent tasks
 			</h3>
 			<ul className="my-2 rounded-md border text-gray-800">
-				<ParentTaskTile />
-				<ParentTaskTile />
-				<ParentTaskTile />
-				<ParentTaskTile />
-				<ParentTaskTile />
-				<ParentTaskTile />
+				{viewedTask.maybeParentTasks.caseOf({
+					Just: (parentTasks) => (
+						<>
+							{parentTasks.map((parentTask) => {
+								return (
+									<ParentTaskTile key={parentTask.id} parentTask={parentTask} />
+								);
+							})}
+						</>
+					),
+					Nothing: () => (
+						<li className="flex items-center border-t p-2 first:border-t-0">
+							<Link
+								to={TaskmapRoute.MainBoard}
+								className="flex-grow rounded-md pr-2 pl-4 hover:bg-gray-100"
+							>
+								Main Board
+							</Link>
+						</li>
+					),
+				})}
 			</ul>
-			<button className="mt-2 flex w-full items-center rounded-md py-1 font-bold text-gray-700 hover:bg-gray-100">
+			{/* <button className="mt-2 flex w-full items-center rounded-md py-1 font-bold text-gray-700 hover:bg-gray-100">
 				<div className="mr-2 flex h-6 w-6">
-					<LinkIcon className="icon m-auto" />
+					<PlusIcon className="icon m-auto" />
 				</div>
-				Link to more tasks
+				Assign parent tasks
 			</button> */}
 		</aside>
 	);
 }
 
-function ParentTaskTile() {
+function ParentTaskTile(props: { parentTask: ParentTaskUIModel }) {
 	return (
 		<li className="flex items-center border-t p-2 first:border-t-0">
-			<span className="flex-grow rounded-md pr-2 pl-4 hover:bg-gray-100">
-				Parent task A
-			</span>
+			<Link
+				to={TaskmapRoute.Task.URL(props.parentTask.id)}
+				className="flex-grow rounded-md pr-2 pl-4 hover:bg-gray-100"
+			>
+				{props.parentTask.text}
+			</Link>
 			<button className="ml-2 rounded-md p-1 leading-[0] hover:bg-gray-100">
 				<XMarkIcon className="icon" />
 			</button>

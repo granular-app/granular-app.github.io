@@ -4,6 +4,7 @@ import { EllipsisVerticalIcon, SparklesIcon } from '@heroicons/react/24/solid';
 import { useSignal } from '@preact/signals-react';
 import { usePopper } from 'react-popper';
 import { Link } from 'react-router-dom';
+import { useUIDependencies } from 'src/ui/ui-dependencies';
 import { TaskmapRoute } from '../../../ui/setup/router';
 import { TaskKanban } from '../../ui/TaskKanban';
 import { ParentTaskUIModel } from '../viewed-task.presenter';
@@ -11,11 +12,15 @@ import { useViewedTask } from './use-viewed-task';
 
 export function TaskPage() {
 	const viewedTask = useViewedTask();
+	const { addViewedTaskSubtaskController } = useUIDependencies();
 
 	return (
 		<>
 			<TaskSidebar />
-			<TaskKanban columns={viewedTask.subtasks} />
+			<TaskKanban
+				columns={viewedTask.subtasks}
+				addSubtask={addViewedTaskSubtaskController.run}
+			/>
 		</>
 	);
 }

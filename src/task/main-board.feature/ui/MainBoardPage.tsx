@@ -1,15 +1,20 @@
 import { SparklesIcon } from '@heroicons/react/24/solid';
 import { TaskKanban } from 'src/task/ui/TaskKanban';
 import { Sidebar } from 'src/ui/Sidebar';
+import { useUIDependencies } from 'src/ui/ui-dependencies';
 import { useMainBoard } from './use-main-board-state';
 
 export function MainBoardPage() {
 	const mainBoard = useMainBoard();
+	const { addMainBoardTaskController } = useUIDependencies();
 
 	return (
 		<>
 			<MainBoardSidebar />
-			<TaskKanban columns={mainBoard.tasks} />
+			<TaskKanban
+				columns={mainBoard.tasks}
+				addSubtask={addMainBoardTaskController.run}
+			/>
 		</>
 	);
 }

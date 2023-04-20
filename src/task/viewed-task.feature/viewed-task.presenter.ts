@@ -25,6 +25,7 @@ export class ViewedTaskPresenter {
 			).length;
 
 			return {
+				id: task.id,
 				text: task.text,
 				status: presentTaskStatus(task.status),
 				directSubtasksCount,
@@ -51,6 +52,7 @@ export class ViewedTaskPresenter {
 }
 
 export type ViewedTaskUIModel = {
+	id: string;
 	text: string;
 	status: string;
 	directCompletedSubtasksCount: number;

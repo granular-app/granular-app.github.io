@@ -4,6 +4,8 @@ import { EllipsisVerticalIcon, SparklesIcon } from '@heroicons/react/24/solid';
 import { useSignal } from '@preact/signals-react';
 import { usePopper } from 'react-popper';
 import { Link } from 'react-router-dom';
+import { ProgressBar } from 'src/ui/ProgressBar';
+import { Sidebar } from 'src/ui/Sidebar';
 import { useUIDependencies } from 'src/ui/ui-dependencies';
 import { TaskmapRoute } from '../../../ui/setup/router';
 import { TaskKanban } from '../../ui/TaskKanban';
@@ -29,7 +31,7 @@ function TaskSidebar() {
 	const viewedTask = useViewedTask();
 
 	return (
-		<aside className="fixed top-10 bottom-0 z-10 w-80 flex-shrink-0 overflow-y-auto p-6 pb-12">
+		<Sidebar>
 			<h1 className="text-lg">
 				{/* <ViewedTaskActionsButton /> */}
 				{viewedTask.text}
@@ -39,14 +41,7 @@ function TaskSidebar() {
 				<span className="font-bold text-gray-700">{viewedTask.status}</span>
 				<SparklesIcon className="icon ml-2" />
 			</div>
-			<div className="mb-2 h-1 w-full bg-gray-200">
-				<div
-					className="h-full bg-gray-400"
-					style={{ width: `${viewedTask.progress * 100}%` }}
-				>
-					<div className="h-full w-full bg-repeat heropattern-diagonalstripes-gray-500"></div>
-				</div>
-			</div>
+			<ProgressBar progress={viewedTask.progress} />
 			<dl className="divide-y divide-gray-100 text-sm text-gray-600">
 				<div className="grid grid-cols-2 py-px">
 					<dt>Direct subtasks</dt>
@@ -97,7 +92,7 @@ function TaskSidebar() {
 				</div>
 				Assign parent tasks
 			</button> */}
-		</aside>
+		</Sidebar>
 	);
 }
 

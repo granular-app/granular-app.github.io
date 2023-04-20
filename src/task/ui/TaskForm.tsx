@@ -22,19 +22,16 @@ export function TaskForm({
 				value={text.value}
 				onChange={(e) => (text.value = e.target.value)}
 				onKeyDown={testSubmitFormTrigger}
-				className="h-max w-full resize-y rounded px-4 py-2"
+				className="h-max w-full resize-y rounded border px-4 py-2"
 				autoFocus
 			/>
 			<div className="mt-2 flex justify-end space-x-2">
-				<button
-					onClick={closeForm}
-					className="rounded px-3 py-1 hover:bg-zinc-200"
-				>
+				<button onClick={closeForm} className="button shadow-none ring-0">
 					Cancel
 				</button>
 				<button
 					onClick={submitForm}
-					className="rounded bg-blue-600 px-3 py-1 text-white shadow-md hover:bg-blue-700"
+					className="button bg-gray-600 text-white shadow ring-gray-800 hover:bg-gray-700"
 				>
 					{submitLabel}
 				</button>

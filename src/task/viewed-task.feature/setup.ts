@@ -9,6 +9,10 @@ import {
 	AfterAddViewedTaskSubtaskObserver,
 } from './add-subtask.controller';
 import { AfterEditViewedTaskSubtaskObserver } from './edit-subtask.controller';
+import {
+	AfterEditViewedTaskObserver,
+	EditViewedTaskController,
+} from './edit-viewed-task.controller';
 import { RefreshViewedTaskController } from './refresh-viewed-task.controller';
 import { ViewTaskController } from './view-task.controller';
 import { ViewTaskUseCase } from './view-task.use-case';
@@ -40,4 +44,10 @@ const editTaskUseCase = new EditTaskUseCase(taskManager);
 export const editViewedTaskSubtaskController = new EditTaskController(
 	editTaskUseCase,
 	new AfterEditViewedTaskSubtaskObserver(refreshViewedTaskController),
+);
+
+export const editViewedTaskController = new EditViewedTaskController(
+	editTaskUseCase,
+	viewedTaskState,
+	new AfterEditViewedTaskObserver(refreshViewedTaskController),
 );

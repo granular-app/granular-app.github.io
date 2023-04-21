@@ -6,6 +6,7 @@ import {
 } from 'src/task/main-board.feature/setup';
 import {
 	addViewedTaskSubtaskController,
+	editViewedTaskController,
 	editViewedTaskSubtaskController,
 	viewedTaskState,
 	viewTaskController,
@@ -21,4 +22,5 @@ export const uiDependencies: UIDependencies = {
 	addViewedTaskSubtaskController,
 	editMainBoardTaskController,
 	editViewedTaskSubtaskController,
+	editViewedTaskController,
 };

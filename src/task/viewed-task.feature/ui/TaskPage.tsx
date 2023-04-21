@@ -1,9 +1,11 @@
 import { Popover } from '@headlessui/react';
-import { PencilIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { PencilIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { EllipsisVerticalIcon, SparklesIcon } from '@heroicons/react/24/solid';
 import { useSignal } from '@preact/signals-react';
+import { useCallback } from 'react';
 import { usePopper } from 'react-popper';
 import { Link } from 'react-router-dom';
+import { TaskForm } from 'src/task/ui/TaskForm';
 import { ProgressBar } from 'src/ui/ProgressBar';
 import { Sidebar } from 'src/ui/Sidebar';
 import { useUIDependencies } from 'src/ui/ui-dependencies';
@@ -34,10 +36,7 @@ function TaskSidebar() {
 
 	return (
 		<Sidebar>
-			<h1 className="text-lg">
-				{/* <ViewedTaskActionsButton /> */}
-				{viewedTask.text}
-			</h1>
+			<TaskTextView />
 			<h3 className="mt-5 mb-1 text-sm font-bold text-gray-500">Status</h3>
 			<div className="flex items-center justify-between">
 				<span className="font-bold text-gray-700">{viewedTask.status}</span>
@@ -98,6 +97,37 @@ function TaskSidebar() {
 	);
 }
 
+function TaskTextView() {
+	const { text } = useViewedTask();
+	const editModeActive = useSignal(false);
+	const enableEditMode = useCallback(() => {
+		editModeActive.value = true;
+	}, []);
+	const disableEditMode = useCallback(() => {
+		editModeActive.value = false;
+	}, []);
+	const { editViewedTaskController } = useUIDependencies();
+
+	if (editModeActive.value) {
+		return (
+			<TaskForm
+				initialText={text}
+				onClose={disableEditMode}
+				onSubmit={editViewedTaskController.run}
+				submitLabel="Save"
+				extraClassName="mt-2 mb-4"
+			/>
+		);
+	}
+
+	return (
+		<h1 className="text-lg">
+			<ViewedTaskActionsButton onEditButtonClick={enableEditMode} />
+			{text}
+		</h1>
+	);
+}
+
 function ParentTaskTile(props: { parentTask: ParentTaskUIModel }) {
 	return (
 		<li className="flex items-center border-t p-2 first:border-t-0">
@@ -114,7 +144,7 @@ function ParentTaskTile(props: { parentTask: ParentTaskUIModel }) {
 	);
 }
 
-function ViewedTaskActionsButton() {
+function ViewedTaskActionsButton(props: { onEditButtonClick: () => void }) {
 	const referenceElement = useSignal<HTMLElement | null>(null);
 	const popperElement = useSignal<HTMLElement | null>(null);
 	const { styles, attributes } = usePopper(
@@ -122,6 +152,14 @@ function ViewedTaskActionsButton() {
 		popperElement.value,
 		{
 			placement: 'bottom-end',
+			modifiers: [
+				{
+					name: 'offset',
+					options: {
+						offset: [0, 4],
+					},
+				},
+			],
 		},
 	);
 
@@ -138,19 +176,22 @@ function ViewedTaskActionsButton() {
 				ref={(element) => (popperElement.value = element)}
 				style={styles.popper}
 				{...attributes.popper}
-				className="absolute z-10 mt-1 w-max overflow-hidden rounded-md border bg-white text-sm shadow-lg"
+				className="absolute z-10 w-max overflow-hidden rounded-md border bg-white text-sm shadow-lg"
 			>
 				<ul>
 					<li className="border-t first:border-t-0">
-						<button className="flex w-full items-center px-2 py-1 hover:bg-gray-100">
+						<button
+							className="flex w-full items-center py-1 pl-2 pr-4 hover:bg-gray-100"
+							onClick={props.onEditButtonClick}
+						>
 							<div className="mr-2 flex h-6 w-6">
 								<PencilIcon className="icon m-auto text-gray-700" />
 							</div>
 							Edit
 						</button>
 					</li>
-					<li className="border-t first:border-t-0">
-						<label className="flex w-full cursor-pointer items-center px-2 py-1 hover:bg-gray-100">
+					{/* <li className="border-t first:border-t-0">
+						<label className="flex w-full cursor-pointer items-center py-1 pl-2 pr-4 hover:bg-gray-100">
 							<div className="mr-2 flex h-6 w-6">
 								<input
 									type="checkbox"
@@ -161,13 +202,13 @@ function ViewedTaskActionsButton() {
 						</label>
 					</li>
 					<li className="border-t first:border-t-0">
-						<button className="flex w-full items-center px-2 py-1 hover:bg-gray-100">
+						<button className="flex w-full items-center py-1 pl-2 pr-4 hover:bg-gray-100">
 							<div className="mr-2 flex h-6 w-6">
 								<TrashIcon className="icon m-auto text-gray-700" />
 							</div>
 							Delete
 						</button>
-					</li>
+					</li> */}
 				</ul>
 			</Popover.Panel>
 		</Popover>

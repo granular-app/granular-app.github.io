@@ -1,5 +1,6 @@
 import { useSignal } from '@preact/signals-react';
 import classNames from 'classnames';
+import { putCaretAtTheEnd } from 'src/utils/ui/put-caret-at-the-end';
 
 export function TaskForm({
 	initialText = '',
@@ -20,6 +21,7 @@ export function TaskForm({
 		<div role="form" className={classNames('mt-4', extraClassName)}>
 			<textarea
 				value={text.value}
+				onFocus={(e) => putCaretAtTheEnd(e.currentTarget)}
 				onChange={(e) => (text.value = e.target.value)}
 				onKeyDown={testSubmitFormTrigger}
 				className="h-max w-full resize-y rounded border px-4 py-2"

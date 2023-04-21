@@ -7,14 +7,16 @@ import { useMainBoard } from './use-main-board-state';
 
 export function MainBoardPage() {
 	const mainBoard = useMainBoard();
-	const { addMainBoardTaskController } = useUIDependencies();
+	const { addMainBoardTaskController, editMainBoardTaskController } =
+		useUIDependencies();
 
 	return (
 		<>
 			<MainBoardSidebar />
 			<TaskKanban
 				columns={mainBoard.tasks}
-				addSubtask={addMainBoardTaskController.run}
+				addTask={addMainBoardTaskController.run}
+				editTask={editMainBoardTaskController.run}
 			/>
 		</>
 	);

@@ -14,14 +14,16 @@ import { useViewedTask } from './use-viewed-task';
 
 export function TaskPage() {
 	const viewedTask = useViewedTask();
-	const { addViewedTaskSubtaskController } = useUIDependencies();
+	const { addViewedTaskSubtaskController, editViewedTaskSubtaskController } =
+		useUIDependencies();
 
 	return (
 		<>
 			<TaskSidebar />
 			<TaskKanban
 				columns={viewedTask.subtasks}
-				addSubtask={addViewedTaskSubtaskController.run}
+				addTask={addViewedTaskSubtaskController.run}
+				editTask={editViewedTaskSubtaskController.run}
 			/>
 		</>
 	);

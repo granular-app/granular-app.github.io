@@ -1,6 +1,8 @@
 import { signal } from '@preact/signals-react';
 import { Maybe, Nothing } from 'purify-ts';
+import { router, TaskmapRoute } from 'src/ui/setup/router';
 import { AddTaskUseCase } from '../add-task.feature/add-task.use-case';
+import { DeleteTaskUseCase } from '../delete-task.feature/delete-task.use-case';
 import { EditTaskController } from '../edit-task.feature/edit-task.controller';
 import { EditTaskUseCase } from '../edit-task.feature/edit-task.use-case';
 import { SetStaticStatusUseCase } from '../set-static-status.feature/set-static-status.use-case';
@@ -9,6 +11,8 @@ import {
 	AddViewedTaskSubtaskController,
 	AfterAddViewedTaskSubtaskObserver,
 } from './add-subtask.controller';
+import { DeleteSubtaskController } from './delete-subtask.controller';
+import { DeleteViewedTaskController } from './delete-viewed-task.controller';
 import { AfterEditViewedTaskSubtaskObserver } from './edit-subtask.controller';
 import {
 	AfterEditViewedTaskObserver,
@@ -61,3 +65,15 @@ export const setViewedTaskStaticStatusController =
 		viewedTaskState,
 		refreshViewedTaskController,
 	);
+
+const deleteTaskUseCase = new DeleteTaskUseCase(taskManager);
+export const deleteSubtaskController = new DeleteSubtaskController(
+	deleteTaskUseCase,
+	refreshViewedTaskController,
+);
+
+export const deleteViewedTaskController = new DeleteViewedTaskController(
+	deleteTaskUseCase,
+	viewedTaskState,
+	() => router.navigate(TaskmapRoute.MainBoard),
+);

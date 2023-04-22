@@ -1,11 +1,12 @@
 import { Signal } from '@preact/signals-react';
 import { Just, Maybe, Nothing } from 'purify-ts';
 import { Task } from '../core/task';
-import { TaskStatus } from '../core/task-status';
+import { TaskStatus, taskStatuses } from '../core/task-status';
 import { presentTaskStatus } from '../presenters/present-task-status';
 import {
 	KanbanColumnsUIModel,
 	KanbanTaskUIModel,
+	presentKanbanColumn,
 } from '../ui-models/kanban-task';
 
 export class ViewedTaskPresenter {
@@ -50,18 +51,13 @@ function presentSubtasks(task: Task): ViewedTaskUIModel['maybeSubtasks'] {
 		allSubtasksCount,
 		allCompletedSubtasksCount,
 		progress,
-		byStatus: {
-			toDo: presentSubtasksColumn(task.subtasks, TaskStatus.ToDo),
-			inProgress: presentSubtasksColumn(task.subtasks, TaskStatus.InProgress),
-			completed: presentSubtasksColumn(task.subtasks, TaskStatus.Completed),
-		},
+		byStatus: Object.fromEntries(
+			taskStatuses.map((status) => [
+				status,
+				presentKanbanColumn(task.subtasks, status),
+			]),
+		) as Record<TaskStatus, KanbanTaskUIModel[]>,
 	});
-}
-
-function presentSubtasksColumn(subtasks: Task[], status: TaskStatus) {
-	return subtasks
-		.filter((task) => task.status === status)
-		.map(KanbanTaskUIModel.fromTask);
 }
 
 export type ViewedTaskUIModel = {

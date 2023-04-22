@@ -1,5 +1,5 @@
 import { Popover, RadioGroup } from '@headlessui/react';
-import { PencilIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { PencilIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import {
 	CheckIcon,
 	EllipsisVerticalIcon,
@@ -10,6 +10,7 @@ import classNames from 'classnames';
 import { Fragment, useCallback } from 'react';
 import { usePopper } from 'react-popper';
 import { Link } from 'react-router-dom';
+import { DeleteTaskDialog } from 'src/task/delete-task.feature/DeleteTaskDialog';
 import { taskStatusesUIModel } from 'src/task/presenters/present-task-status';
 import { emptyKanbanColumns } from 'src/task/ui-models/kanban-task';
 import { TaskForm } from 'src/task/ui/TaskForm';
@@ -41,16 +42,16 @@ export function TaskPage() {
 
 function TaskTextView() {
 	const { text } = useViewedTask();
-	const editModeActive = useSignal(false);
+	const editModeEnabled = useSignal(false);
 	const enableEditMode = useCallback(() => {
-		editModeActive.value = true;
+		editModeEnabled.value = true;
 	}, []);
 	const disableEditMode = useCallback(() => {
-		editModeActive.value = false;
+		editModeEnabled.value = false;
 	}, []);
 	const { editViewedTaskController } = useAdapters();
 
-	if (editModeActive.value) {
+	if (editModeEnabled.value) {
 		return (
 			<TaskForm
 				initialText={text}
@@ -64,13 +65,13 @@ function TaskTextView() {
 
 	return (
 		<h1 className="text-lg">
-			<ViewedTaskActionsButton onEditButtonClick={enableEditMode} />
+			<ViewedTaskActionsButton enableEditMode={enableEditMode} />
 			{text}
 		</h1>
 	);
 }
 
-function ViewedTaskActionsButton(props: { onEditButtonClick: () => void }) {
+function ViewedTaskActionsButton(props: { enableEditMode: () => void }) {
 	const referenceElement = useSignal<HTMLElement | null>(null);
 	const popperElement = useSignal<HTMLElement | null>(null);
 	const { styles, attributes } = usePopper(
@@ -89,34 +90,38 @@ function ViewedTaskActionsButton(props: { onEditButtonClick: () => void }) {
 		},
 	);
 
-	return (
-		<Popover className="relative float-right">
-			<Popover.Button
-				ref={(element) => (referenceElement.value = element)}
-				className="ml-2 mt-1 flex h-6 w-6 items-center justify-center rounded-md hover:bg-gray-100"
-			>
-				<EllipsisVerticalIcon className="icon" />
-			</Popover.Button>
+	const { deleteViewedTaskController } = useAdapters();
+	const isDeleteTaskDialogOpen = useSignal(false);
 
-			<Popover.Panel
-				ref={(element) => (popperElement.value = element)}
-				style={styles.popper}
-				{...attributes.popper}
-				className="absolute z-10 w-max overflow-hidden rounded-md border bg-white text-sm shadow-lg"
-			>
-				<ul>
-					<li className="border-t first:border-t-0">
-						<button
-							className="flex w-full items-center py-1 pl-2 pr-4 hover:bg-gray-100"
-							onClick={props.onEditButtonClick}
-						>
-							<div className="mr-2 flex h-6 w-6">
-								<PencilIcon className="icon m-auto text-gray-700" />
-							</div>
-							Edit
-						</button>
-					</li>
-					{/* <li className="border-t first:border-t-0">
+	return (
+		<>
+			<Popover className="relative float-right">
+				<Popover.Button
+					ref={(element) => (referenceElement.value = element)}
+					className="ml-2 mt-1 flex h-6 w-6 items-center justify-center rounded-md hover:bg-gray-100"
+				>
+					<EllipsisVerticalIcon className="icon" />
+				</Popover.Button>
+
+				<Popover.Panel
+					ref={(element) => (popperElement.value = element)}
+					style={styles.popper}
+					{...attributes.popper}
+					className="absolute z-10 w-max overflow-hidden rounded-md border bg-white text-sm shadow-lg"
+				>
+					<ul>
+						<li className="border-t first:border-t-0">
+							<button
+								className="flex w-full items-center py-1 pl-2 pr-4 hover:bg-gray-100"
+								onClick={props.enableEditMode}
+							>
+								<div className="mr-2 flex h-6 w-6">
+									<PencilIcon className="icon m-auto text-gray-700" />
+								</div>
+								Edit
+							</button>
+						</li>
+						{/* <li className="border-t first:border-t-0">
 						<label className="flex w-full cursor-pointer items-center py-1 pl-2 pr-4 hover:bg-gray-100">
 							<div className="mr-2 flex h-6 w-6">
 								<input
@@ -126,18 +131,26 @@ function ViewedTaskActionsButton(props: { onEditButtonClick: () => void }) {
 							</div>
 							<span>Show on Main Board</span>
 						</label>
-					</li>
-					<li className="border-t first:border-t-0">
-						<button className="flex w-full items-center py-1 pl-2 pr-4 hover:bg-gray-100">
-							<div className="mr-2 flex h-6 w-6">
-								<TrashIcon className="icon m-auto text-gray-700" />
-							</div>
-							Delete
-						</button>
 					</li> */}
-				</ul>
-			</Popover.Panel>
-		</Popover>
+						<li className="border-t first:border-t-0">
+							<button
+								className="flex w-full items-center py-1 pl-2 pr-4 hover:bg-gray-100"
+								onClick={() => (isDeleteTaskDialogOpen.value = true)}
+							>
+								<div className="mr-2 flex h-6 w-6">
+									<TrashIcon className="icon m-auto text-gray-700" />
+								</div>
+								Delete
+							</button>
+						</li>
+					</ul>
+				</Popover.Panel>
+			</Popover>
+			<DeleteTaskDialog
+				isOpen={isDeleteTaskDialogOpen}
+				delete={deleteViewedTaskController.run}
+			/>
+		</>
 	);
 }
 
@@ -286,8 +299,11 @@ function ParentTaskTile(props: { parentTask: ParentTaskUIModel }) {
 
 function ViewedTaskSubtasksKanban() {
 	const viewedTask = useViewedTask();
-	const { addViewedTaskSubtaskController, editViewedTaskSubtaskController } =
-		useAdapters();
+	const {
+		addViewedTaskSubtaskController,
+		editViewedTaskSubtaskController,
+		deleteSubtaskController,
+	} = useAdapters();
 
 	return (
 		<TaskKanban
@@ -296,6 +312,7 @@ function ViewedTaskSubtasksKanban() {
 				.orDefault(emptyKanbanColumns)}
 			addTask={addViewedTaskSubtaskController.run}
 			editTask={editViewedTaskSubtaskController.run}
+			deleteTask={deleteSubtaskController.run}
 		/>
 	);
 }

@@ -2,8 +2,7 @@ import { createBrowserRouter, redirect } from 'react-router-dom';
 import { MainBoardPage } from 'src/task/main-board.feature/ui/MainBoardPage';
 import { TaskPage } from '../../task/viewed-task.feature/ui/TaskPage';
 import { AppLayout } from '../AppLayout';
-import { NotFoundPage } from '../NotFoundPage';
-import { adapters } from './adapters';
+import { ErrorPage } from '../ErrorPage';
 
 export const TaskmapRoute = {
 	MainBoard: '/main-board',
@@ -19,32 +18,35 @@ export const TaskmapRoute = {
 export const router = createBrowserRouter([
 	{
 		path: '/',
-		ErrorBoundary: NotFoundPage,
+		ErrorBoundary: ErrorPage,
 		loader: () => redirect(TaskmapRoute.MainBoard),
 	},
 	{
 		path: TaskmapRoute.Settings,
-		ErrorBoundary: NotFoundPage,
+		ErrorBoundary: ErrorPage,
 		loader: () => redirect(TaskmapRoute.SettingsExport),
 	},
 	{
 		element: <AppLayout />,
-		ErrorBoundary: NotFoundPage,
-
+		ErrorBoundary: ErrorPage,
 		children: [
 			{
 				path: TaskmapRoute.MainBoard,
-				loader: () => {
+				loader: async () => {
+					const { adapters } = await import('./adapters');
+
 					adapters.viewMainBoardController.run();
-					return adapters.mainBoardState.value.extract()!;
+					return null;
 				},
 				Component: MainBoardPage,
 			},
 			{
 				path: TaskmapRoute.Task.URLTemplate,
-				loader: ({ params }) => {
+				loader: async ({ params }) => {
+					const { adapters } = await import('./adapters');
+
 					adapters.viewTaskController.run(params.taskID!);
-					return adapters.viewedTaskState.value.extract()!;
+					return null;
 				},
 				Component: TaskPage,
 			},

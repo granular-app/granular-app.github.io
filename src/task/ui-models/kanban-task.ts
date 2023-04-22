@@ -1,15 +1,12 @@
 import { Task } from '../core/task';
+import { TaskStatus } from '../core/task-status';
 
-export type KanbanColumnsUIModel = {
-	toDo: KanbanTaskUIModel[];
-	inProgress: KanbanTaskUIModel[];
-	completed: KanbanTaskUIModel[];
-};
+export type KanbanColumnsUIModel = Record<TaskStatus, KanbanTaskUIModel[]>;
 
 export const emptyKanbanColumns: KanbanColumnsUIModel = {
-	toDo: [],
-	inProgress: [],
-	completed: [],
+	[TaskStatus.ToDo]: [],
+	[TaskStatus.InProgress]: [],
+	[TaskStatus.Completed]: [],
 };
 
 export type KanbanTaskUIModel = {
@@ -25,3 +22,9 @@ export const KanbanTaskUIModel = {
 		};
 	},
 } as const;
+
+export function presentKanbanColumn(subtasks: Task[], status: TaskStatus) {
+	return subtasks
+		.filter((task) => task.status === status)
+		.map(KanbanTaskUIModel.fromTask);
+}

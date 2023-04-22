@@ -20,4 +20,8 @@ export class TaskManager {
 	findTask(taskID: string): Maybe<Task> {
 		return Maybe.fromNullable(this.allTasks.find((task) => task.id === taskID));
 	}
+
+	indexOf(taskID: string) {
+		return this.allTasks.findIndex((task) => task.id === taskID);
+	}
 }

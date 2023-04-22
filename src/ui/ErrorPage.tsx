@@ -1,7 +1,14 @@
-import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Link, useRouteError } from 'react-router-dom';
 import { Header } from './Header';
 
-export function NotFoundPage() {
+export function ErrorPage() {
+	const error = useRouteError();
+
+	useEffect(() => {
+		console.error(error);
+	}, [error]);
+
 	return (
 		<div>
 			<Header />

@@ -1,10 +1,11 @@
 import { Signal } from '@preact/signals-react';
 import { Just, Maybe } from 'purify-ts';
-import { TaskStatus } from 'src/task/core/task-status';
+import { TaskStatus, taskStatuses } from 'src/task/core/task-status';
 import { presentTaskStatus } from 'src/task/presenters/present-task-status';
 import {
 	KanbanColumnsUIModel,
 	KanbanTaskUIModel,
+	presentKanbanColumn,
 } from 'src/task/ui-models/kanban-task';
 import { ViewMainBoardUseCaseOutputPort } from './view-main-board.use-case';
 
@@ -29,17 +30,12 @@ export class MainBoardPresenter {
 			progress: allCompletedTasksCount / allTasksCount,
 			mainBoardTasksCount,
 			mainBoardCompletedTasksCount,
-			tasks: {
-				toDo: mainBoard.tasks
-					.filter((task) => task.status === TaskStatus.ToDo)
-					.map(KanbanTaskUIModel.fromTask),
-				inProgress: mainBoard.tasks
-					.filter((task) => task.status === TaskStatus.InProgress)
-					.map(KanbanTaskUIModel.fromTask),
-				completed: mainBoard.tasks
-					.filter((task) => task.status === TaskStatus.Completed)
-					.map(KanbanTaskUIModel.fromTask),
-			},
+			tasksByStatus: Object.fromEntries(
+				taskStatuses.map((status) => [
+					status,
+					presentKanbanColumn(mainBoard.tasks, status),
+				]),
+			) as Record<TaskStatus, KanbanTaskUIModel[]>,
 		});
 	};
 }
@@ -51,5 +47,5 @@ export type MainBoardUIModel = {
 	allCompletedTasksCount: number;
 	allTasksCount: number;
 	progress: number;
-	tasks: KanbanColumnsUIModel;
+	tasksByStatus: KanbanColumnsUIModel;
 };

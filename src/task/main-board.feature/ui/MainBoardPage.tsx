@@ -7,16 +7,20 @@ import { useMainBoard } from './use-main-board-state';
 
 export function MainBoardPage() {
 	const mainBoard = useMainBoard();
-	const { addMainBoardTaskController, editMainBoardTaskController } =
-		useAdapters();
+	const {
+		addMainBoardTaskController,
+		editMainBoardTaskController,
+		deleteMainBoardTaskController,
+	} = useAdapters();
 
 	return (
 		<>
 			<MainBoardSidebar />
 			<TaskKanban
-				columns={mainBoard.tasks}
+				columns={mainBoard.tasksByStatus}
 				addTask={addMainBoardTaskController.run}
 				editTask={editMainBoardTaskController.run}
+				deleteTask={deleteMainBoardTaskController.run}
 			/>
 		</>
 	);

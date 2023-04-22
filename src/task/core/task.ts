@@ -53,4 +53,19 @@ export class Task {
 	listAllSubtasks() {
 		return [...this.listAllSubtasksSet()];
 	}
+
+	delete() {
+		this.subtasks
+			.filter((subtask) => subtask.parentTasks.length === 1)
+			.forEach((subtask) => subtask.delete());
+
+		const index = this.taskManager.indexOf(this.id);
+		this.taskManager.allTasks.splice(index, 1);
+		this.parentTasks.forEach(
+			(parentTask) =>
+				(parentTask.subtasks = parentTask.subtasks.filter(
+					(subtask) => subtask !== this,
+				)),
+		);
+	}
 }

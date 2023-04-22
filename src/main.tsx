@@ -3,8 +3,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import { App } from './ui/App';
+import { adapters } from './ui/setup/adapters';
 import { router } from './ui/setup/router';
-import { uiDependencies } from './ui/setup/ui-dependencies';
 
 enableMapSet();
 
@@ -13,6 +13,6 @@ const root = ReactDOM.createRoot(rootElement);
 
 root.render(
 	<React.StrictMode>
-		<App router={router} uiDependencies={uiDependencies} />
+		<App router={router} adapters={adapters} />
 	</React.StrictMode>,
 );

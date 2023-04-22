@@ -11,21 +11,21 @@ import { SetViewedTaskStaticStatusController } from 'src/task/viewed-task.featur
 import { ViewTaskController } from 'src/task/viewed-task.feature/view-task.controller';
 import { ViewedTaskUIModel } from 'src/task/viewed-task.feature/viewed-task.presenter';
 
-const UIDependenciesContext = createContext<UIDependencies | null>(null);
+const AdaptersContext = createContext<Adapters | null>(null);
 
-export function useUIDependencies() {
-	const uiDependencies = useContext(UIDependenciesContext);
+export function useAdapters() {
+	const adapters = useContext(AdaptersContext);
 
-	if (uiDependencies === null) {
+	if (adapters === null) {
 		throw new Error(
-			`This app's UI requires global UI states to be provided, but they weren't.`,
+			`The UI needs adapters to work, but they weren't provided.`,
 		);
 	} else {
-		return uiDependencies;
+		return adapters;
 	}
 }
 
-export type UIDependencies = {
+export type Adapters = {
 	mainBoardState: Signal<Maybe<MainBoardUIModel>>;
 	viewMainBoardController: ViewMainBoardController;
 	addMainBoardTaskController: AddMainBoardTaskController;
@@ -38,4 +38,4 @@ export type UIDependencies = {
 	setViewedTaskStaticStatusController: SetViewedTaskStaticStatusController;
 };
 
-export const UIDependenciesProvider = UIDependenciesContext.Provider;
+export const AdaptersProvider = AdaptersContext.Provider;

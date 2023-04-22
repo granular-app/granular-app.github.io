@@ -1,7 +1,7 @@
-import { useUIDependencies } from 'src/ui/ui-dependencies';
+import { useAdapters } from 'src/ui/adapaters';
 
 export function useMainBoard() {
-	const { mainBoardState } = useUIDependencies();
+	const { mainBoardState } = useAdapters();
 
 	return mainBoardState.value
 		.ifNothing(() => {

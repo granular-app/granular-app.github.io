@@ -3,7 +3,7 @@ import { MainBoardPage } from 'src/task/main-board.feature/ui/MainBoardPage';
 import { TaskPage } from '../../task/viewed-task.feature/ui/TaskPage';
 import { AppLayout } from '../AppLayout';
 import { NotFoundPage } from '../NotFoundPage';
-import { uiDependencies } from './ui-dependencies';
+import { adapters } from './adapters';
 
 export const TaskmapRoute = {
 	MainBoard: '/main-board',
@@ -35,16 +35,16 @@ export const router = createBrowserRouter([
 			{
 				path: TaskmapRoute.MainBoard,
 				loader: () => {
-					uiDependencies.viewMainBoardController.run();
-					return uiDependencies.mainBoardState.value.extract()!;
+					adapters.viewMainBoardController.run();
+					return adapters.mainBoardState.value.extract()!;
 				},
 				Component: MainBoardPage,
 			},
 			{
 				path: TaskmapRoute.Task.URLTemplate,
 				loader: ({ params }) => {
-					uiDependencies.viewTaskController.run(params.taskID!);
-					return uiDependencies.viewedTaskState.value.extract()!;
+					adapters.viewTaskController.run(params.taskID!);
+					return adapters.viewedTaskState.value.extract()!;
 				},
 				Component: TaskPage,
 			},

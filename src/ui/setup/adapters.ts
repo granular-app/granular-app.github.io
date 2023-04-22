@@ -12,9 +12,9 @@ import {
 	viewedTaskState,
 	viewTaskController,
 } from 'src/task/viewed-task.feature/setup';
-import { UIDependencies } from '../ui-dependencies';
+import { Adapters } from '../adapaters';
 
-export const uiDependencies: UIDependencies = {
+export const adapters: Adapters = {
 	mainBoardState,
 	viewMainBoardController,
 	viewedTaskState,

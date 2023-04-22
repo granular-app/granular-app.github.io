@@ -1,14 +1,14 @@
 import { SparklesIcon } from '@heroicons/react/24/solid';
 import { TaskKanban } from 'src/task/ui/TaskKanban';
+import { useAdapters } from 'src/ui/adapaters';
 import { ProgressBar } from 'src/ui/ProgressBar';
 import { Sidebar } from 'src/ui/Sidebar';
-import { useUIDependencies } from 'src/ui/ui-dependencies';
 import { useMainBoard } from './use-main-board-state';
 
 export function MainBoardPage() {
 	const mainBoard = useMainBoard();
 	const { addMainBoardTaskController, editMainBoardTaskController } =
-		useUIDependencies();
+		useAdapters();
 
 	return (
 		<>

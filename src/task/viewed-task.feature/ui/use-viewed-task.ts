@@ -1,7 +1,7 @@
-import { useUIDependencies } from '../../../ui/ui-dependencies';
+import { useAdapters } from '../../../ui/adapaters';
 
 export function useViewedTask() {
-	const { viewedTaskState } = useUIDependencies();
+	const { viewedTaskState } = useAdapters();
 
 	return viewedTaskState.value
 		.ifNothing(() => {

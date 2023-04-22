@@ -13,9 +13,9 @@ import { Link } from 'react-router-dom';
 import { taskStatusesUIModel } from 'src/task/presenters/present-task-status';
 import { emptyKanbanColumns } from 'src/task/ui-models/kanban-task';
 import { TaskForm } from 'src/task/ui/TaskForm';
+import { useAdapters } from 'src/ui/adapaters';
 import { ProgressBar } from 'src/ui/ProgressBar';
 import { Sidebar } from 'src/ui/Sidebar';
-import { useUIDependencies } from 'src/ui/ui-dependencies';
 import { TaskmapRoute } from '../../../ui/setup/router';
 import { TaskKanban } from '../../ui/TaskKanban';
 import {
@@ -48,7 +48,7 @@ function TaskTextView() {
 	const disableEditMode = useCallback(() => {
 		editModeActive.value = false;
 	}, []);
-	const { editViewedTaskController } = useUIDependencies();
+	const { editViewedTaskController } = useAdapters();
 
 	if (editModeActive.value) {
 		return (
@@ -156,7 +156,7 @@ function StatusView() {
 
 function StaticStatusView() {
 	const viewedTaskStaticStatus = useViewedTask().staticStatus;
-	const { setViewedTaskStaticStatusController } = useUIDependencies();
+	const { setViewedTaskStaticStatusController } = useAdapters();
 
 	return (
 		<RadioGroup
@@ -287,7 +287,7 @@ function ParentTaskTile(props: { parentTask: ParentTaskUIModel }) {
 function ViewedTaskSubtasksKanban() {
 	const viewedTask = useViewedTask();
 	const { addViewedTaskSubtaskController, editViewedTaskSubtaskController } =
-		useUIDependencies();
+		useAdapters();
 
 	return (
 		<TaskKanban

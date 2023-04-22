@@ -1,12 +1,12 @@
 import { RouterProvider } from 'react-router-dom';
-import { UIDependencies, UIDependenciesProvider } from './ui-dependencies';
+import { Adapters, AdaptersProvider } from './adapaters';
 
 type Router = Parameters<typeof RouterProvider>[0]['router'];
 
-export function App(props: { router: Router; uiDependencies: UIDependencies }) {
+export function App(props: { router: Router; adapters: Adapters }) {
 	return (
-		<UIDependenciesProvider value={props.uiDependencies}>
+		<AdaptersProvider value={props.adapters}>
 			<RouterProvider router={props.router} />
-		</UIDependenciesProvider>
+		</AdaptersProvider>
 	);
 }

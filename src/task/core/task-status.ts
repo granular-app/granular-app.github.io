@@ -6,6 +6,7 @@ export const TaskStatus = {
 	Completed: 'completed',
 } as const;
 export type TaskStatus = (typeof TaskStatus)[keyof typeof TaskStatus];
+export const taskStatuses = Object.values(TaskStatus);
 
 const taskStatusDeriviationPriority = [
 	// To smallest priority

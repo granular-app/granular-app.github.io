@@ -6,6 +6,12 @@ export type KanbanColumnsUIModel = {
 	completed: KanbanTaskUIModel[];
 };
 
+export const emptyKanbanColumns: KanbanColumnsUIModel = {
+	toDo: [],
+	inProgress: [],
+	completed: [],
+};
+
 export type KanbanTaskUIModel = {
 	id: string;
 	text: string;

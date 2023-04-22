@@ -1,99 +1,41 @@
-import { Popover } from '@headlessui/react';
+import { Popover, RadioGroup } from '@headlessui/react';
 import { PencilIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { EllipsisVerticalIcon, SparklesIcon } from '@heroicons/react/24/solid';
+import {
+	CheckIcon,
+	EllipsisVerticalIcon,
+	SparklesIcon,
+} from '@heroicons/react/24/solid';
 import { useSignal } from '@preact/signals-react';
-import { useCallback } from 'react';
+import classNames from 'classnames';
+import { Fragment, useCallback } from 'react';
 import { usePopper } from 'react-popper';
 import { Link } from 'react-router-dom';
+import { taskStatusesUIModel } from 'src/task/presenters/present-task-status';
+import { emptyKanbanColumns } from 'src/task/ui-models/kanban-task';
 import { TaskForm } from 'src/task/ui/TaskForm';
 import { ProgressBar } from 'src/ui/ProgressBar';
 import { Sidebar } from 'src/ui/Sidebar';
 import { useUIDependencies } from 'src/ui/ui-dependencies';
 import { TaskmapRoute } from '../../../ui/setup/router';
 import { TaskKanban } from '../../ui/TaskKanban';
-import { ParentTaskUIModel } from '../viewed-task.presenter';
+import {
+	ParentTaskUIModel,
+	ViewedTaskSubtasksUIModel,
+} from '../viewed-task.presenter';
 import { useViewedTask } from './use-viewed-task';
 
 export function TaskPage() {
-	const viewedTask = useViewedTask();
-	const { addViewedTaskSubtaskController, editViewedTaskSubtaskController } =
-		useUIDependencies();
-
 	return (
 		<>
-			<TaskSidebar />
-			<TaskKanban
-				columns={viewedTask.subtasks}
-				addTask={addViewedTaskSubtaskController.run}
-				editTask={editViewedTaskSubtaskController.run}
-			/>
-		</>
-	);
-}
-
-function TaskSidebar() {
-	const viewedTask = useViewedTask();
-
-	return (
-		<Sidebar>
-			<TaskTextView />
-			<h3 className="mt-5 mb-1 text-sm font-bold text-gray-500">Status</h3>
-			<div className="flex items-center justify-between">
-				<span className="font-bold text-gray-700">{viewedTask.status}</span>
-				<SparklesIcon className="icon ml-2" />
-			</div>
-			<ProgressBar progress={viewedTask.progress} />
-			<dl className="divide-y divide-gray-100 text-sm text-gray-600">
-				<div className="grid grid-cols-2 py-px">
-					<dt>Direct subtasks</dt>
-					<dd>
-						{viewedTask.directCompletedSubtasksCount} /{' '}
-						{viewedTask.directSubtasksCount}
-					</dd>
-				</div>
-				<div className="grid grid-cols-2 py-px">
-					<dt>All subtasks</dt>
-					<dd>
-						{viewedTask.allCompletedSubtasksCount} /{' '}
-						{viewedTask.allSubtasksCount}
-					</dd>
-				</div>
-			</dl>
-			{/* <h3 className="mt-5 mb-1 text-sm font-bold text-gray-500">Note</h3>
+			<Sidebar>
+				<TaskTextView />
+				<StatusView />
+				{/* <h3 className="mt-5 mb-1 text-sm font-bold text-gray-500">Note</h3>
 			<button className="button">Add note</button> */}
-			<h3 className="mt-5 mb-1 text-sm font-bold text-gray-500">
-				Parent tasks
-			</h3>
-			<ul className="my-2 rounded-md border text-gray-800">
-				{viewedTask.maybeParentTasks.caseOf({
-					Just: (parentTasks) => (
-						<>
-							{parentTasks.map((parentTask) => {
-								return (
-									<ParentTaskTile key={parentTask.id} parentTask={parentTask} />
-								);
-							})}
-						</>
-					),
-					Nothing: () => (
-						<li className="flex items-center border-t p-2 first:border-t-0">
-							<Link
-								to={TaskmapRoute.MainBoard}
-								className="flex-grow rounded-md pr-2 pl-4 hover:bg-gray-100"
-							>
-								Main Board
-							</Link>
-						</li>
-					),
-				})}
-			</ul>
-			{/* <button className="mt-2 flex w-full items-center rounded-md py-1 font-bold text-gray-700 hover:bg-gray-100">
-				<div className="mr-2 flex h-6 w-6">
-					<PlusIcon className="icon m-auto" />
-				</div>
-				Assign parent tasks
-			</button> */}
-		</Sidebar>
+				<ParentTasksView />
+			</Sidebar>
+			<ViewedTaskSubtasksKanban />
+		</>
 	);
 }
 
@@ -125,22 +67,6 @@ function TaskTextView() {
 			<ViewedTaskActionsButton onEditButtonClick={enableEditMode} />
 			{text}
 		</h1>
-	);
-}
-
-function ParentTaskTile(props: { parentTask: ParentTaskUIModel }) {
-	return (
-		<li className="flex items-center border-t p-2 first:border-t-0">
-			<Link
-				to={TaskmapRoute.Task.URL(props.parentTask.id)}
-				className="flex-grow rounded-md pr-2 pl-4 hover:bg-gray-100"
-			>
-				{props.parentTask.text}
-			</Link>
-			<button className="ml-2 rounded-md p-1 leading-[0] hover:bg-gray-100">
-				<XMarkIcon className="icon" />
-			</button>
-		</li>
 	);
 }
 
@@ -212,5 +138,164 @@ function ViewedTaskActionsButton(props: { onEditButtonClick: () => void }) {
 				</ul>
 			</Popover.Panel>
 		</Popover>
+	);
+}
+
+function StatusView() {
+	const viewedTask = useViewedTask();
+
+	return (
+		<>
+			<h3 className="mt-5 mb-1 text-sm font-bold text-gray-500">Status</h3>
+			{viewedTask.maybeSubtasks
+				.map((subtasks) => <SubtasksStatusView subtasks={subtasks} />)
+				.orDefault(<StaticStatusView />)}
+		</>
+	);
+}
+
+function StaticStatusView() {
+	const viewedTaskStaticStatus = useViewedTask().staticStatus;
+	const { setViewedTaskStaticStatusController } = useUIDependencies();
+
+	return (
+		<RadioGroup
+			value={viewedTaskStaticStatus}
+			onChange={setViewedTaskStaticStatusController.run}
+			defaultChecked
+			className="my-2 rounded-md border text-gray-800"
+		>
+			{taskStatusesUIModel.map(({ label, value }) => {
+				return (
+					<RadioGroup.Option key={value} value={value} as={Fragment}>
+						{({ checked }) => (
+							<div
+								className={classNames(
+									'flex cursor-pointer items-center border-t p-2 first:border-t-0 hover:bg-gray-100',
+									checked && 'bg-gray-100 font-bold text-gray-700',
+								)}
+							>
+								<span className="flex-grow pr-2 pl-4">{label}</span>
+								{checked && (
+									<div className="ml-2 p-1 leading-[0]">
+										<CheckIcon className="icon" />
+									</div>
+								)}
+							</div>
+						)}
+					</RadioGroup.Option>
+				);
+			})}
+		</RadioGroup>
+	);
+}
+
+function SubtasksStatusView(props: { subtasks: ViewedTaskSubtasksUIModel }) {
+	const viewedTask = useViewedTask();
+	const {
+		progress,
+		directCompletedSubtasksCount,
+		allCompletedSubtasksCount,
+		allSubtasksCount,
+		directSubtasksCount,
+	} = props.subtasks;
+
+	return (
+		<>
+			<div className="flex items-center justify-between">
+				<span className="font-bold text-gray-700">
+					{viewedTask.statusLabel}
+				</span>
+				<SparklesIcon className="icon ml-2" />
+			</div>
+			<ProgressBar progress={progress} />
+			<dl className="divide-y divide-gray-100 text-sm text-gray-600">
+				<div className="grid grid-cols-2 py-px">
+					<dt>Direct subtasks</dt>
+					<dd>
+						{directCompletedSubtasksCount} / {directSubtasksCount}
+					</dd>
+				</div>
+				<div className="grid grid-cols-2 py-px">
+					<dt>All subtasks</dt>
+					<dd>
+						{allCompletedSubtasksCount} / {allSubtasksCount}
+					</dd>
+				</div>
+			</dl>
+		</>
+	);
+}
+
+function ParentTasksView() {
+	const viewedTask = useViewedTask();
+
+	return (
+		<>
+			<h3 className="mt-5 mb-1 text-sm font-bold text-gray-500">
+				Parent tasks
+			</h3>
+			<ul className="my-2 rounded-md border text-gray-800">
+				{viewedTask.maybeParentTasks.caseOf({
+					Just: (parentTasks) => (
+						<>
+							{parentTasks.map((parentTask) => {
+								return (
+									<ParentTaskTile key={parentTask.id} parentTask={parentTask} />
+								);
+							})}
+						</>
+					),
+					Nothing: () => (
+						<li className="flex items-center border-t p-2 first:border-t-0">
+							<Link
+								to={TaskmapRoute.MainBoard}
+								className="flex-grow rounded-md pr-2 pl-4 hover:bg-gray-100"
+							>
+								Main Board
+							</Link>
+						</li>
+					),
+				})}
+			</ul>
+			{/* <button className="mt-2 flex w-full items-center rounded-md py-1 font-bold text-gray-700 hover:bg-gray-100">
+				<div className="mr-2 flex h-6 w-6">
+					<PlusIcon className="icon m-auto" />
+				</div>
+				Assign parent tasks
+			</button> */}
+		</>
+	);
+}
+
+function ParentTaskTile(props: { parentTask: ParentTaskUIModel }) {
+	return (
+		<li className="flex items-center border-t p-2 first:border-t-0">
+			<Link
+				to={TaskmapRoute.Task.URL(props.parentTask.id)}
+				className="flex-grow rounded-md pr-2 pl-4 hover:bg-gray-100"
+			>
+				{props.parentTask.text}
+			</Link>
+			<button className="ml-2 rounded-md p-1 leading-[0] hover:bg-gray-100">
+				<XMarkIcon className="icon" />
+			</button>
+		</li>
+	);
+}
+
+function ViewedTaskSubtasksKanban() {
+	const viewedTask = useViewedTask();
+	const { addViewedTaskSubtaskController, editViewedTaskSubtaskController } =
+		useUIDependencies();
+
+	return (
+		<TaskKanban
+			columns={viewedTask.maybeSubtasks
+				.map((subtasks) => subtasks.byStatus)
+				.orDefault(emptyKanbanColumns)}
+			addTask={addViewedTaskSubtaskController.run}
+			editTask={editViewedTaskSubtaskController.run}
+		/>
 	);
 }

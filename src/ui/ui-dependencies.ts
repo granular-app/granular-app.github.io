@@ -7,6 +7,7 @@ import { MainBoardUIModel } from 'src/task/main-board.feature/main-board.present
 import { ViewMainBoardController } from 'src/task/main-board.feature/view-main-board.controller';
 import { AddViewedTaskSubtaskController } from 'src/task/viewed-task.feature/add-subtask.controller';
 import { EditViewedTaskController } from 'src/task/viewed-task.feature/edit-viewed-task.controller';
+import { SetViewedTaskStaticStatusController } from 'src/task/viewed-task.feature/set-viewed-task-static-status.controller';
 import { ViewTaskController } from 'src/task/viewed-task.feature/view-task.controller';
 import { ViewedTaskUIModel } from 'src/task/viewed-task.feature/viewed-task.presenter';
 
@@ -34,6 +35,7 @@ export type UIDependencies = {
 	addViewedTaskSubtaskController: AddViewedTaskSubtaskController;
 	editViewedTaskSubtaskController: EditTaskController;
 	editViewedTaskController: EditViewedTaskController;
+	setViewedTaskStaticStatusController: SetViewedTaskStaticStatusController;
 };
 
 export const UIDependenciesProvider = UIDependenciesContext.Provider;

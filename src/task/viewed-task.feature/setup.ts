@@ -3,6 +3,7 @@ import { Maybe, Nothing } from 'purify-ts';
 import { AddTaskUseCase } from '../add-task.feature/add-task.use-case';
 import { EditTaskController } from '../edit-task.feature/edit-task.controller';
 import { EditTaskUseCase } from '../edit-task.feature/edit-task.use-case';
+import { SetStaticStatusUseCase } from '../set-static-status.feature/set-static-status.use-case';
 import { taskManager } from '../setup';
 import {
 	AddViewedTaskSubtaskController,
@@ -14,6 +15,7 @@ import {
 	EditViewedTaskController,
 } from './edit-viewed-task.controller';
 import { RefreshViewedTaskController } from './refresh-viewed-task.controller';
+import { SetViewedTaskStaticStatusController } from './set-viewed-task-static-status.controller';
 import { ViewTaskController } from './view-task.controller';
 import { ViewTaskUseCase } from './view-task.use-case';
 import {
@@ -51,3 +53,11 @@ export const editViewedTaskController = new EditViewedTaskController(
 	viewedTaskState,
 	new AfterEditViewedTaskObserver(refreshViewedTaskController),
 );
+
+const setStaticStatusUseCase = new SetStaticStatusUseCase(taskManager);
+export const setViewedTaskStaticStatusController =
+	new SetViewedTaskStaticStatusController(
+		setStaticStatusUseCase,
+		viewedTaskState,
+		refreshViewedTaskController,
+	);

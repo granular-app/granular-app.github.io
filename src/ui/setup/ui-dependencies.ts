@@ -8,6 +8,7 @@ import {
 	addViewedTaskSubtaskController,
 	editViewedTaskController,
 	editViewedTaskSubtaskController,
+	setViewedTaskStaticStatusController,
 	viewedTaskState,
 	viewTaskController,
 } from 'src/task/viewed-task.feature/setup';
@@ -23,4 +24,5 @@ export const uiDependencies: UIDependencies = {
 	editMainBoardTaskController,
 	editViewedTaskSubtaskController,
 	editViewedTaskController,
+	setViewedTaskStaticStatusController,
 };

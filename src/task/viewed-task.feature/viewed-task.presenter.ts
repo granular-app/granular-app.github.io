@@ -13,55 +13,74 @@ export class ViewedTaskPresenter {
 
 	present(viewedTask: Maybe<Task>) {
 		this.state.value = viewedTask.map((task) => {
-			const directSubtasksCount = task.subtasks.length;
-			const directCompletedSubtasksCount = task.subtasks.filter(
-				(subtask) => subtask.status === TaskStatus.Completed,
-			).length;
-
-			const allSubtasks = task.listAllSubtasks();
-			const allSubtasksCount = allSubtasks.length;
-			const allCompletedSubtasksCount = allSubtasks.filter(
-				(subtask) => subtask.status === TaskStatus.Completed,
-			).length;
-
 			return {
 				id: task.id,
 				text: task.text,
-				status: presentTaskStatus(task.status),
-				directSubtasksCount,
-				directCompletedSubtasksCount,
-				allSubtasksCount,
-				allCompletedSubtasksCount,
-				progress: allCompletedSubtasksCount / allSubtasksCount,
-				subtasks: {
-					toDo: task.subtasks
-						.filter((task) => task.status === TaskStatus.ToDo)
-						.map(KanbanTaskUIModel.fromTask),
-					inProgress: task.subtasks
-						.filter((task) => task.status === TaskStatus.InProgress)
-						.map(KanbanTaskUIModel.fromTask),
-					completed: task.subtasks
-						.filter((task) => task.status === TaskStatus.Completed)
-						.map(KanbanTaskUIModel.fromTask),
-				},
-				maybeParentTasks:
-					task.parentTasks.length > 0 ? Just(task.parentTasks) : Nothing,
+				status: task.status,
+				staticStatus: task.staticStatus,
+				statusLabel: presentTaskStatus(task.status),
+				maybeSubtasks: presentSubtasks(task),
+				maybeParentTasks: task.hasParentTasks
+					? Just(task.parentTasks)
+					: Nothing,
 			};
 		});
 	}
 }
 
+function presentSubtasks(task: Task): ViewedTaskUIModel['maybeSubtasks'] {
+	if (!task.hasSubtasks) return Nothing;
+
+	const directSubtasksCount = task.subtasks.length;
+	const directCompletedSubtasksCount = task.subtasks.filter(
+		(subtask) => subtask.status === TaskStatus.Completed,
+	).length;
+
+	const allSubtasks = task.listAllSubtasks();
+	const allSubtasksCount = allSubtasks.length;
+	const allCompletedSubtasksCount = allSubtasks.filter(
+		(subtask) => subtask.status === TaskStatus.Completed,
+	).length;
+
+	const progress = allCompletedSubtasksCount / allSubtasksCount;
+
+	return Just({
+		directSubtasksCount,
+		directCompletedSubtasksCount,
+		allSubtasksCount,
+		allCompletedSubtasksCount,
+		progress,
+		byStatus: {
+			toDo: presentSubtasksColumn(task.subtasks, TaskStatus.ToDo),
+			inProgress: presentSubtasksColumn(task.subtasks, TaskStatus.InProgress),
+			completed: presentSubtasksColumn(task.subtasks, TaskStatus.Completed),
+		},
+	});
+}
+
+function presentSubtasksColumn(subtasks: Task[], status: TaskStatus) {
+	return subtasks
+		.filter((task) => task.status === status)
+		.map(KanbanTaskUIModel.fromTask);
+}
+
 export type ViewedTaskUIModel = {
 	id: string;
 	text: string;
-	status: string;
+	status: TaskStatus;
+	staticStatus: TaskStatus;
+	statusLabel: string;
+	maybeParentTasks: Maybe<ParentTaskUIModel[]>;
+	maybeSubtasks: Maybe<ViewedTaskSubtasksUIModel>;
+};
+
+export type ViewedTaskSubtasksUIModel = {
+	progress: number;
+	byStatus: KanbanColumnsUIModel;
 	directCompletedSubtasksCount: number;
 	directSubtasksCount: number;
 	allCompletedSubtasksCount: number;
 	allSubtasksCount: number;
-	progress: number;
-	subtasks: KanbanColumnsUIModel;
-	maybeParentTasks: Maybe<ParentTaskUIModel[]>;
 };
 
 export type ParentTaskUIModel = {

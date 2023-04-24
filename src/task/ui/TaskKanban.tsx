@@ -10,7 +10,7 @@ import classNames from 'classnames';
 import { useCallback } from 'react';
 import { usePopper } from 'react-popper';
 import { Link } from 'react-router-dom';
-import { TaskmapRoute } from '../../ui/setup/router';
+import { AppRoute } from '../../ui/setup/router';
 import { TaskStatus } from '../core/task-status';
 import { DeleteTaskController } from '../delete-task.feature/delete-task.controller';
 import { DeleteTaskDialog } from '../delete-task.feature/DeleteTaskDialog';
@@ -141,7 +141,7 @@ export function KanbanTaskTile(props: {
 				deleteTask={() => props.deleteTask(props.task.id)}
 			/>
 			<Link
-				to={TaskmapRoute.Task.URL(props.task.id)}
+				to={AppRoute.Task.URL(props.task.id)}
 				className="block rounded-md hover:bg-zinc-100"
 			>
 				{props.task.text}

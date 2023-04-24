@@ -23,7 +23,7 @@ import { TaskForm } from 'src/task/ui/TaskForm';
 import { useAdapters } from 'src/ui/adapaters';
 import { ProgressBar } from 'src/ui/ProgressBar';
 import { Sidebar } from 'src/ui/Sidebar';
-import { TaskmapRoute } from '../../../ui/setup/router';
+import { AppRoute } from '../../../ui/setup/router';
 import { TaskKanban } from '../../ui/TaskKanban';
 import {
 	ParentTaskUIModel,
@@ -258,7 +258,7 @@ function ParentTasksView() {
 				{viewedTask.isMainBoardTask && (
 					<li className="flex items-center border-t p-2 first:border-t-0">
 						<Link
-							to={TaskmapRoute.MainBoard}
+							to={AppRoute.MainBoard}
 							className="flex-grow rounded-md pr-2 pl-4 hover:bg-gray-100"
 						>
 							Main Board
@@ -382,7 +382,7 @@ function ParentTaskTile(props: { parentTask: ParentTaskUIModel }) {
 	return (
 		<li className="flex items-center border-t p-2 first:border-t-0">
 			<Link
-				to={TaskmapRoute.Task.URL(props.parentTask.id)}
+				to={AppRoute.Task.URL(props.parentTask.id)}
 				className="flex-grow rounded-md pr-2 pl-4 hover:bg-gray-100"
 			>
 				{props.parentTask.text}

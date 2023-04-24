@@ -4,7 +4,7 @@ import { TaskPage } from '../../task/viewed-task.feature/ui/TaskPage';
 import { AppLayout } from '../AppLayout';
 import { ErrorPage } from '../ErrorPage';
 
-export const TaskmapRoute = {
+export const AppRoute = {
 	MainBoard: '/main-board',
 	Task: {
 		URLTemplate: `/task/:taskID`,
@@ -19,19 +19,19 @@ export const router = createBrowserRouter([
 	{
 		path: '/',
 		ErrorBoundary: ErrorPage,
-		loader: () => redirect(TaskmapRoute.MainBoard),
+		loader: () => redirect(AppRoute.MainBoard),
 	},
 	{
-		path: TaskmapRoute.Settings,
+		path: AppRoute.Settings,
 		ErrorBoundary: ErrorPage,
-		loader: () => redirect(TaskmapRoute.SettingsExport),
+		loader: () => redirect(AppRoute.SettingsExport),
 	},
 	{
 		element: <AppLayout />,
 		ErrorBoundary: ErrorPage,
 		children: [
 			{
-				path: TaskmapRoute.MainBoard,
+				path: AppRoute.MainBoard,
 				loader: async () => {
 					const { adapters } = await import('./adapters');
 
@@ -41,7 +41,7 @@ export const router = createBrowserRouter([
 				Component: MainBoardPage,
 			},
 			{
-				path: TaskmapRoute.Task.URLTemplate,
+				path: AppRoute.Task.URLTemplate,
 				loader: async ({ params }) => {
 					const { adapters } = await import('./adapters');
 
@@ -51,11 +51,11 @@ export const router = createBrowserRouter([
 				Component: TaskPage,
 			},
 			{
-				path: TaskmapRoute.SettingsExport,
+				path: AppRoute.SettingsExport,
 				element: <div>Export</div>,
 			},
 			{
-				path: TaskmapRoute.SettingsImport,
+				path: AppRoute.SettingsImport,
 				element: <div>Import</div>,
 			},
 		],

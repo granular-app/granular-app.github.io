@@ -1,6 +1,6 @@
 import { signal } from '@preact/signals-react';
 import { Maybe, Nothing } from 'purify-ts';
-import { router, TaskmapRoute } from 'src/ui/setup/router';
+import { AppRoute, router } from 'src/ui/setup/router';
 import { AddSubtaskUseCase } from '../add-subtask.feature/add-subtask.use-case';
 import { CreateSubtaskUseCase } from '../create-subtask.feature/create-subtask.use-case';
 import { DeleteTaskUseCase } from '../delete-task.feature/delete-task.use-case';
@@ -80,7 +80,7 @@ export const deleteSubtaskController = new DeleteSubtaskController(
 export const deleteViewedTaskController = new DeleteViewedTaskController(
 	new DeleteTaskUseCase(taskManager),
 	forceGetViewedTask,
-	() => router.navigate(TaskmapRoute.MainBoard),
+	() => router.navigate(AppRoute.MainBoard),
 );
 
 export const addViewedTaskParentTaskController =

@@ -323,7 +323,7 @@ function ParentTaskCandidatesCombobox() {
 					</div>
 					<Combobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
 						{filteredCandidates.length === 0 && (
-							<div className="p-4 text-center text-xl font-bold text-gray-400">
+							<div className="p-4 text-center text-xl text-gray-400">
 								Not found
 							</div>
 						)}
@@ -365,7 +365,7 @@ function ParentTaskCandidatesCombobox() {
 				</div>
 			</Combobox>
 			<button
-				className="ml-2 flex flex-shrink-0 items-center rounded-md border px-3 font-bold text-gray-700 hover:bg-gray-100 disabled:bg-gray-100 disabled:hover:bg-gray-100"
+				className="ml-2 flex flex-shrink-0 items-center rounded-md border bg-gray-800 px-3 font-bold text-gray-200 shadow-md transition hover:bg-gray-700 disabled:bg-gray-100 disabled:text-gray-400 disabled:shadow-none disabled:hover:bg-gray-100"
 				onClick={() => {
 					addViewedTaskParentTaskController.run(selectedCandidate.value!.id);
 					selectedCandidate.value = null;

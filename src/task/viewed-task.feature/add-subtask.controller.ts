@@ -1,10 +1,10 @@
-import { AddSubtaskUseCase } from '../add-subtask.feature/add-subtask.use-case';
 import { TaskStatus } from '../core/task-status';
+import { CreateSubtaskUseCase } from '../create-subtask.feature/create-subtask.use-case';
 import { ViewedTaskUIModel } from './viewed-task.presenter';
 
 export class AddViewedTaskSubtaskController {
 	constructor(
-		private addSubtaskUseCase: AddSubtaskUseCase,
+		private addSubtaskUseCase: CreateSubtaskUseCase,
 		private getViewedTask: () => ViewedTaskUIModel,
 		private afterRun: () => void,
 	) {}

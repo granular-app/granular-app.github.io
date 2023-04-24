@@ -1,11 +1,11 @@
-import { AddParentTaskUseCase } from '../add-parent-task.feature/add-parent-task.use-case';
+import { AddSubtaskUseCase } from '../add-subtask.feature/add-subtask.use-case';
 import { PreferAsMainBoardTaskUseCase } from '../main-board.feature/prefer-as-main-board-task.feature/prefer-as-main-board-task.use-case';
 import { RefreshViewedTaskController } from './refresh-viewed-task.controller';
 import { ViewedTaskUIModel } from './viewed-task.presenter';
 
 export class AddViewedTaskParentTaskController {
 	constructor(
-		private addParentTaskUseCase: AddParentTaskUseCase,
+		private addSubtaskUseCase: AddSubtaskUseCase,
 		private preferAsMainBoardTaskUseCase: PreferAsMainBoardTaskUseCase,
 		private getViewedTask: () => ViewedTaskUIModel,
 		refreshViewedTaskController: RefreshViewedTaskController,
@@ -23,7 +23,7 @@ export class AddViewedTaskParentTaskController {
 		if (parentTaskID === 'main-board') {
 			this.preferAsMainBoardTaskUseCase.run(true, viewedTask.id);
 		} else {
-			this.addParentTaskUseCase.run(viewedTask.id, parentTaskID);
+			this.addSubtaskUseCase.run(viewedTask.id, parentTaskID);
 		}
 
 		this.afterAddParentTaskObserver.afterAddParentTask();

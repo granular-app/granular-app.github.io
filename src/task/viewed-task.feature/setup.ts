@@ -1,8 +1,8 @@
 import { signal } from '@preact/signals-react';
 import { Maybe, Nothing } from 'purify-ts';
 import { router, TaskmapRoute } from 'src/ui/setup/router';
-import { AddParentTaskUseCase } from '../add-parent-task.feature/add-parent-task.use-case';
 import { AddSubtaskUseCase } from '../add-subtask.feature/add-subtask.use-case';
+import { CreateSubtaskUseCase } from '../create-subtask.feature/create-subtask.use-case';
 import { DeleteTaskUseCase } from '../delete-task.feature/delete-task.use-case';
 import { EditTaskController } from '../edit-task.feature/edit-task.controller';
 import { EditTaskUseCase } from '../edit-task.feature/edit-task.use-case';
@@ -48,7 +48,7 @@ const refreshViewedTaskController = new RefreshViewedTaskController(
 
 export const addViewedTaskSubtaskController =
 	new AddViewedTaskSubtaskController(
-		new AddSubtaskUseCase(taskManager),
+		new CreateSubtaskUseCase(taskManager, new AddSubtaskUseCase(taskManager)),
 		forceGetViewedTask,
 		refreshViewedTaskController.run,
 	);
@@ -85,7 +85,7 @@ export const deleteViewedTaskController = new DeleteViewedTaskController(
 
 export const addViewedTaskParentTaskController =
 	new AddViewedTaskParentTaskController(
-		new AddParentTaskUseCase(taskManager),
+		new AddSubtaskUseCase(taskManager),
 		new PreferAsMainBoardTaskUseCase(taskManager),
 
 		forceGetViewedTask,

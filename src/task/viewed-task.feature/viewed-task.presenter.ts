@@ -13,7 +13,13 @@ export class ViewedTaskPresenter {
 	constructor(private state: Signal<Maybe<ViewedTaskUIModel>>) {}
 
 	present(viewedTask: Maybe<Task>) {
-		this.state.value = viewedTask.map((task) => {
+		this.state.value = viewedTask.map((task): ViewedTaskUIModel => {
+			const parentTaskCandidates: ParentTaskCandidateUIModel[] =
+				task.findParentTaskCandidates();
+
+			if (!task.isMainBoardTask)
+				parentTaskCandidates.unshift({ id: 'main-board', text: 'Main Board' });
+
 			return {
 				id: task.id,
 				text: task.text,
@@ -21,10 +27,9 @@ export class ViewedTaskPresenter {
 				staticStatus: task.staticStatus,
 				statusLabel: presentTaskStatus(task.status),
 				maybeSubtasks: presentSubtasks(task),
-				maybeParentTasks: task.hasParentTasks
-					? Just(task.parentTasks)
-					: Nothing,
-				parentTaskCandidates: task.findParentTaskCandidates(),
+				parentTasks: task.parentTasks,
+				isMainBoardTask: task.isMainBoardTask,
+				parentTaskCandidates,
 			};
 		});
 	}
@@ -67,10 +72,13 @@ export type ViewedTaskUIModel = {
 	status: TaskStatus;
 	staticStatus: TaskStatus;
 	statusLabel: string;
-	maybeParentTasks: Maybe<ParentTaskUIModel[]>;
+	isMainBoardTask: boolean;
+	parentTasks: ParentTaskUIModel[];
 	maybeSubtasks: Maybe<ViewedTaskSubtasksUIModel>;
-	parentTaskCandidates: { id: string; text: string }[];
+	parentTaskCandidates: ParentTaskCandidateUIModel[];
 };
+
+export type ParentTaskCandidateUIModel = { id: string; text: string };
 
 export type ViewedTaskSubtasksUIModel = {
 	progress: number;

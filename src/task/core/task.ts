@@ -12,6 +12,11 @@ export class Task {
 
 	static generateID = nanoid;
 
+	userPrefersAsMainBoardTask: boolean = false;
+	get isMainBoardTask() {
+		return this.userPrefersAsMainBoardTask || !this.hasParentTasks;
+	}
+
 	subtasks: Task[] = [];
 
 	get hasSubtasks() {

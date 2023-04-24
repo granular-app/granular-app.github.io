@@ -6,7 +6,7 @@ export class MainBoard {
 	constructor(private taskManager: TaskManager) {}
 
 	get tasks() {
-		return this.taskManager.allTasks.filter((task) => !task.hasParentTasks);
+		return this.taskManager.allTasks.filter((task) => task.isMainBoardTask);
 	}
 
 	get status(): TaskStatus {
@@ -17,5 +17,11 @@ export class MainBoard {
 
 	listAllSubtasks(): Task[] {
 		return this.taskManager.allTasks;
+	}
+
+	createTask(params: { text: string; status: TaskStatus }) {
+		const mainBoardTask = this.taskManager.createTask(params.text);
+		mainBoardTask.userPrefersAsMainBoardTask = true;
+		mainBoardTask.staticStatus = params.status;
 	}
 }

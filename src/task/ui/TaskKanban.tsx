@@ -24,7 +24,7 @@ import { TaskForm } from './TaskForm';
 
 export function TaskKanban(props: {
 	columns: KanbanColumnsUIModel;
-	addTask: (text: string, options: { status: TaskStatus }) => void;
+	addTask: (params: { text: string; status: TaskStatus }) => void;
 	editTask: EditTaskController['run'];
 	deleteTask: DeleteTaskController['run'];
 }) {
@@ -46,8 +46,8 @@ export function TaskKanban(props: {
 								deleteTask={props.deleteTask}
 							/>
 							<AddTaskButton
-								onSubmit={(taskText) =>
-									props.addTask(taskText, { status: status.value })
+								onSubmit={(text) =>
+									props.addTask({ text, status: status.value })
 								}
 							/>
 						</div>

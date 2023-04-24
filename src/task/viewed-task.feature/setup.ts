@@ -2,16 +2,14 @@ import { signal } from '@preact/signals-react';
 import { Maybe, Nothing } from 'purify-ts';
 import { router, TaskmapRoute } from 'src/ui/setup/router';
 import { AddParentTaskUseCase } from '../add-parent-task.feature/add-parent-task.use-case';
-import { AddTaskUseCase } from '../add-task.feature/add-task.use-case';
+import { AddSubtaskUseCase } from '../add-subtask.feature/add-subtask.use-case';
 import { DeleteTaskUseCase } from '../delete-task.feature/delete-task.use-case';
 import { EditTaskController } from '../edit-task.feature/edit-task.controller';
 import { EditTaskUseCase } from '../edit-task.feature/edit-task.use-case';
+import { PreferAsMainBoardTaskUseCase } from '../main-board.feature/prefer-as-main-board-task.feature/prefer-as-main-board-task.use-case';
 import { SetStaticStatusUseCase } from '../set-static-status.feature/set-static-status.use-case';
 import { taskManager } from '../setup';
-import {
-	AddViewedTaskSubtaskController,
-	AfterAddViewedTaskSubtaskObserver,
-} from './add-subtask.controller';
+import { AddViewedTaskSubtaskController } from './add-subtask.controller';
 import { AddViewedTaskParentTaskController } from './add-viewed-task-parent-task.controller';
 import { DeleteSubtaskController } from './delete-subtask.controller';
 import { DeleteViewedTaskController } from './delete-viewed-task.controller';
@@ -30,7 +28,7 @@ import {
 } from './viewed-task.presenter';
 
 export const viewedTaskState = signal<Maybe<ViewedTaskUIModel>>(Nothing);
-const getViewedTask = () => {
+export const forceGetViewedTask = () => {
 	return viewedTaskState.value
 		.ifNothing(() => {
 			throw new Error('Must have a viewed task to run this function.');
@@ -44,27 +42,25 @@ const viewTaskUseCase = new ViewTaskUseCase(taskManager, (viewedTask) =>
 );
 export const viewTaskController = new ViewTaskController(viewTaskUseCase);
 const refreshViewedTaskController = new RefreshViewedTaskController(
-	getViewedTask,
+	forceGetViewedTask,
 	viewTaskController,
 );
 
-const addTaskUseCase = new AddTaskUseCase(taskManager);
 export const addViewedTaskSubtaskController =
 	new AddViewedTaskSubtaskController(
-		addTaskUseCase,
-		getViewedTask,
-		new AfterAddViewedTaskSubtaskObserver(refreshViewedTaskController),
+		new AddSubtaskUseCase(taskManager),
+		forceGetViewedTask,
+		refreshViewedTaskController.run,
 	);
 
-const editTaskUseCase = new EditTaskUseCase(taskManager);
 export const editViewedTaskSubtaskController = new EditTaskController(
-	editTaskUseCase,
+	new EditTaskUseCase(taskManager),
 	new AfterEditViewedTaskSubtaskObserver(refreshViewedTaskController),
 );
 
 export const editViewedTaskController = new EditViewedTaskController(
-	editTaskUseCase,
-	getViewedTask,
+	new EditTaskUseCase(taskManager),
+	forceGetViewedTask,
 	new AfterEditViewedTaskObserver(refreshViewedTaskController),
 );
 
@@ -72,25 +68,26 @@ const setStaticStatusUseCase = new SetStaticStatusUseCase(taskManager);
 export const setViewedTaskStaticStatusController =
 	new SetViewedTaskStaticStatusController(
 		setStaticStatusUseCase,
-		getViewedTask,
+		forceGetViewedTask,
 		refreshViewedTaskController,
 	);
 
-const deleteTaskUseCase = new DeleteTaskUseCase(taskManager);
 export const deleteSubtaskController = new DeleteSubtaskController(
-	deleteTaskUseCase,
+	new DeleteTaskUseCase(taskManager),
 	refreshViewedTaskController,
 );
 
 export const deleteViewedTaskController = new DeleteViewedTaskController(
-	deleteTaskUseCase,
-	getViewedTask,
+	new DeleteTaskUseCase(taskManager),
+	forceGetViewedTask,
 	() => router.navigate(TaskmapRoute.MainBoard),
 );
 
 export const addViewedTaskParentTaskController =
 	new AddViewedTaskParentTaskController(
 		new AddParentTaskUseCase(taskManager),
-		getViewedTask,
+		new PreferAsMainBoardTaskUseCase(taskManager),
+
+		forceGetViewedTask,
 		refreshViewedTaskController,
 	);

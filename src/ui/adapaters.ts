@@ -2,7 +2,7 @@ import { Signal } from '@preact/signals-react';
 import { Maybe } from 'purify-ts';
 import { createContext, useContext } from 'react';
 import { EditTaskController } from 'src/task/edit-task.feature/edit-task.controller';
-import { AddMainBoardTaskController } from 'src/task/main-board.feature/add-main-board-task.controller';
+import { AddMainBoardTaskController } from 'src/task/main-board.feature/add-main-board-task.feature/add-main-board-task.controller';
 import { DeleteMainBoardTaskController } from 'src/task/main-board.feature/delete-main-board-task.controller';
 import { MainBoardUIModel } from 'src/task/main-board.feature/main-board.presenter';
 import { ViewMainBoardController } from 'src/task/main-board.feature/view-main-board.controller';
@@ -31,11 +31,13 @@ export function useAdapters() {
 
 export type Adapters = {
 	mainBoardState: Signal<Maybe<MainBoardUIModel>>;
+	forceGetMainBoard: () => MainBoardUIModel;
 	viewMainBoardController: ViewMainBoardController;
 	addMainBoardTaskController: AddMainBoardTaskController;
 	editMainBoardTaskController: EditTaskController;
 	deleteMainBoardTaskController: DeleteMainBoardTaskController;
 	viewedTaskState: Signal<Maybe<ViewedTaskUIModel>>;
+	forceGetViewedTask: () => ViewedTaskUIModel;
 	viewTaskController: ViewTaskController;
 	addViewedTaskSubtaskController: AddViewedTaskSubtaskController;
 	editViewedTaskSubtaskController: EditTaskController;

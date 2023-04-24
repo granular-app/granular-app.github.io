@@ -6,9 +6,9 @@ export class ViewMainBoardUseCase {
 		private output: ViewMainBoardUseCaseOutputPort,
 	) {}
 
-	run() {
+	run = () => {
 		this.output(this.mainBoard);
-	}
+	};
 }
 
 export type ViewMainBoardUseCaseOutputPort = (mainBoard: MainBoard) => void;

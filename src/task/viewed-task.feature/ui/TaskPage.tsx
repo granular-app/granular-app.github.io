@@ -255,26 +255,23 @@ function ParentTasksView() {
 				Parent tasks
 			</h3>
 			<ul className="my-2 rounded-md border text-gray-800">
-				{viewedTask.maybeParentTasks.caseOf({
-					Just: (parentTasks) => (
-						<>
-							{parentTasks.map((parentTask) => {
-								return (
-									<ParentTaskTile key={parentTask.id} parentTask={parentTask} />
-								);
-							})}
-						</>
-					),
-					Nothing: () => (
-						<li className="flex items-center border-t p-2 first:border-t-0">
-							<Link
-								to={TaskmapRoute.MainBoard}
-								className="flex-grow rounded-md pr-2 pl-4 hover:bg-gray-100"
-							>
-								Main Board
-							</Link>
-						</li>
-					),
+				{viewedTask.isMainBoardTask && (
+					<li className="flex items-center border-t p-2 first:border-t-0">
+						<Link
+							to={TaskmapRoute.MainBoard}
+							className="flex-grow rounded-md pr-2 pl-4 hover:bg-gray-100"
+						>
+							Main Board
+						</Link>
+						{viewedTask.parentTasks.length > 0 && (
+							<button className="ml-2 rounded-md p-1 leading-[0] hover:bg-gray-100">
+								<XMarkIcon className="icon" />
+							</button>
+						)}
+					</li>
+				)}
+				{viewedTask.parentTasks.map((parentTask) => {
+					return <ParentTaskTile key={parentTask.id} parentTask={parentTask} />;
 				})}
 			</ul>
 			<ParentTaskCandidatesCombobox />

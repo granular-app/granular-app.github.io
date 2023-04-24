@@ -1,9 +1,9 @@
 import { ViewMainBoardUseCase } from './view-main-board.use-case';
 
 export class ViewMainBoardController {
-	constructor(private viewMainBordUseCase: ViewMainBoardUseCase) {}
+	constructor(private viewMainBoardUseCase: ViewMainBoardUseCase) {}
 
-	run() {
-		return this.viewMainBordUseCase.run();
-	}
+	run = () => {
+		return this.viewMainBoardUseCase.run();
+	};
 }

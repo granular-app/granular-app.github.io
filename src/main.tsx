@@ -2,11 +2,13 @@ import { enableMapSet } from 'immer';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
+import { createExampleTasks } from './setup';
 import { App } from './ui/App';
 import { adapters } from './ui/setup/adapters';
 import { router } from './ui/setup/router';
 
 enableMapSet();
+createExampleTasks();
 
 const rootElement = document.getElementById('root')!;
 const root = ReactDOM.createRoot(rootElement);

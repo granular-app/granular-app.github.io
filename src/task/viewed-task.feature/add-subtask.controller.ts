@@ -1,5 +1,3 @@
-import { Signal } from '@preact/signals-react';
-import { Maybe } from 'purify-ts';
 import {
 	AddTaskController,
 	AfterAddTaskObserver,
@@ -12,7 +10,7 @@ import { ViewedTaskUIModel } from './viewed-task.presenter';
 export class AddViewedTaskSubtaskController {
 	constructor(
 		addTaskUseCase: AddTaskUseCase,
-		private viewedTaskState: Signal<Maybe<ViewedTaskUIModel>>,
+		private getViewedTask: () => ViewedTaskUIModel,
 		afterAddViewedTaskSubtaskObserver: AfterAddViewedTaskSubtaskObserver,
 	) {
 		this.addTaskController = new AddTaskController(
@@ -24,11 +22,7 @@ export class AddViewedTaskSubtaskController {
 	private addTaskController: AddTaskController;
 
 	run = (text: string, options: { status: TaskStatus }) => {
-		const viewedTask = this.viewedTaskState.value
-			.ifNothing(() => {
-				throw new Error('Must have a viewed task to run this controller.');
-			})
-			.extract()!;
+		const viewedTask = this.getViewedTask();
 
 		this.addTaskController.run(text, {
 			status: options.status,

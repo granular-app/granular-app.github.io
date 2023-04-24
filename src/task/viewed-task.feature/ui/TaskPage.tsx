@@ -1,5 +1,11 @@
-import { Popover, RadioGroup } from '@headlessui/react';
-import { PencilIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { Combobox, Popover, RadioGroup } from '@headlessui/react';
+import {
+	ChevronUpDownIcon,
+	PencilIcon,
+	PlusIcon,
+	TrashIcon,
+	XMarkIcon,
+} from '@heroicons/react/24/outline';
 import {
 	CheckIcon,
 	EllipsisVerticalIcon,
@@ -271,13 +277,101 @@ function ParentTasksView() {
 					),
 				})}
 			</ul>
-			{/* <button className="mt-2 flex w-full items-center rounded-md py-1 font-bold text-gray-700 hover:bg-gray-100">
-				<div className="mr-2 flex h-6 w-6">
-					<PlusIcon className="icon m-auto" />
-				</div>
-				Assign parent tasks
-			</button> */}
+			<ParentTaskCandidatesCombobox />
 		</>
+	);
+}
+
+function ParentTaskCandidatesCombobox() {
+	const viewedTask = useViewedTask();
+	const { addViewedTaskParentTaskController } = useAdapters();
+	const candidates = viewedTask.parentTaskCandidates;
+	const selectedCandidate = useSignal<{ id: string; text: string } | null>(
+		null,
+	);
+	const query = useSignal('');
+
+	const filteredCandidates =
+		query.value === ''
+			? candidates
+			: candidates.filter((candidate) => {
+					return candidate.text
+						.toLowerCase()
+						.includes(query.value.toLowerCase());
+			  });
+
+	return (
+		<div className="flex">
+			<Combobox
+				value={selectedCandidate.value}
+				onChange={(newValue) => (selectedCandidate.value = newValue)}
+				nullable
+			>
+				<div className="relative w-full">
+					<div className="relative w-full cursor-default overflow-hidden rounded-lg border bg-white text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-300 sm:text-sm">
+						<Combobox.Input
+							className="w-full border-none py-2 pl-6 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
+							onChange={(event) => (query.value = event.target.value)}
+							displayValue={(candidate: { text: string } | null) =>
+								candidate?.text ?? ''
+							}
+							placeholder="New parent task"
+						/>
+						<Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
+							<ChevronUpDownIcon
+								className="h-5 w-5 text-gray-400"
+								aria-hidden="true"
+							/>
+						</Combobox.Button>
+					</div>
+					<Combobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+						{filteredCandidates.map((candidate) => (
+							<Combobox.Option
+								key={candidate.id}
+								value={candidate}
+								className={({ selected }) =>
+									classNames(
+										'relative flex cursor-pointer select-none py-2 pl-6 pr-4 text-gray-700',
+										selected && 'bg-gray-100',
+									)
+								}
+							>
+								{({ selected }) => (
+									<>
+										<span
+											className={classNames(
+												`block w-full truncate`,
+												selected ? 'font-medium' : 'font-normal',
+											)}
+										>
+											{candidate.text}
+										</span>
+										{selected && (
+											<span
+												className={classNames(
+													`inset-y-0 flex flex-shrink-0 items-center pl-3`,
+												)}
+											>
+												<CheckIcon className="icon" aria-hidden="true" />
+											</span>
+										)}
+									</>
+								)}
+							</Combobox.Option>
+						))}
+					</Combobox.Options>
+				</div>
+			</Combobox>
+			<button
+				className="ml-2 flex flex-shrink-0 items-center rounded-md border px-3 font-bold text-gray-700 hover:bg-gray-100 disabled:bg-gray-100 disabled:hover:bg-gray-100"
+				onClick={() =>
+					addViewedTaskParentTaskController.run(selectedCandidate.value!.id)
+				}
+				disabled={selectedCandidate.value === null}
+			>
+				<PlusIcon className="m-auto h-4 w-4" />
+			</button>
+		</div>
 	);
 }
 

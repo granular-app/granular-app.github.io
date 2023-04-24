@@ -13,27 +13,9 @@ export class Task {
 	static generateID = nanoid;
 
 	subtasks: Task[] = [];
-	staticStatus: TaskStatus = TaskStatus.ToDo;
-	get status(): TaskStatus {
-		return this.derivedStatus.orDefault(this.staticStatus);
-	}
-
-	get derivedStatus(): Maybe<TaskStatus> {
-		return deriveTaskStatus(this.subtasks.map((subtask) => subtask.status));
-	}
-
-	get parentTasks(): Task[] {
-		return this.taskManager.allTasks.filter((task) =>
-			task.subtasks.includes(this),
-		);
-	}
 
 	get hasSubtasks() {
 		return this.subtasks.length > 0;
-	}
-
-	get hasParentTasks() {
-		return this.parentTasks.length > 0;
 	}
 
 	createSubtask(text: string) {
@@ -52,6 +34,49 @@ export class Task {
 
 	listAllSubtasks() {
 		return [...this.listAllSubtasksSet()];
+	}
+
+	staticStatus: TaskStatus = TaskStatus.ToDo;
+
+	get status(): TaskStatus {
+		return this.derivedStatus.orDefault(this.staticStatus);
+	}
+
+	get derivedStatus(): Maybe<TaskStatus> {
+		return deriveTaskStatus(this.subtasks.map((subtask) => subtask.status));
+	}
+
+	get parentTasks(): Task[] {
+		return this.taskManager.allTasks.filter((task) =>
+			task.subtasks.includes(this),
+		);
+	}
+
+	get hasParentTasks() {
+		return this.parentTasks.length > 0;
+	}
+
+	findParentTaskCandidates(): Task[] {
+		const allSubtasks = this.listAllSubtasks();
+		const isValidParentCandidate = (other: Task): boolean => {
+			const isThisTask = other === this;
+			const isAlreadyParent = this.parentTasks.includes(other);
+			const isSubtask = allSubtasks.includes(other);
+
+			return (
+				!isThisTask && !isAlreadyParent && !isSubtask && other.hasUniqueText
+				// I will figure out a way to present candidates with identical text in a distinguishable manner later (if ever)
+			);
+		};
+
+		return this.taskManager.allTasks.filter(isValidParentCandidate);
+	}
+
+	get hasUniqueText() {
+		return (
+			this.taskManager.allTasks.filter((task) => task.text === this.text)
+				.length === 1
+		);
 	}
 
 	delete() {

@@ -24,6 +24,7 @@ export class ViewedTaskPresenter {
 				maybeParentTasks: task.hasParentTasks
 					? Just(task.parentTasks)
 					: Nothing,
+				parentTaskCandidates: task.findParentTaskCandidates(),
 			};
 		});
 	}
@@ -68,6 +69,7 @@ export type ViewedTaskUIModel = {
 	statusLabel: string;
 	maybeParentTasks: Maybe<ParentTaskUIModel[]>;
 	maybeSubtasks: Maybe<ViewedTaskSubtasksUIModel>;
+	parentTaskCandidates: { id: string; text: string }[];
 };
 
 export type ViewedTaskSubtasksUIModel = {

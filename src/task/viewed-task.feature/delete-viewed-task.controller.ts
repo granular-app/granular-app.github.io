@@ -1,5 +1,3 @@
-import { Signal } from '@preact/signals-react';
-import { Maybe } from 'purify-ts';
 import {
 	AfterDeleteTaskObserver,
 	DeleteTaskController,
@@ -10,7 +8,7 @@ import { ViewedTaskUIModel } from './viewed-task.presenter';
 export class DeleteViewedTaskController {
 	constructor(
 		deleteTaskUseCase: DeleteTaskUseCase,
-		private viewedTaskState: Signal<Maybe<ViewedTaskUIModel>>,
+		private getViewedTask: () => ViewedTaskUIModel,
 		navigateToMainBoard: () => void,
 	) {
 		this.deleteTaskController = new DeleteTaskController(
@@ -22,11 +20,7 @@ export class DeleteViewedTaskController {
 	private deleteTaskController: DeleteTaskController;
 
 	run = () => {
-		const viewedTask = this.viewedTaskState.value
-			.ifNothing(() => {
-				throw new Error('Must have a viewed task to run this controller.');
-			})
-			.extract()!;
+		const viewedTask = this.getViewedTask();
 
 		this.deleteTaskController.run(viewedTask.id);
 	};

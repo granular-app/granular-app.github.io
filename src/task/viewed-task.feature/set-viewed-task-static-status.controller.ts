@@ -1,5 +1,3 @@
-import { Signal } from '@preact/signals-react';
-import { Maybe } from 'purify-ts';
 import { TaskStatus } from '../core/task-status';
 import {
 	AfterSetStaticStatusObserver,
@@ -12,7 +10,7 @@ import { ViewedTaskUIModel } from './viewed-task.presenter';
 export class SetViewedTaskStaticStatusController {
 	constructor(
 		setStaticStatusUseCase: SetStaticStatusUseCase,
-		private viewedTaskState: Signal<Maybe<ViewedTaskUIModel>>,
+		private getViewedTask: () => ViewedTaskUIModel,
 		refreshViewedTaskController: RefreshViewedTaskController,
 	) {
 		this.setStaticStatusController = new SetStaticStatusController(
@@ -24,11 +22,7 @@ export class SetViewedTaskStaticStatusController {
 	private setStaticStatusController: SetStaticStatusController;
 
 	run = (newStaticStatus: TaskStatus) => {
-		const viewedTask = this.viewedTaskState.value
-			.ifNothing(() => {
-				throw new Error('Must have a viewed task to run this controller.');
-			})
-			.extract()!;
+		const viewedTask = this.getViewedTask();
 
 		this.setStaticStatusController.run(viewedTask.id, newStaticStatus);
 	};

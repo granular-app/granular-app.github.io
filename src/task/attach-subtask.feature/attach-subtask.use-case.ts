@@ -1,6 +1,6 @@
 import { TaskManager } from '../core/task-manager';
 
-export class AddSubtaskUseCase {
+export class AttachSubtaskUseCase {
 	constructor(private taskManager: TaskManager) {}
 
 	run = (subtaskID: string, parentTaskID: string) => {

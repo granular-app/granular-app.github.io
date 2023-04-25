@@ -4,15 +4,17 @@ import { AppRoute, router } from 'src/ui/setup/router';
 import { AttachSubtaskUseCase } from '../attach-subtask.feature/attach-subtask.use-case';
 import { CreateSubtaskUseCase } from '../create-subtask.feature/create-subtask.use-case';
 import { DeleteTaskUseCase } from '../delete-task.feature/delete-task.use-case';
+import { DetachSubtaskUseCase } from '../detach-subtask.feature/detach-subtask.use-case';
 import { EditTaskController } from '../edit-task.feature/edit-task.controller';
 import { EditTaskUseCase } from '../edit-task.feature/edit-task.use-case';
 import { PreferAsMainBoardTaskUseCase } from '../main-board.feature/prefer-as-main-board-task.feature/prefer-as-main-board-task.use-case';
 import { SetStaticStatusUseCase } from '../set-static-status.feature/set-static-status.use-case';
 import { taskManager } from '../setup';
-import { AddViewedTaskSubtaskController } from './add-subtask.controller';
-import { AddViewedTaskParentTaskController } from './add-viewed-task-parent-task.controller';
+import { AttachViewedTaskController } from './attach-viewed-task.controller';
+import { CreateViewedTaskSubtaskController } from './create-subtask.controller';
 import { DeleteSubtaskController } from './delete-subtask.controller';
 import { DeleteViewedTaskController } from './delete-viewed-task.controller';
+import { DetachViewedTaskController } from './detach-viewed-task.controller';
 import { AfterEditViewedTaskSubtaskObserver } from './edit-subtask.controller';
 import {
 	AfterEditViewedTaskObserver,
@@ -47,7 +49,7 @@ const refreshViewedTaskController = new RefreshViewedTaskController(
 );
 
 export const addViewedTaskSubtaskController =
-	new AddViewedTaskSubtaskController(
+	new CreateViewedTaskSubtaskController(
 		new CreateSubtaskUseCase(
 			taskManager,
 			new AttachSubtaskUseCase(taskManager),
@@ -86,11 +88,16 @@ export const deleteViewedTaskController = new DeleteViewedTaskController(
 	() => router.navigate(AppRoute.MainBoard),
 );
 
-export const addViewedTaskParentTaskController =
-	new AddViewedTaskParentTaskController(
-		new AttachSubtaskUseCase(taskManager),
-		new PreferAsMainBoardTaskUseCase(taskManager),
+export const attachViewedTaskController = new AttachViewedTaskController(
+	new AttachSubtaskUseCase(taskManager),
+	new PreferAsMainBoardTaskUseCase(taskManager),
+	forceGetViewedTask,
+	refreshViewedTaskController,
+);
 
-		forceGetViewedTask,
-		refreshViewedTaskController,
-	);
+export const detachViewedTaskController = new DetachViewedTaskController(
+	new DetachSubtaskUseCase(taskManager),
+	new PreferAsMainBoardTaskUseCase(taskManager),
+	forceGetViewedTask,
+	refreshViewedTaskController.run,
+);

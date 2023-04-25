@@ -98,4 +98,8 @@ export class Task {
 				)),
 		);
 	}
+
+	detachSubtask(subtaskID: string) {
+		this.subtasks = this.subtasks.filter((subtask) => subtask.id !== subtaskID);
+	}
 }

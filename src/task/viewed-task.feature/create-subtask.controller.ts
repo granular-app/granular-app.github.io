@@ -2,9 +2,9 @@ import { TaskStatus } from '../core/task-status';
 import { CreateSubtaskUseCase } from '../create-subtask.feature/create-subtask.use-case';
 import { ViewedTaskUIModel } from './viewed-task.presenter';
 
-export class AddViewedTaskSubtaskController {
+export class CreateViewedTaskSubtaskController {
 	constructor(
-		private addSubtaskUseCase: CreateSubtaskUseCase,
+		private createSubtaskUseCase: CreateSubtaskUseCase,
 		private getViewedTask: () => ViewedTaskUIModel,
 		private afterRun: () => void,
 	) {}
@@ -12,7 +12,7 @@ export class AddViewedTaskSubtaskController {
 	run = (subtaskParams: { text: string; status: TaskStatus }) => {
 		const viewedTask = this.getViewedTask();
 
-		this.addSubtaskUseCase.run(subtaskParams, viewedTask.id);
+		this.createSubtaskUseCase.run(subtaskParams, viewedTask.id);
 		this.afterRun();
 	};
 }

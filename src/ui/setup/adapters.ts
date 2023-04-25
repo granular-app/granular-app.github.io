@@ -7,10 +7,11 @@ import {
 	viewMainBoardController,
 } from 'src/task/main-board.feature/setup';
 import {
-	addViewedTaskParentTaskController,
 	addViewedTaskSubtaskController,
+	attachViewedTaskController,
 	deleteSubtaskController,
 	deleteViewedTaskController,
+	detachViewedTaskController,
 	editViewedTaskController,
 	editViewedTaskSubtaskController,
 	forceGetViewedTask,
@@ -34,7 +35,8 @@ export const adapters: Adapters = {
 	deleteSubtaskController,
 	deleteMainBoardTaskController,
 	deleteViewedTaskController,
-	addViewedTaskParentTaskController,
+	attachViewedTaskController,
 	forceGetMainBoard,
 	forceGetViewedTask,
+	detachViewedTaskController,
 };

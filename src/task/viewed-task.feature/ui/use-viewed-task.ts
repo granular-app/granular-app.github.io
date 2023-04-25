@@ -1,11 +1,7 @@
 import { useAdapters } from '../../../ui/adapaters';
 
 export function useViewedTask() {
-	const { viewedTaskState } = useAdapters();
+	const { forceGetViewedTask } = useAdapters();
 
-	return viewedTaskState.value
-		.ifNothing(() => {
-			throw new Error('Task not found.');
-		})
-		.extract()!;
+	return forceGetViewedTask();
 }

@@ -3,11 +3,11 @@ import { PreferAsMainBoardTaskUseCase } from '../main-board.feature/prefer-as-ma
 import { RefreshViewedTaskController } from './refresh-viewed-task.controller';
 import { ViewedTaskUIModel } from './viewed-task.presenter';
 
-export class AddViewedTaskParentTaskController {
+export class AttachViewedTaskController {
 	constructor(
 		private attachSubtaskUseCase: AttachSubtaskUseCase,
 		private preferAsMainBoardTaskUseCase: PreferAsMainBoardTaskUseCase,
-		private getViewedTask: () => ViewedTaskUIModel,
+		private forceGetViewedTask: () => ViewedTaskUIModel,
 		refreshViewedTaskController: RefreshViewedTaskController,
 	) {
 		this.afterAddParentTaskObserver = new AfterAddViewedTaskParentTaskObserver(
@@ -18,7 +18,7 @@ export class AddViewedTaskParentTaskController {
 	private afterAddParentTaskObserver: AfterAddViewedTaskParentTaskObserver;
 
 	run = (parentTaskID: string) => {
-		const viewedTask = this.getViewedTask();
+		const viewedTask = this.forceGetViewedTask();
 
 		if (parentTaskID === 'main-board') {
 			this.preferAsMainBoardTaskUseCase.run(true, viewedTask.id);

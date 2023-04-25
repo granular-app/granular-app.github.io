@@ -14,11 +14,8 @@ export class ViewedTaskPresenter {
 
 	present(viewedTask: Maybe<Task>) {
 		this.state.value = viewedTask.map((task): ViewedTaskUIModel => {
-			const parentTaskCandidates: ParentTaskCandidateUIModel[] =
-				task.findParentTaskCandidates();
-
-			if (!task.isMainBoardTask)
-				parentTaskCandidates.unshift({ id: 'main-board', text: 'Main Board' });
+			const parentTasks = presentParentTasks(task);
+			const parentTaskCandidates = presentParentTaskCandidates(task);
 
 			return {
 				id: task.id,
@@ -27,12 +24,36 @@ export class ViewedTaskPresenter {
 				staticStatus: task.staticStatus,
 				statusLabel: presentTaskStatus(task.status),
 				maybeSubtasks: presentSubtasks(task),
-				parentTasks: task.parentTasks,
 				isMainBoardTask: task.isMainBoardTask,
+				parentTasks,
 				parentTaskCandidates,
+				canDetachFromParentTasks: parentTasks.length > 1,
 			};
 		});
 	}
+}
+
+function presentParentTasks(task: Task) {
+	const parentTasks: ParentTaskUIModel[] = task.parentTasks;
+
+	if (task.isMainBoardTask) {
+		parentTasks.unshift({
+			id: 'main-board',
+			text: 'Main Board',
+		});
+	}
+	return parentTasks;
+}
+
+function presentParentTaskCandidates(task: Task) {
+	const parentTaskCandidates: ParentTaskCandidateUIModel[] =
+		task.findParentTaskCandidates();
+
+	if (!task.isMainBoardTask) {
+		parentTaskCandidates.unshift({ id: 'main-board', text: 'Main Board' });
+	}
+
+	return parentTaskCandidates;
 }
 
 function presentSubtasks(task: Task): ViewedTaskUIModel['maybeSubtasks'] {
@@ -76,6 +97,7 @@ export type ViewedTaskUIModel = {
 	parentTasks: ParentTaskUIModel[];
 	maybeSubtasks: Maybe<ViewedTaskSubtasksUIModel>;
 	parentTaskCandidates: ParentTaskCandidateUIModel[];
+	canDetachFromParentTasks: boolean;
 };
 
 export type ParentTaskCandidateUIModel = { id: string; text: string };

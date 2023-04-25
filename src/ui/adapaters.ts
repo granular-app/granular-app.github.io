@@ -6,10 +6,11 @@ import { AddMainBoardTaskController } from 'src/task/main-board.feature/add-main
 import { DeleteMainBoardTaskController } from 'src/task/main-board.feature/delete-main-board-task.controller';
 import { MainBoardUIModel } from 'src/task/main-board.feature/main-board.presenter';
 import { ViewMainBoardController } from 'src/task/main-board.feature/view-main-board.controller';
-import { AddViewedTaskSubtaskController } from 'src/task/viewed-task.feature/add-subtask.controller';
-import { AddViewedTaskParentTaskController } from 'src/task/viewed-task.feature/add-viewed-task-parent-task.controller';
+import { AttachViewedTaskController } from 'src/task/viewed-task.feature/attach-viewed-task.controller';
+import { CreateViewedTaskSubtaskController } from 'src/task/viewed-task.feature/create-subtask.controller';
 import { DeleteSubtaskController } from 'src/task/viewed-task.feature/delete-subtask.controller';
 import { DeleteViewedTaskController } from 'src/task/viewed-task.feature/delete-viewed-task.controller';
+import { DetachViewedTaskController } from 'src/task/viewed-task.feature/detach-viewed-task.controller';
 import { EditViewedTaskController } from 'src/task/viewed-task.feature/edit-viewed-task.controller';
 import { SetViewedTaskStaticStatusController } from 'src/task/viewed-task.feature/set-viewed-task-static-status.controller';
 import { ViewTaskController } from 'src/task/viewed-task.feature/view-task.controller';
@@ -39,13 +40,14 @@ export type Adapters = {
 	viewedTaskState: Signal<Maybe<ViewedTaskUIModel>>;
 	forceGetViewedTask: () => ViewedTaskUIModel;
 	viewTaskController: ViewTaskController;
-	addViewedTaskSubtaskController: AddViewedTaskSubtaskController;
+	addViewedTaskSubtaskController: CreateViewedTaskSubtaskController;
 	editViewedTaskSubtaskController: EditTaskController;
 	editViewedTaskController: EditViewedTaskController;
 	setViewedTaskStaticStatusController: SetViewedTaskStaticStatusController;
 	deleteSubtaskController: DeleteSubtaskController;
 	deleteViewedTaskController: DeleteViewedTaskController;
-	addViewedTaskParentTaskController: AddViewedTaskParentTaskController;
+	attachViewedTaskController: AttachViewedTaskController;
+	detachViewedTaskController: DetachViewedTaskController;
 };
 
 export const AdaptersProvider = AdaptersContext.Provider;

@@ -136,16 +136,16 @@ export function KanbanTaskTile(props: {
 
 	return (
 		<li className="group relative mb-2 rounded bg-white p-2 shadow">
-			<KanbakTaskTileActionsButton
-				enableEditMode={enableEditMode}
-				deleteTask={() => props.deleteTask(props.task.id)}
-			/>
 			<Link
 				to={AppRoute.Task.URL(props.task.id)}
 				className="block rounded-md hover:bg-zinc-100"
 			>
 				{props.task.text}
 			</Link>
+			<KanbakTaskTileActionsButton
+				enableEditMode={enableEditMode}
+				deleteTask={() => props.deleteTask(props.task.id)}
+			/>
 		</li>
 	);
 }
@@ -202,7 +202,7 @@ export function KanbakTaskTileActionsButton(props: {
 						<Popover.Button
 							ref={(element) => (referenceElement.value = element)}
 							className={classNames(
-								'kanban__task-tile-actions-button absolute right-2 z-10 flex h-6 w-6 items-center justify-center rounded-md bg-white transition-opacity hover:bg-gray-100 group-hover:opacity-100',
+								'kanban__task-tile-actions-button absolute right-2 top-2 z-10 flex h-6 w-6 items-center justify-center rounded-md bg-white transition-opacity hover:bg-gray-100 focus:opacity-100 group-hover:opacity-100',
 								!popoverIsOpen && 'opacity-0',
 							)}
 						>

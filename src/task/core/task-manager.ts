@@ -4,8 +4,9 @@ import { Task } from './task';
 export class TaskManager {
 	allTasks: Task[] = [];
 
-	createTask(text: string) {
-		const task: Task = new Task(Task.generateID(), text, this);
+	createTask(text: string, id?: string) {
+		const taskID = id ?? Task.generateID();
+		const task: Task = new Task(taskID, text, this);
 		this.allTasks.push(task);
 		return task;
 	}

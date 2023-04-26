@@ -9,7 +9,7 @@ import { EditTaskController } from '../edit-task.feature/edit-task.controller';
 import { EditTaskUseCase } from '../edit-task.feature/edit-task.use-case';
 import { PreferAsMainBoardTaskUseCase } from '../main-board.feature/prefer-as-main-board-task.feature/prefer-as-main-board-task.use-case';
 import { SetStaticStatusUseCase } from '../set-static-status.feature/set-static-status.use-case';
-import { taskManager } from '../setup';
+import { taskManager, tasksRepository } from '../setup';
 import { AttachViewedTaskController } from './attach-viewed-task.controller';
 import { CreateViewedTaskSubtaskController } from './create-subtask.controller';
 import { DeleteSubtaskController } from './delete-subtask.controller';
@@ -52,24 +52,28 @@ export const addViewedTaskSubtaskController =
 	new CreateViewedTaskSubtaskController(
 		new CreateSubtaskUseCase(
 			taskManager,
-			new AttachSubtaskUseCase(taskManager),
+			new AttachSubtaskUseCase(taskManager, tasksRepository),
+			tasksRepository,
 		),
 		forceGetViewedTask,
 		refreshViewedTaskController.run,
 	);
 
 export const editViewedTaskSubtaskController = new EditTaskController(
-	new EditTaskUseCase(taskManager),
+	new EditTaskUseCase(taskManager, tasksRepository),
 	new AfterEditViewedTaskSubtaskObserver(refreshViewedTaskController),
 );
 
 export const editViewedTaskController = new EditViewedTaskController(
-	new EditTaskUseCase(taskManager),
+	new EditTaskUseCase(taskManager, tasksRepository),
 	forceGetViewedTask,
 	new AfterEditViewedTaskObserver(refreshViewedTaskController),
 );
 
-const setStaticStatusUseCase = new SetStaticStatusUseCase(taskManager);
+const setStaticStatusUseCase = new SetStaticStatusUseCase(
+	taskManager,
+	tasksRepository,
+);
 export const setViewedTaskStaticStatusController =
 	new SetViewedTaskStaticStatusController(
 		setStaticStatusUseCase,
@@ -78,26 +82,26 @@ export const setViewedTaskStaticStatusController =
 	);
 
 export const deleteSubtaskController = new DeleteSubtaskController(
-	new DeleteTaskUseCase(taskManager),
+	new DeleteTaskUseCase(taskManager, tasksRepository),
 	refreshViewedTaskController,
 );
 
 export const deleteViewedTaskController = new DeleteViewedTaskController(
-	new DeleteTaskUseCase(taskManager),
+	new DeleteTaskUseCase(taskManager, tasksRepository),
 	forceGetViewedTask,
 	() => router.navigate(AppRoute.MainBoard),
 );
 
 export const attachViewedTaskController = new AttachViewedTaskController(
-	new AttachSubtaskUseCase(taskManager),
-	new PreferAsMainBoardTaskUseCase(taskManager),
+	new AttachSubtaskUseCase(taskManager, tasksRepository),
+	new PreferAsMainBoardTaskUseCase(taskManager, tasksRepository),
 	forceGetViewedTask,
 	refreshViewedTaskController,
 );
 
 export const detachViewedTaskController = new DetachViewedTaskController(
-	new DetachSubtaskUseCase(taskManager),
-	new PreferAsMainBoardTaskUseCase(taskManager),
+	new DetachSubtaskUseCase(taskManager, tasksRepository),
+	new PreferAsMainBoardTaskUseCase(taskManager, tasksRepository),
 	forceGetViewedTask,
 	refreshViewedTaskController.run,
 );

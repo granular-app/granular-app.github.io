@@ -3,7 +3,7 @@ import { Maybe, Nothing } from 'purify-ts';
 import { DeleteTaskUseCase } from '../delete-task.feature/delete-task.use-case';
 import { EditTaskController } from '../edit-task.feature/edit-task.controller';
 import { EditTaskUseCase } from '../edit-task.feature/edit-task.use-case';
-import { taskManager } from '../setup';
+import { taskManager, tasksRepository } from '../setup';
 
 import { AddMainBoardTaskController } from './add-main-board-task.feature/add-main-board-task.controller';
 import { AddMainBoardTaskUseCase } from './add-main-board-task.feature/add-main-board-task.use-case';
@@ -36,17 +36,17 @@ export const viewMainBoardController = new ViewMainBoardController(
 );
 
 export const addMainBoardTaskController = new AddMainBoardTaskController(
-	new AddMainBoardTaskUseCase(mainBoard),
+	new AddMainBoardTaskUseCase(mainBoard, tasksRepository),
 	viewMainBoardController.run,
 );
 
-const editTaskUseCase = new EditTaskUseCase(taskManager);
+const editTaskUseCase = new EditTaskUseCase(taskManager, tasksRepository);
 export const editMainBoardTaskController = new EditTaskController(
 	editTaskUseCase,
 	new AfterEditMainBoardTaskObserver(viewMainBoardController),
 );
 
-const deleteTaskUseCase = new DeleteTaskUseCase(taskManager);
+const deleteTaskUseCase = new DeleteTaskUseCase(taskManager, tasksRepository);
 export const deleteMainBoardTaskController = new DeleteMainBoardTaskController(
 	deleteTaskUseCase,
 	viewMainBoardController,

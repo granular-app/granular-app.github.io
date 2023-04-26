@@ -37,7 +37,7 @@ function MainBoardSidebar() {
 				<span className="font-bold text-gray-700">{mainBoard.status}</span>
 				<SparklesIcon className="icon ml-2" />
 			</div>
-			<ProgressBar progress={mainBoard.progress} />
+			<ProgressBar progress={mainBoard.progress} className="mb-2 h-1" />
 			<dl className="divide-y divide-gray-100 text-sm text-gray-600">
 				<div className="grid grid-cols-2 py-px">
 					<dt>Main Board tasks</dt>

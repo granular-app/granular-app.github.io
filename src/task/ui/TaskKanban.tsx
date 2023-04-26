@@ -4,12 +4,13 @@ import {
 	PlusCircleIcon,
 	TrashIcon,
 } from '@heroicons/react/24/outline';
-import { EllipsisVerticalIcon } from '@heroicons/react/24/solid';
+import { EllipsisVerticalIcon, SparklesIcon } from '@heroicons/react/24/solid';
 import { useSignal } from '@preact/signals-react';
 import classNames from 'classnames';
 import { useCallback } from 'react';
 import { usePopper } from 'react-popper';
 import { Link } from 'react-router-dom';
+import { ProgressBar } from 'src/ui/ProgressBar';
 import { AppRoute } from '../../ui/setup/router';
 import { TaskStatus } from '../core/task-status';
 import { DeleteTaskController } from '../delete-task.feature/delete-task.controller';
@@ -135,17 +136,28 @@ export function KanbanTaskTile(props: {
 	}
 
 	return (
-		<li className="group relative mb-2 rounded bg-white p-2 shadow">
-			<Link
-				to={AppRoute.Task.URL(props.task.id)}
-				className="block rounded-md hover:bg-zinc-100"
-			>
-				{props.task.text}
-			</Link>
-			<KanbakTaskTileActionsButton
-				enableEditMode={enableEditMode}
-				deleteTask={() => props.deleteTask(props.task.id)}
-			/>
+		<li className="group relative mb-2 rounded bg-white shadow">
+			<div className="p-2">
+				<Link
+					to={AppRoute.Task.URL(props.task.id)}
+					className="block rounded-md hover:bg-zinc-100"
+				>
+					<SparklesIcon className="icon float-right ml-2 mt-1 text-gray-600" />
+					<span>{props.task.text}</span>
+				</Link>
+				<KanbakTaskTileActionsButton
+					enableEditMode={enableEditMode}
+					deleteTask={() => props.deleteTask(props.task.id)}
+				/>
+			</div>
+			{props.task.maybeProgress
+				.map((progress) => (
+					<ProgressBar
+						progress={progress}
+						className="-mt-0.5 h-0.5 rounded-b"
+					/>
+				))
+				.extract()}
 		</li>
 	);
 }

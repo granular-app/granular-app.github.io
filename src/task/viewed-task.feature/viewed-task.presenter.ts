@@ -2,6 +2,7 @@ import { Signal } from '@preact/signals-react';
 import { Just, Maybe, Nothing } from 'purify-ts';
 import { Task } from '../core/task';
 import { TaskStatus, taskStatuses } from '../core/task-status';
+import { calculateTaskProgress } from '../presenters/calculate-task-progress';
 import { presentTaskStatus } from '../presenters/present-task-status';
 import {
 	KanbanColumnsUIModel,
@@ -69,8 +70,7 @@ function presentSubtasks(task: Task): ViewedTaskUIModel['maybeSubtasks'] {
 	const allCompletedSubtasksCount = allSubtasks.filter(
 		(subtask) => subtask.status === TaskStatus.Completed,
 	).length;
-
-	const progress = allCompletedSubtasksCount / allSubtasksCount;
+	const progress = calculateTaskProgress(task);
 
 	return Just({
 		directSubtasksCount,

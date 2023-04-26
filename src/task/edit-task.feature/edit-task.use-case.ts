@@ -9,6 +9,6 @@ export class EditTaskUseCase {
 
 	run = (id: string, newText: string) => {
 		this.taskManager.getTask(id).text = newText;
-		this.tasksRepo.save(this.taskManager.allTasks);
+		this.tasksRepo.save();
 	};
 }

@@ -17,6 +17,6 @@ export class CreateSubtaskUseCase {
 		const subtask = this.taskManager.createTask(subtaskParams.text);
 		subtask.staticStatus = subtaskParams.status;
 		this.attachSubtaskUseCase.run(subtask.id, parentTaskID);
-		this.tasksRepo.save(this.taskManager.allTasks);
+		this.tasksRepo.save();
 	}
 }

@@ -10,6 +10,6 @@ export class AddMainBoardTaskUseCase {
 
 	run(params: { text: string; status: TaskStatus }) {
 		this.mainBoard.createTask(params);
-		this.tasksRepo.save(this.mainBoard.listAllSubtasks());
+		this.tasksRepo.save();
 	}
 }

@@ -9,6 +9,6 @@ export class DeleteTaskUseCase {
 
 	run = (taskID: string) => {
 		this.taskManager.getTask(taskID).delete();
-		this.tasksRepo.save(this.taskManager.allTasks);
+		this.tasksRepo.save();
 	};
 }

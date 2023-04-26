@@ -10,6 +10,6 @@ export class SetStaticStatusUseCase {
 
 	run = (taskID: string, newStaticStatus: TaskStatus) => {
 		this.taskManager.getTask(taskID).staticStatus = newStaticStatus;
-		this.tasksRepo.save(this.taskManager.allTasks);
+		this.tasksRepo.save();
 	};
 }

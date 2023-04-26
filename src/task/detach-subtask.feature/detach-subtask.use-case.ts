@@ -10,6 +10,6 @@ export class DetachSubtaskUseCase {
 	run = (subtaskID: string, parentTaskID: string) => {
 		const parentTask = this.taskManager.getTask(parentTaskID);
 		parentTask.detachSubtask(subtaskID);
-		this.tasksRepo.save(this.taskManager.allTasks);
+		this.tasksRepo.save();
 	};
 }

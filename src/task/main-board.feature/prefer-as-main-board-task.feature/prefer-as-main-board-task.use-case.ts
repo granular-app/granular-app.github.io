@@ -9,6 +9,6 @@ export class PreferAsMainBoardTaskUseCase {
 
 	run = (prefers: boolean, taskID: string) => {
 		this.taskManager.getTask(taskID).userPrefersAsMainBoardTask = prefers;
-		this.tasksRepo.save(this.taskManager.allTasks);
+		this.tasksRepo.save();
 	};
 }

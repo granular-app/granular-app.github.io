@@ -1,4 +1,4 @@
-import { emptyKanbanColumns } from 'src/task/ui-models/kanban-task';
+import { emptyKanbanColumns } from 'src/task.feature/ui-models/kanban-task';
 import { useAdapters } from 'src/ui/adapaters';
 import { TaskKanban } from '../../ui/TaskKanban';
 import { useViewedTask } from './use-viewed-task';

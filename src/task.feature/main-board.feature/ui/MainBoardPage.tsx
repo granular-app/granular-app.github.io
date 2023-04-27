@@ -1,5 +1,5 @@
 import { SparklesIcon } from '@heroicons/react/24/solid';
-import { TaskKanban } from 'src/task/ui/TaskKanban';
+import { TaskKanban } from 'src/task.feature/ui/TaskKanban';
 import { useAdapters } from 'src/ui/adapaters';
 import { ProgressBar } from 'src/ui/ProgressBar';
 import { Sidebar } from 'src/ui/Sidebar';

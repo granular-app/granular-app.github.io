@@ -1,5 +1,5 @@
-import { TasksRepository } from 'src/task/application/tasks-repository';
-import { TaskManager } from 'src/task/core/task-manager';
+import { TasksRepository } from 'src/task.feature/application/tasks-repository';
+import { TaskManager } from 'src/task.feature/core/task-manager';
 
 export class PreferAsMainBoardTaskUseCase {
 	constructor(

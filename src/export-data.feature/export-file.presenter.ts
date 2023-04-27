@@ -1,8 +1,8 @@
-import { Task } from 'src/task/core/task';
+import { Task } from 'src/task.feature/core/task';
 import {
 	serializeTaskTemplates,
 	tasksToTaskTemplates,
-} from 'src/task/utils/task-template';
+} from 'src/task.feature/utils/task-template';
 
 export class ExportFilePresenter {
 	constructor(private effect: (file: Blob) => void) {}

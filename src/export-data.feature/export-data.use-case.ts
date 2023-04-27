@@ -1,5 +1,5 @@
-import { Task } from 'src/task/core/task';
-import { TaskManager } from 'src/task/core/task-manager';
+import { Task } from 'src/task.feature/core/task';
+import { TaskManager } from 'src/task.feature/core/task-manager';
 
 export class ExportDataUseCase {
 	constructor(

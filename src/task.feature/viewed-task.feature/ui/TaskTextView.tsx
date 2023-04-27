@@ -7,8 +7,8 @@ import {
 import { useSignal } from '@preact/signals-react';
 import { useCallback } from 'react';
 import { usePopper } from 'react-popper';
-import { DeleteTaskDialog } from 'src/task/delete-task.feature/DeleteTaskDialog';
-import { TaskForm } from 'src/task/ui/TaskForm';
+import { DeleteTaskDialog } from 'src/task.feature/delete-task.feature/DeleteTaskDialog';
+import { TaskForm } from 'src/task.feature/ui/TaskForm';
 import { useAdapters } from 'src/ui/adapaters';
 import { useViewedTask } from './use-viewed-task';
 

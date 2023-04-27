@@ -2,7 +2,7 @@ import { RadioGroup } from '@headlessui/react';
 import { CheckIcon, SparklesIcon } from '@heroicons/react/24/solid';
 import classNames from 'classnames';
 import { Fragment } from 'react';
-import { taskStatusesUIModel } from 'src/task/presenters/present-task-status';
+import { taskStatusesUIModel } from 'src/task.feature/presenters/present-task-status';
 import { useAdapters } from 'src/ui/adapaters';
 import { ProgressBar } from 'src/ui/ProgressBar';
 import { ViewedTaskSubtasksUIModel } from '../viewed-task.presenter';

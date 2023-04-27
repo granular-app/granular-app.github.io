@@ -6,7 +6,7 @@ import {
 	forceGetMainBoard,
 	mainBoardState,
 	viewMainBoardController,
-} from 'src/task/main-board.feature/setup';
+} from 'src/task.feature/main-board.feature/setup';
 import {
 	addViewedTaskSubtaskController,
 	attachViewedTaskController,
@@ -19,7 +19,7 @@ import {
 	setViewedTaskStaticStatusController,
 	viewedTaskState,
 	viewTaskController,
-} from 'src/task/viewed-task.feature/setup';
+} from 'src/task.feature/viewed-task.feature/setup';
 import { Adapters } from '../adapaters';
 
 export const adapters: Adapters = {

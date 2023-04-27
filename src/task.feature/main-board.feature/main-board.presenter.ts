@@ -1,12 +1,12 @@
 import { Signal } from '@preact/signals-react';
 import { Just, Maybe } from 'purify-ts';
-import { TaskStatus, taskStatuses } from 'src/task/core/task-status';
-import { presentTaskStatus } from 'src/task/presenters/present-task-status';
+import { TaskStatus, taskStatuses } from 'src/task.feature/core/task-status';
+import { presentTaskStatus } from 'src/task.feature/presenters/present-task-status';
 import {
 	KanbanColumnsUIModel,
 	KanbanTaskUIModel,
 	presentKanbanColumn,
-} from 'src/task/ui-models/kanban-task';
+} from 'src/task.feature/ui-models/kanban-task';
 import { ViewMainBoardUseCaseOutputPort } from './view-main-board.use-case';
 
 export class MainBoardPresenter {

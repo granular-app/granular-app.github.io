@@ -1,8 +1,12 @@
+import { TasksRepository } from 'src/task.feature/application/tasks-repository';
 import { TaskManager } from 'src/task.feature/core/task-manager';
 import { TaskTemplate } from 'src/task.feature/utils/task-template';
 
 export class ImportDataUseCase {
-	constructor(private taskManager: TaskManager) {}
+	constructor(
+		private taskManager: TaskManager,
+		private tasksRepo: TasksRepository,
+	) {}
 
 	run = (taskTemplates: TaskTemplate[]) => {
 		const existingTaskIds = new Set(
@@ -38,5 +42,6 @@ export class ImportDataUseCase {
 		});
 
 		this.taskManager.importTasks(filteredTaskTemplates);
+		this.tasksRepo.save();
 	};
 }

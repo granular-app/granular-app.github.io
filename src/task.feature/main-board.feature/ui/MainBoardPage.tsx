@@ -1,8 +1,10 @@
 import { SparklesIcon } from '@heroicons/react/24/solid';
+import { useEffect } from 'react';
 import { TaskKanban } from 'src/task.feature/ui/TaskKanban';
 import { useAdapters } from 'src/ui/adapaters';
 import { ProgressBar } from 'src/ui/ProgressBar';
 import { Sidebar } from 'src/ui/Sidebar';
+import { setDocumentTitle } from 'src/utils/ui/set-document-title';
 import { useMainBoard } from './use-main-board-state';
 
 export function MainBoardPage() {
@@ -12,6 +14,10 @@ export function MainBoardPage() {
 		editMainBoardTaskController,
 		deleteMainBoardTaskController,
 	} = useAdapters();
+
+	useEffect(() => {
+		setDocumentTitle('Main Board');
+	}, []);
 
 	return (
 		<>

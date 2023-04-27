@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
+import { useFileUpload } from 'src/utils/ui/use-file-upload';
 import { useAdapters } from './adapaters';
 import { AppRoute } from './setup/router';
-import { useFileUpload } from './utils/use-file-upload';
 
 export function Header() {
 	return (

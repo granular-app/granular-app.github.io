@@ -1,10 +1,19 @@
+import { useEffect } from 'react';
 import { Sidebar } from 'src/ui/Sidebar';
+import { setDocumentTitle } from 'src/utils/ui/set-document-title';
 import { ParentTasksView } from './ParentTasksView';
 import { StatusView } from './StatusView';
 import { TaskTextView } from './TaskTextView';
+import { useViewedTask } from './use-viewed-task';
 import { ViewedTaskSubtasksKanban } from './ViewedTaskSubtasksKanban';
 
 export function TaskPage() {
+	const viewedTask = useViewedTask();
+
+	useEffect(() => {
+		setDocumentTitle(viewedTask.text);
+	}, []);
+
 	return (
 		<>
 			<Sidebar>

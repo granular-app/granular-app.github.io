@@ -1,4 +1,4 @@
-import { downloadFile } from 'src/ui/utils/download-file';
+import { downloadFile } from 'src/utils/ui/download-file';
 
 const exportFileName = 'taskmap-export.json' as const;
 

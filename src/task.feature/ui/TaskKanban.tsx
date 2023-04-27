@@ -142,7 +142,9 @@ export function KanbanTaskTile(props: {
 					to={AppRoute.Task.URL(props.task.id)}
 					className="block rounded-md hover:bg-zinc-100"
 				>
-					<SparklesIcon className="icon float-right ml-2 mt-1 text-gray-600" />
+					{props.task.maybeProgress.isJust() && (
+						<SparklesIcon className="icon float-right ml-2 mt-1 text-gray-600" />
+					)}
 					<span>{props.task.text}</span>
 				</Link>
 				<KanbakTaskTileActionsButton

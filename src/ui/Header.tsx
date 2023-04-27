@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useAdapters } from './adapaters';
 import { AppRoute } from './setup/router';
 
 export function Header() {
@@ -14,10 +15,16 @@ export function Header() {
 						<Link to={AppRoute.MainBoard}>Main Board</Link>
 					</li>
 					<li>
-						<Link to={AppRoute.Settings}>Settings</Link>
+						<ExportDataButton />
 					</li>
 				</ul>
 			</nav>
 		</header>
 	);
+}
+
+function ExportDataButton() {
+	const { exportDataController } = useAdapters();
+
+	return <button onClick={exportDataController.run}>Export</button>;
 }

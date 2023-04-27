@@ -1,6 +1,7 @@
 import { Signal } from '@preact/signals-react';
 import { Maybe } from 'purify-ts';
 import { createContext, useContext } from 'react';
+import { ExportDataController } from 'src/export-data.feature/export-data.controller';
 import { EditTaskController } from 'src/task/edit-task.feature/edit-task.controller';
 import { AddMainBoardTaskController } from 'src/task/main-board.feature/add-main-board-task.feature/add-main-board-task.controller';
 import { DeleteMainBoardTaskController } from 'src/task/main-board.feature/delete-main-board-task.controller';
@@ -48,6 +49,7 @@ export type Adapters = {
 	deleteViewedTaskController: DeleteViewedTaskController;
 	attachViewedTaskController: AttachViewedTaskController;
 	detachViewedTaskController: DetachViewedTaskController;
+	exportDataController: ExportDataController;
 };
 
 export const AdaptersProvider = AdaptersContext.Provider;

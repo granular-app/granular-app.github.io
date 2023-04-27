@@ -10,9 +10,6 @@ export const AppRoute = {
 		URLTemplate: `/task/:taskID`,
 		URL: (taskID: string) => `/task/${taskID}`,
 	},
-	Settings: '/settings',
-	SettingsExport: '/settings/export',
-	SettingsImport: '/settings/import',
 } as const;
 
 export const router = createBrowserRouter([
@@ -20,11 +17,6 @@ export const router = createBrowserRouter([
 		path: '/',
 		ErrorBoundary: ErrorPage,
 		loader: () => redirect(AppRoute.MainBoard),
-	},
-	{
-		path: AppRoute.Settings,
-		ErrorBoundary: ErrorPage,
-		loader: () => redirect(AppRoute.SettingsExport),
 	},
 	{
 		element: <AppLayout />,
@@ -49,14 +41,6 @@ export const router = createBrowserRouter([
 					return null;
 				},
 				Component: TaskPage,
-			},
-			{
-				path: AppRoute.SettingsExport,
-				element: <div>Export</div>,
-			},
-			{
-				path: AppRoute.SettingsImport,
-				element: <div>Import</div>,
 			},
 		],
 	},

@@ -8,8 +8,8 @@ export class ImportDataController {
 		private viewMainBoardUseCase: ViewMainBoardUseCase,
 	) {}
 
-	run = async (exportFileContents: string) => {
-		const taskTemplates: TaskTemplate[] = JSON.parse(exportFileContents);
+	run = async (data: string) => {
+		const taskTemplates: TaskTemplate[] = JSON.parse(data);
 
 		this.importDataUseCase.run(taskTemplates);
 		this.viewMainBoardUseCase.run();

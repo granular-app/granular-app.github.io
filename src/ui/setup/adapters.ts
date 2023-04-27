@@ -1,4 +1,5 @@
 import { exportDataController } from 'src/export-data.feature/setup';
+import { importDataController } from 'src/import-data.feature/setup';
 import {
 	addMainBoardTaskController,
 	deleteMainBoardTaskController,
@@ -41,4 +42,5 @@ export const adapters: Adapters = {
 	forceGetViewedTask,
 	detachViewedTaskController,
 	exportDataController,
+	importDataController,
 };

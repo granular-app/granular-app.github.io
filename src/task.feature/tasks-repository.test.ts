@@ -34,14 +34,20 @@ describe('TasksRepositoryImpl', () => {
 		tasksRepository.save();
 
 		// Load tasks from the repository
-		const loadedTasks = tasksRepository.load();
+		tasksRepository.load();
 
 		// Verify loaded tasks
-		expect(loadedTasks.length).toEqual(3);
+		expect(taskManager.allTasks.length).toEqual(3);
 
-		const loadedTask1 = loadedTasks.find((task) => task.id === task1.id);
-		const loadedTask2 = loadedTasks.find((task) => task.id === task2.id);
-		const loadedSubtask1 = loadedTasks.find((task) => task.id === subtask1.id);
+		const loadedTask1 = taskManager.allTasks.find(
+			(task) => task.id === task1.id,
+		);
+		const loadedTask2 = taskManager.allTasks.find(
+			(task) => task.id === task2.id,
+		);
+		const loadedSubtask1 = taskManager.allTasks.find(
+			(task) => task.id === subtask1.id,
+		);
 
 		expect(loadedTask1?.text).toEqual('Task 1');
 		expect(loadedTask2?.text).toEqual('Task 2');

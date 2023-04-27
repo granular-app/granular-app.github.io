@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useAdapters } from './adapaters';
 import { AppRoute } from './setup/router';
+import { useFileUpload } from './utils/use-file-upload';
 
 export function Header() {
 	return (
@@ -17,6 +18,9 @@ export function Header() {
 					<li>
 						<ExportDataButton />
 					</li>
+					<li>
+						<ImportDataButton />
+					</li>
 				</ul>
 			</nav>
 		</header>
@@ -27,4 +31,18 @@ function ExportDataButton() {
 	const { exportDataController } = useAdapters();
 
 	return <button onClick={exportDataController.run}>Export</button>;
+}
+
+function ImportDataButton() {
+	const { importDataController } = useAdapters();
+	const { invisibleFileInput, triggerFileUpload } = useFileUpload(
+		importDataController.run,
+	);
+
+	return (
+		<div>
+			{invisibleFileInput}
+			<button onClick={triggerFileUpload}>Import</button>
+		</div>
+	);
 }

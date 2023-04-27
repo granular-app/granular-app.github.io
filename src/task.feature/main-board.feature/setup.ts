@@ -27,7 +27,7 @@ export const forceGetMainBoard = () => {
 
 const mainBoardPresenter = new MainBoardPresenter(mainBoardState);
 
-const viewMainBoardUseCase = new ViewMainBoardUseCase(
+export const viewMainBoardUseCase = new ViewMainBoardUseCase(
 	mainBoard,
 	mainBoardPresenter.present,
 );

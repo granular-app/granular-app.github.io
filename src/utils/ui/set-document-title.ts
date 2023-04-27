@@ -1,7 +1,7 @@
 const maxPageNameLength = 100 as const;
 
 export function setDocumentTitle(pageName: string) {
-	document.title = `${truncateString(pageName, maxPageNameLength)} | Granular`;
+	document.title = `${truncateString(pageName, maxPageNameLength)} | granular`;
 }
 
 function truncateString(s: string, maxLength: number) {

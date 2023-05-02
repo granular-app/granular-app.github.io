@@ -2,10 +2,9 @@ import { createBrowserRouter } from 'react-router-dom';
 import { MainBoardPage } from 'src/task.feature/main-board.feature/ui/MainBoardPage';
 import { TaskPage } from 'src/task.feature/viewed-task.feature/ui/TaskPage';
 import { AppLayout } from '../AppLayout';
-import { ErrorPage } from '../ErrorPage';
 
 export const AppRoute = {
-	MainBoard: '/main-board',
+	MainBoard: '/',
 	Task: {
 		URLTemplate: `/task/:taskID`,
 		URL: (taskID: string) => `/task/${taskID}`,
@@ -17,38 +16,24 @@ export const router = createBrowserRouter([
 		element: <AppLayout />,
 		children: [
 			{
-				path: '/',
-				ErrorBoundary: ErrorPage,
+				path: AppRoute.MainBoard,
 				loader: async () => {
 					const { adapters } = await import('./adapters');
-					adapters.viewMainBoardController.run();
 
-					history.replaceState({}, document.title, AppRoute.MainBoard);
+					adapters.viewMainBoardController.run();
 					return null;
 				},
 				Component: MainBoardPage,
-				children: [
-					{
-						path: AppRoute.MainBoard,
-						loader: async () => {
-							const { adapters } = await import('./adapters');
+			},
+			{
+				path: AppRoute.Task.URLTemplate,
+				loader: async ({ params }) => {
+					const { adapters } = await import('./adapters');
 
-							adapters.viewMainBoardController.run();
-							return null;
-						},
-						Component: MainBoardPage,
-					},
-					{
-						path: AppRoute.Task.URLTemplate,
-						loader: async ({ params }) => {
-							const { adapters } = await import('./adapters');
-
-							adapters.viewTaskController.run(params.taskID!);
-							return null;
-						},
-						Component: TaskPage,
-					},
-				],
+					adapters.viewTaskController.run(params.taskID!);
+					return null;
+				},
+				Component: TaskPage,
 			},
 		],
 	},

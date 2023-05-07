@@ -8,12 +8,14 @@ export function TaskForm({
 	onSubmit,
 	onClose,
 	extraClassName,
+	onEmptyFormBlur,
 }: {
 	initialText?: string;
 	submitLabel: string;
 	onSubmit: (text: string) => void;
 	onClose: () => void;
 	extraClassName?: string;
+	onEmptyFormBlur?: () => void;
 }) {
 	const text = useSignal(initialText);
 
@@ -21,8 +23,13 @@ export function TaskForm({
 		<div role="form" className={classNames('mt-4', extraClassName)}>
 			<textarea
 				value={text.value}
-				onFocus={(e) => putCaretAtTheEnd(e.currentTarget)}
-				onChange={(e) => (text.value = e.target.value)}
+				onFocus={(evt) => putCaretAtTheEnd(evt.currentTarget)}
+				onChange={(evt) => (text.value = evt.target.value)}
+				onBlur={() => {
+					if (text.value.trim() === '') {
+						onEmptyFormBlur?.();
+					}
+				}}
 				onKeyDown={testSubmitFormTrigger}
 				className="h-max w-full resize-y rounded border px-4 py-2"
 				autoFocus
@@ -50,11 +57,10 @@ export function TaskForm({
 
 	function submitForm() {
 		onSubmit(text.value);
-		closeForm();
+		text.value = '';
 	}
 
 	function closeForm() {
-		text.value = '';
 		onClose();
 	}
 }

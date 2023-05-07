@@ -7,10 +7,11 @@ import {
 import { EllipsisVerticalIcon, SparklesIcon } from '@heroicons/react/24/solid';
 import { useSignal } from '@preact/signals-react';
 import classNames from 'classnames';
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import { usePopper } from 'react-popper';
 import { Link } from 'react-router-dom';
 import { ProgressBar } from 'src/ui/ProgressBar';
+import { runOnNextFrame } from 'src/utils/ui/run-on-next-frame';
 import { AppRoute } from '../../ui/setup/router';
 import { TaskStatus } from '../core/task-status';
 import { DeleteTaskController } from '../delete-task.feature/delete-task.controller';
@@ -82,6 +83,7 @@ function AddTaskButton(props: { onSubmit: (text: string) => void }) {
 	const formVisisble = useSignal(false);
 	const openForm = () => (formVisisble.value = true);
 	const closeForm = useCallback(() => (formVisisble.value = false), []);
+	const buttonRef = useRef<HTMLButtonElement>(null);
 
 	if (formVisisble.value) {
 		return (
@@ -90,12 +92,17 @@ function AddTaskButton(props: { onSubmit: (text: string) => void }) {
 				onClose={closeForm}
 				onSubmit={props.onSubmit}
 				submitLabel="Add task"
+				onEmptyFormBlur={() => {
+					closeForm();
+					runOnNextFrame(() => buttonRef.current?.focus());
+				}}
 			/>
 		);
 	}
 
 	return (
 		<button
+			ref={buttonRef}
 			className="mt-4 flex w-full items-center rounded-md py-1 font-bold text-gray-700 hover:bg-gray-100"
 			onClick={openForm}
 		>

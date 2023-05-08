@@ -8,6 +8,7 @@ import { AddMainBoardTaskController } from 'src/task.feature/main-board.feature/
 import { DeleteMainBoardTaskController } from 'src/task.feature/main-board.feature/delete-main-board-task.controller';
 import { MainBoardUIModel } from 'src/task.feature/main-board.feature/main-board.presenter';
 import { ViewMainBoardController } from 'src/task.feature/main-board.feature/view-main-board.controller';
+import { SetStaticStatusController } from 'src/task.feature/set-static-status.feature/set-static-status.controller';
 import { AttachViewedTaskController } from 'src/task.feature/viewed-task.feature/attach-viewed-task.controller';
 import { CreateViewedTaskSubtaskController } from 'src/task.feature/viewed-task.feature/create-subtask.controller';
 import { DeleteSubtaskController } from 'src/task.feature/viewed-task.feature/delete-subtask.controller';
@@ -52,6 +53,8 @@ export type Adapters = {
 	detachViewedTaskController: DetachViewedTaskController;
 	exportDataController: ExportDataController;
 	importDataController: ImportDataController;
+	setViewedTaskSubtaskStaticStatusController: SetStaticStatusController;
+	setMainBoardTaskStaticStatusController: SetStaticStatusController;
 };
 
 export const AdaptersProvider = AdaptersContext.Provider;

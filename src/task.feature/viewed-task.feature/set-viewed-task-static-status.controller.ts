@@ -1,8 +1,5 @@
 import { TaskStatus } from '../core/task-status';
-import {
-	AfterSetStaticStatusObserver,
-	SetStaticStatusController,
-} from '../set-static-status.feature/set-static-status.controller';
+import { SetStaticStatusController } from '../set-static-status.feature/set-static-status.controller';
 import { SetStaticStatusUseCase } from '../set-static-status.feature/set-static-status.use-case';
 import { RefreshViewedTaskController } from './refresh-viewed-task.controller';
 import { ViewedTaskUIModel } from './viewed-task.presenter';
@@ -15,7 +12,7 @@ export class SetViewedTaskStaticStatusController {
 	) {
 		this.setStaticStatusController = new SetStaticStatusController(
 			setStaticStatusUseCase,
-			new AfterSetViewedTaskStaticStatusObserver(refreshViewedTaskController),
+			refreshViewedTaskController.run,
 		);
 	}
 
@@ -26,16 +23,4 @@ export class SetViewedTaskStaticStatusController {
 
 		this.setStaticStatusController.run(viewedTask.id, newStaticStatus);
 	};
-}
-
-export class AfterSetViewedTaskStaticStatusObserver
-	implements AfterSetStaticStatusObserver
-{
-	constructor(
-		private refreshViewedTaskController: RefreshViewedTaskController,
-	) {}
-
-	afterSetStaticStatus(): void {
-		this.refreshViewedTaskController.run();
-	}
 }

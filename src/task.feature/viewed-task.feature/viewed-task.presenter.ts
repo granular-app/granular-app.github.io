@@ -13,7 +13,7 @@ import {
 export class ViewedTaskPresenter {
 	constructor(private state: Signal<Maybe<ViewedTaskUIModel>>) {}
 
-	present(viewedTask: Maybe<Task>) {
+	present = (viewedTask: Maybe<Task>) => {
 		this.state.value = viewedTask.map((task): ViewedTaskUIModel => {
 			const parentTasks = presentParentTasks(task);
 			const parentTaskCandidates = presentParentTaskCandidates(task);
@@ -31,7 +31,7 @@ export class ViewedTaskPresenter {
 				canDetachFromParentTasks: parentTasks.length > 1,
 			};
 		});
-	}
+	};
 }
 
 function presentParentTasks(task: Task) {

@@ -1,3 +1,13 @@
+import {
+	DndContext,
+	DragEndEvent,
+	DragOverlay,
+	DragStartEvent,
+	PointerSensor,
+	useDroppable,
+	useSensor,
+	useSensors,
+} from '@dnd-kit/core';
 import { Popover } from '@headlessui/react';
 import {
 	PencilIcon,
@@ -5,19 +15,26 @@ import {
 	TrashIcon,
 } from '@heroicons/react/24/outline';
 import { EllipsisVerticalIcon, SparklesIcon } from '@heroicons/react/24/solid';
-import { useSignal } from '@preact/signals-react';
+import { useComputed, useSignal } from '@preact/signals-react';
 import classNames from 'classnames';
-import { useCallback, useRef } from 'react';
+import { Just, Maybe, Nothing } from 'purify-ts';
+import { ElementType, ReactNode, useCallback, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { usePopper } from 'react-popper';
 import { Link } from 'react-router-dom';
 import { ProgressBar } from 'src/ui/ProgressBar';
+import { Draggable } from 'src/utils/ui/Draggable';
 import { runOnNextFrame } from 'src/utils/ui/run-on-next-frame';
 import { AppRoute } from '../../ui/setup/router';
-import { TaskStatus } from '../core/task-status';
+import { TaskStatus, taskStatuses } from '../core/task-status';
 import { DeleteTaskController } from '../delete-task.feature/delete-task.controller';
 import { DeleteTaskDialog } from '../delete-task.feature/DeleteTaskDialog';
 import { EditTaskController } from '../edit-task.feature/edit-task.controller';
-import { taskStatusesUIModel } from '../presenters/present-task-status';
+import {
+	taskStatusesUIModel,
+	TaskStatusUIModel,
+} from '../presenters/present-task-status';
+import { SetStaticStatusController } from '../set-static-status.feature/set-static-status.controller';
 import {
 	KanbanColumnsUIModel,
 	KanbanTaskUIModel,
@@ -29,33 +46,59 @@ export function TaskKanban(props: {
 	addTask: (params: { text: string; status: TaskStatus }) => void;
 	editTask: EditTaskController['run'];
 	deleteTask: DeleteTaskController['run'];
+	setStaticStatus: SetStaticStatusController['run'];
 }) {
 	return (
-		<div className="w-full overflow-y-auto pl-80">
-			<div className="flex w-full snap-x snap-mandatory overflow-x-auto p-6 pb-12 sm:snap-none">
-				{taskStatusesUIModel.map((status) => {
-					return (
-						<div
-							key={status.value}
-							className="mr-3 w-4/5 flex-shrink-0 snap-center sm:w-64"
-						>
-							<h3 className="mt-1 mb-2 px-2 text-sm font-bold text-gray-500">
-								{status.label}
-							</h3>
-							<KanbanColumnTaskTiles
-								column={props.columns[status.value]}
-								editTask={props.editTask}
-								deleteTask={props.deleteTask}
-							/>
-							<AddTaskButton
-								onSubmit={(text) =>
-									props.addTask({ text, status: status.value })
-								}
-							/>
-						</div>
-					);
-				})}
+		<TaskKanbanDragAndDrop
+			columns={props.columns}
+			setStaticStatus={props.setStaticStatus}
+		>
+			<div className="w-full overflow-y-auto pl-80">
+				<div className="flex w-full snap-x snap-mandatory items-start overflow-x-auto p-6 pb-12 sm:snap-none">
+					{taskStatusesUIModel.map((status) => (
+						<KanbanColumn
+							status={status}
+							column={props.columns[status.value]}
+							{...props}
+						/>
+					))}
+				</div>
 			</div>
+		</TaskKanbanDragAndDrop>
+	);
+}
+
+function KanbanColumn(props: {
+	status: TaskStatusUIModel;
+	column: KanbanTaskUIModel[];
+	addTask: (params: { text: string; status: TaskStatus }) => void;
+	editTask: EditTaskController['run'];
+	deleteTask: DeleteTaskController['run'];
+}) {
+	const droppable = useDroppable({
+		id: props.status.value,
+	});
+
+	return (
+		<div
+			key={props.status.value}
+			ref={droppable.setNodeRef}
+			className={classNames(
+				'mr-3 w-4/5 flex-shrink-0 snap-center rounded sm:w-64',
+				droppable.isOver && 'ring-2 ring-zinc-500 ring-offset-4',
+			)}
+		>
+			<h3 className="mt-1 mb-2 px-2 text-sm font-bold text-gray-500">
+				{props.status.label}
+			</h3>
+			<KanbanColumnTaskTiles
+				column={props.column}
+				editTask={props.editTask}
+				deleteTask={props.deleteTask}
+			/>
+			<AddTaskButton
+				onSubmit={(text) => props.addTask({ text, status: props.status.value })}
+			/>
 		</div>
 	);
 }
@@ -118,6 +161,8 @@ export function KanbanTaskTile(props: {
 	task: KanbanTaskUIModel;
 	editTask: (taskID: string, newText: string) => void;
 	deleteTask: (taskID: string) => void;
+	extraClassName?: string;
+	element?: ElementType;
 }) {
 	const editModeEnabled = useSignal(false);
 	const enableEditMode = useCallback(() => {
@@ -142,54 +187,63 @@ export function KanbanTaskTile(props: {
 		);
 	}
 
-	return (
-		<li className="group relative mb-2 rounded bg-white shadow">
-			<div className="p-2">
-				<Link
-					to={AppRoute.Task.URL(props.task.id)}
-					className="block rounded-md hover:bg-zinc-100"
-				>
-					{props.task.maybeProgress.isJust() && (
-						<SparklesIcon className="icon float-right ml-2 mt-1 text-gray-600" />
-					)}
-					<span>{props.task.text}</span>
-				</Link>
-				<KanbakTaskTileActionsButton
-					enableEditMode={enableEditMode}
-					deleteTask={() => props.deleteTask(props.task.id)}
-				/>
-			</div>
-			{props.task.maybeProgress
-				.map((progress) => (
-					<ProgressBar
-						progress={progress}
-						className="-mt-0.5 h-0.5 rounded-b"
-					/>
-				))
-				.extract()}
-		</li>
-	);
-}
+	const Element = props.element ?? 'li';
 
-// function KanbanTaskTileWithProgressBar() {
-// 	return (
-// 		<div className="group relative mb-2 rounded bg-white p-2 shadow">
-// 			<KanbakTaskTileActionsButton onEditButtonClick={() => {}} />
-// 			<SparklesIcon className="icon float-right mt-2 ml-2" />
-// 			<h4>Task tile with progress bar</h4>
-// 			<div className="absolute bottom-0 left-0 h-0.5 w-full overflow-hidden rounded-b bg-gray-200">
-// 				<div
-// 					className="h-full bg-gray-400"
-// 					style={{
-// 						width: `75%`,
-// 					}}
-// 				>
-// 					<div className="h-full bg-repeat heropattern-diagonalstripes-gray-500"></div>
-// 				</div>
-// 			</div>
-// 		</div>
-// 	);
-// }
+	return props.task.maybeProgress.caseOf({
+		Just: (progress) => (
+			<Element
+				id={props.task.id}
+				className={classNames(
+					'group relative mb-2 rounded bg-white shadow',
+					props.extraClassName,
+				)}
+			>
+				<div className="p-2">
+					<Link
+						to={AppRoute.Task.URL(props.task.id)}
+						className="block rounded-md hover:bg-zinc-100"
+					>
+						{props.task.maybeProgress.isJust() && (
+							<SparklesIcon className="icon float-right ml-2 mt-1 text-gray-600" />
+						)}
+						<span>{props.task.text}</span>
+					</Link>
+					<KanbakTaskTileActionsButton
+						enableEditMode={enableEditMode}
+						deleteTask={() => props.deleteTask(props.task.id)}
+					/>
+				</div>
+				<ProgressBar progress={progress} className="-mt-0.5 h-0.5 rounded-b" />
+			</Element>
+		),
+		Nothing: () => (
+			<Draggable
+				id={props.task.id}
+				element={Element}
+				className={classNames(
+					'group relative mb-2 rounded bg-white shadow',
+					props.extraClassName,
+				)}
+			>
+				<div className="p-2">
+					<Link
+						to={AppRoute.Task.URL(props.task.id)}
+						className="block rounded-md hover:bg-zinc-100"
+					>
+						{props.task.maybeProgress.isJust() && (
+							<SparklesIcon className="icon float-right ml-2 mt-1 text-gray-600" />
+						)}
+						<span>{props.task.text}</span>
+					</Link>
+					<KanbakTaskTileActionsButton
+						enableEditMode={enableEditMode}
+						deleteTask={() => props.deleteTask(props.task.id)}
+					/>
+				</div>
+			</Draggable>
+		),
+	});
+}
 
 export function KanbakTaskTileActionsButton(props: {
 	enableEditMode: () => void;
@@ -270,4 +324,83 @@ export function KanbakTaskTileActionsButton(props: {
 			/>
 		</>
 	);
+}
+
+function TaskKanbanDragAndDrop(props: {
+	children: ReactNode;
+	columns: KanbanColumnsUIModel;
+	setStaticStatus: SetStaticStatusController['run'];
+}) {
+	const { handleDragStart, handleDragEnd, dndSensors, draggedTask } =
+		useTaskDragAndDrop(props.columns, props.setStaticStatus);
+
+	return (
+		<DndContext
+			onDragStart={handleDragStart}
+			onDragEnd={handleDragEnd}
+			sensors={dndSensors}
+		>
+			{props.children}
+			{createPortal(
+				<DragOverlay>
+					{draggedTask.value
+						.map((task) => (
+							<KanbanTaskTile
+								task={task}
+								extraClassName="shadow-lg"
+								element="div"
+								deleteTask={() => {}}
+								editTask={() => {}}
+							/>
+						))
+						.extract()}
+				</DragOverlay>,
+				document.body,
+			)}
+		</DndContext>
+	);
+}
+function useTaskDragAndDrop(
+	columns: KanbanColumnsUIModel,
+	setStaticStatus: SetStaticStatusController['run'],
+) {
+	const subtasks = taskStatuses.flatMap((status) => columns[status]);
+	const getTask = (id: string): KanbanTaskUIModel => {
+		return subtasks.find((subtask) => subtask.id === id)!;
+	};
+
+	const draggedTaskID = useSignal<Maybe<string>>(Nothing);
+	const draggedTask = useComputed(() => draggedTaskID.value.map(getTask));
+	const dndSensors = useSensors(
+		useSensor(PointerSensor, {
+			activationConstraint: {
+				distance: 8,
+			},
+		}),
+	);
+
+	return {
+		handleDragStart,
+		handleDragEnd,
+		draggedTask,
+		dndSensors,
+	};
+
+	function handleDragStart(event: DragStartEvent) {
+		draggedTaskID.value = Just(event.active.id.toString());
+	}
+
+	function handleDragEnd(event: DragEndEvent) {
+		draggedTaskID.value = Nothing;
+
+		if (event.over === null) return;
+
+		const status = event.over.id as TaskStatus;
+		const taskID = event.active.id as string;
+
+		console.log(
+			`dragged task with id ${taskID} and changed status to ${status}`,
+		);
+		setStaticStatus(taskID, status);
+	}
 }

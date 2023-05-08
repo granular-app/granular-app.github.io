@@ -1,5 +1,3 @@
-import { signal } from '@preact/signals-react';
-import { Maybe, Nothing } from 'purify-ts';
 import { AppRoute, router } from 'src/ui/setup/router';
 import { AttachSubtaskUseCase } from '../attach-subtask.feature/attach-subtask.use-case';
 import { CreateSubtaskUseCase } from '../create-subtask.feature/create-subtask.use-case';
@@ -8,6 +6,7 @@ import { DetachSubtaskUseCase } from '../detach-subtask.feature/detach-subtask.u
 import { EditTaskController } from '../edit-task.feature/edit-task.controller';
 import { EditTaskUseCase } from '../edit-task.feature/edit-task.use-case';
 import { PreferAsMainBoardTaskUseCase } from '../main-board.feature/prefer-as-main-board-task.feature/prefer-as-main-board-task.use-case';
+import { SetStaticStatusController } from '../set-static-status.feature/set-static-status.controller';
 import { SetStaticStatusUseCase } from '../set-static-status.feature/set-static-status.use-case';
 import { taskManager, tasksRepository } from '../setup';
 import { AttachViewedTaskController } from './attach-viewed-task.controller';
@@ -24,10 +23,11 @@ import { RefreshViewedTaskController } from './refresh-viewed-task.controller';
 import { SetViewedTaskStaticStatusController } from './set-viewed-task-static-status.controller';
 import { ViewTaskController } from './view-task.controller';
 import { ViewTaskUseCase } from './view-task.use-case';
-import {
-	ViewedTaskPresenter,
-	ViewedTaskUIModel,
-} from './viewed-task.presenter';
+import { ViewedTaskPresenter } from './viewed-task.presenter';
+
+import { signal } from '@preact/signals-react';
+import { Maybe, Nothing } from 'purify-ts';
+import { ViewedTaskUIModel } from './viewed-task.presenter';
 
 export const viewedTaskState = signal<Maybe<ViewedTaskUIModel>>(Nothing);
 export const forceGetViewedTask = () => {
@@ -43,7 +43,7 @@ const viewTaskUseCase = new ViewTaskUseCase(taskManager, (viewedTask) =>
 	viewedTaskPresenter.present(viewedTask),
 );
 export const viewTaskController = new ViewTaskController(viewTaskUseCase);
-const refreshViewedTaskController = new RefreshViewedTaskController(
+export const refreshViewedTaskController = new RefreshViewedTaskController(
 	forceGetViewedTask,
 	viewTaskController,
 );
@@ -105,3 +105,9 @@ export const detachViewedTaskController = new DetachViewedTaskController(
 	forceGetViewedTask,
 	refreshViewedTaskController.run,
 );
+
+export const setViewedTaskSubtaskStaticStatusController =
+	new SetStaticStatusController(
+		new SetStaticStatusUseCase(taskManager, tasksRepository),
+		refreshViewedTaskController.run,
+	);

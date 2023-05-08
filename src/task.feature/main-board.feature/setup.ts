@@ -5,6 +5,8 @@ import { EditTaskController } from '../edit-task.feature/edit-task.controller';
 import { EditTaskUseCase } from '../edit-task.feature/edit-task.use-case';
 import { taskManager, tasksRepository } from '../setup';
 
+import { SetStaticStatusController } from '../set-static-status.feature/set-static-status.controller';
+import { SetStaticStatusUseCase } from '../set-static-status.feature/set-static-status.use-case';
 import { AddMainBoardTaskController } from './add-main-board-task.feature/add-main-board-task.controller';
 import { AddMainBoardTaskUseCase } from './add-main-board-task.feature/add-main-board-task.use-case';
 import { DeleteMainBoardTaskController } from './delete-main-board-task.controller';
@@ -51,3 +53,9 @@ export const deleteMainBoardTaskController = new DeleteMainBoardTaskController(
 	deleteTaskUseCase,
 	viewMainBoardController,
 );
+
+export const setMainBoardTaskStaticStatusController =
+	new SetStaticStatusController(
+		new SetStaticStatusUseCase(taskManager, tasksRepository),
+		viewMainBoardController.run,
+	);

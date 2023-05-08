@@ -6,6 +6,7 @@ import {
 	editMainBoardTaskController,
 	forceGetMainBoard,
 	mainBoardState,
+	setMainBoardTaskStaticStatusController,
 	viewMainBoardController,
 } from 'src/task.feature/main-board.feature/setup';
 import {
@@ -18,6 +19,7 @@ import {
 	editViewedTaskSubtaskController,
 	forceGetViewedTask,
 	setViewedTaskStaticStatusController,
+	setViewedTaskSubtaskStaticStatusController,
 	viewedTaskState,
 	viewTaskController,
 } from 'src/task.feature/viewed-task.feature/setup';
@@ -43,4 +45,6 @@ export const adapters: Adapters = {
 	detachViewedTaskController,
 	exportDataController,
 	importDataController,
+	setMainBoardTaskStaticStatusController,
+	setViewedTaskSubtaskStaticStatusController,
 };

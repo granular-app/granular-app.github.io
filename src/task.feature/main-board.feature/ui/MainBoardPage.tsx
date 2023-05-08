@@ -13,6 +13,7 @@ export function MainBoardPage() {
 		addMainBoardTaskController,
 		editMainBoardTaskController,
 		deleteMainBoardTaskController,
+		setMainBoardTaskStaticStatusController,
 	} = useAdapters();
 
 	useEffect(() => {
@@ -27,6 +28,7 @@ export function MainBoardPage() {
 				addTask={addMainBoardTaskController.run}
 				editTask={editMainBoardTaskController.run}
 				deleteTask={deleteMainBoardTaskController.run}
+				setStaticStatus={setMainBoardTaskStaticStatusController.run}
 			/>
 		</>
 	);

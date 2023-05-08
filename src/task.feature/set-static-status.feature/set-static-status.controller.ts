@@ -3,15 +3,11 @@ import { SetStaticStatusUseCase } from './set-static-status.use-case';
 export class SetStaticStatusController {
 	constructor(
 		private setStaticStatusUseCase: SetStaticStatusUseCase,
-		private afterSetStaticStatusObserver: AfterSetStaticStatusObserver,
+		private afterSetStaticStatus: () => void,
 	) {}
 
 	run: SetStaticStatusUseCase['run'] = (taskID, newStaticStatus) => {
 		this.setStaticStatusUseCase.run(taskID, newStaticStatus);
-		this.afterSetStaticStatusObserver.afterSetStaticStatus();
+		this.afterSetStaticStatus();
 	};
-}
-
-export interface AfterSetStaticStatusObserver {
-	afterSetStaticStatus(): void;
 }

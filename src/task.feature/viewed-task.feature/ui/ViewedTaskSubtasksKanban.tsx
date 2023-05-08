@@ -9,6 +9,7 @@ export function ViewedTaskSubtasksKanban() {
 		addViewedTaskSubtaskController,
 		editViewedTaskSubtaskController,
 		deleteSubtaskController,
+		setViewedTaskSubtaskStaticStatusController,
 	} = useAdapters();
 
 	return (
@@ -19,6 +20,7 @@ export function ViewedTaskSubtasksKanban() {
 			addTask={addViewedTaskSubtaskController.run}
 			editTask={editViewedTaskSubtaskController.run}
 			deleteTask={deleteSubtaskController.run}
+			setStaticStatus={setViewedTaskSubtaskStaticStatusController.run}
 		/>
 	);
 }

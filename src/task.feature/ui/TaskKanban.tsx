@@ -266,7 +266,7 @@ export function KanbakTaskTileActionsButton(props: {
 						<Popover.Button
 							ref={(element) => (referenceElement.value = element)}
 							className={classNames(
-								'kanban__task-tile-actions-button absolute right-2 top-2 z-10 flex h-6 w-6 items-center justify-center rounded-md bg-white transition-opacity hover:bg-gray-100 group-focus-within:opacity-100 group-hover:opacity-100',
+								'kanban__task-tile-actions-button absolute right-2 top-2 z-10 flex h-6 w-6 items-center justify-center rounded-md bg-white transition-opacity hover:bg-gray-100 focus:bg-gray-100 group-focus-within:opacity-100 group-hover:opacity-100',
 								!popoverIsOpen && 'opacity-0',
 							)}
 						>

@@ -8,14 +8,6 @@ import { setDocumentTitle } from 'src/utils/ui/set-document-title';
 import { useMainBoard } from './use-main-board-state';
 
 export function MainBoardPage() {
-	const mainBoard = useMainBoard();
-	const {
-		addMainBoardTaskController,
-		editMainBoardTaskController,
-		deleteMainBoardTaskController,
-		setMainBoardTaskStaticStatusController,
-	} = useAdapters();
-
 	useEffect(() => {
 		setDocumentTitle('Main Board');
 	}, []);
@@ -23,13 +15,7 @@ export function MainBoardPage() {
 	return (
 		<>
 			<MainBoardSidebar />
-			<TaskKanban
-				columns={mainBoard.tasksByStatus}
-				addTask={addMainBoardTaskController.run}
-				editTask={editMainBoardTaskController.run}
-				deleteTask={deleteMainBoardTaskController.run}
-				setStaticStatus={setMainBoardTaskStaticStatusController.run}
-			/>
+			<MainBoardTaskKanban />
 		</>
 	);
 }
@@ -62,5 +48,25 @@ function MainBoardSidebar() {
 				</div>
 			</dl>
 		</Sidebar>
+	);
+}
+
+function MainBoardTaskKanban() {
+	const mainBoard = useMainBoard();
+	const {
+		addMainBoardTaskController,
+		editMainBoardTaskController,
+		deleteMainBoardTaskController,
+		setMainBoardTaskStaticStatusController,
+	} = useAdapters();
+
+	return (
+		<TaskKanban
+			columns={mainBoard.tasksByStatus}
+			addTask={addMainBoardTaskController.run}
+			editTask={editMainBoardTaskController.run}
+			deleteTask={deleteMainBoardTaskController.run}
+			setStaticStatus={setMainBoardTaskStaticStatusController.run}
+		/>
 	);
 }

@@ -15,6 +15,7 @@ export function TaskKanbanColumns(props: {
 		<>
 			{taskStatusesUIModel.map((status) => (
 				<TaskKanbanColumn
+					key={status.value}
 					status={status}
 					column={props.columns[status.value]}
 					addTask={props.addTask}

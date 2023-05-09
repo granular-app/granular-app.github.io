@@ -6,11 +6,13 @@ export function Draggable(props: {
 	element?: ElementType;
 	children: ReactNode;
 	className?: string;
+	disabled?: boolean;
 }) {
 	const Element = props.element ?? 'div';
 	const { attributes, listeners, setNodeRef, isDragging, transform } =
 		useDraggable({
 			id: props.id,
+			disabled: props.disabled,
 		});
 	const style = transform
 		? {

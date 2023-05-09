@@ -187,62 +187,51 @@ export function KanbanTaskTile(props: {
 		);
 	}
 
-	const Element = props.element ?? 'li';
+	return (
+		<Draggable
+			id={props.task.id}
+			element={props.element ?? 'li'}
+			className={classNames(
+				'group relative mb-2 rounded bg-white shadow',
+				props.extraClassName,
+			)}
+			disabled={props.task.maybeProgress.isJust()}
+		>
+			<KanbanTaskTileContents enableEditMode={enableEditMode} {...props} />
+			{props.task.maybeProgress
+				.map((progress) => (
+					<ProgressBar
+						progress={progress}
+						className="-mt-0.5 h-0.5 rounded-b"
+					/>
+				))
+				.extract()}
+		</Draggable>
+	);
+}
 
-	return props.task.maybeProgress.caseOf({
-		Just: (progress) => (
-			<Element
-				id={props.task.id}
-				className={classNames(
-					'group relative mb-2 rounded bg-white shadow',
-					props.extraClassName,
-				)}
+function KanbanTaskTileContents(props: {
+	task: KanbanTaskUIModel;
+	deleteTask: (taskID: string) => void;
+	enableEditMode: () => void;
+}) {
+	return (
+		<div className="p-2">
+			<Link
+				to={AppRoute.Task.URL(props.task.id)}
+				className="block rounded-md hover:bg-zinc-100"
 			>
-				<div className="p-2">
-					<Link
-						to={AppRoute.Task.URL(props.task.id)}
-						className="block rounded-md hover:bg-zinc-100"
-					>
-						{props.task.maybeProgress.isJust() && (
-							<SparklesIcon className="icon float-right ml-2 mt-1 text-gray-600" />
-						)}
-						<span>{props.task.text}</span>
-					</Link>
-					<KanbakTaskTileActionsButton
-						enableEditMode={enableEditMode}
-						deleteTask={() => props.deleteTask(props.task.id)}
-					/>
-				</div>
-				<ProgressBar progress={progress} className="-mt-0.5 h-0.5 rounded-b" />
-			</Element>
-		),
-		Nothing: () => (
-			<Draggable
-				id={props.task.id}
-				element={Element}
-				className={classNames(
-					'group relative mb-2 rounded bg-white shadow',
-					props.extraClassName,
+				{props.task.maybeProgress.isJust() && (
+					<SparklesIcon className="icon float-right ml-2 mt-1 text-gray-600" />
 				)}
-			>
-				<div className="p-2">
-					<Link
-						to={AppRoute.Task.URL(props.task.id)}
-						className="block rounded-md hover:bg-zinc-100"
-					>
-						{props.task.maybeProgress.isJust() && (
-							<SparklesIcon className="icon float-right ml-2 mt-1 text-gray-600" />
-						)}
-						<span>{props.task.text}</span>
-					</Link>
-					<KanbakTaskTileActionsButton
-						enableEditMode={enableEditMode}
-						deleteTask={() => props.deleteTask(props.task.id)}
-					/>
-				</div>
-			</Draggable>
-		),
-	});
+				<span>{props.task.text}</span>
+			</Link>
+			<KanbakTaskTileActionsButton
+				enableEditMode={props.enableEditMode}
+				deleteTask={() => props.deleteTask(props.task.id)}
+			/>
+		</div>
+	);
 }
 
 export function KanbakTaskTileActionsButton(props: {

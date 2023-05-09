@@ -387,9 +387,6 @@ function useTaskDragAndDrop(
 		const status = event.over.id as TaskStatus;
 		const taskID = event.active.id as string;
 
-		console.log(
-			`dragged task with id ${taskID} and changed status to ${status}`,
-		);
 		setStaticStatus(taskID, status);
 	}
 }

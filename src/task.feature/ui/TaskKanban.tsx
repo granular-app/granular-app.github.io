@@ -88,7 +88,7 @@ function KanbanColumn(props: {
 				droppable.isOver && 'ring-2 ring-zinc-500 ring-offset-4',
 			)}
 		>
-			<h3 className="mt-1 mb-2 px-2 text-sm font-bold text-gray-500">
+			<h3 className="mt-1 mb-2 text-sm font-bold text-gray-500">
 				{props.status.label}
 			</h3>
 			<KanbanColumnTaskTiles

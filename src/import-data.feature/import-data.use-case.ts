@@ -9,35 +9,26 @@ export class ImportDataUseCase {
 	) {}
 
 	run = (taskTemplates: TaskTemplate[]) => {
-		const existingTaskIds = new Set(
+		const existingTaskIDs = new Set(
 			this.taskManager.allTasks.map((task) => task.id),
 		);
 		const filteredTaskTemplates: TaskTemplate[] = [];
 
 		taskTemplates.forEach((template) => {
-			if (
-				existingTaskIds.has(template.id) ||
-				filteredTaskTemplates
-					.map((template) => template.id)
-					.includes(template.id)
-			) {
-				// Skip duplicate task
-				// Process its subtasks
-				template.subtaskIDs.forEach((subtaskID) => {
-					const subtaskTemplate = taskTemplates.find((t) => t.id === subtaskID);
+			const taskWithSuchIDAlreadyExists = existingTaskIDs.has(template.id);
+			const taskIsAlreadyImported = filteredTaskTemplates
+				.map(({ id }) => id)
+				.includes(template.id);
+			const isDuplicate = taskWithSuchIDAlreadyExists || taskIsAlreadyImported;
+			const isOrphan =
+				!template.userPrefersAsMainBoardTask &&
+				taskTemplates.every(
+					(otherTemplate) => !otherTemplate.subtaskIDs.includes(template.id),
+				);
 
-					if (
-						subtaskTemplate &&
-						!existingTaskIds.has(subtaskID) &&
-						subtaskTemplate.userPrefersAsMainBoardTask
-					) {
-						// Remove reference to the parent task and add the subtask as a main board task
-						filteredTaskTemplates.push(subtaskTemplate);
-					}
-				});
-			} else {
-				// Add non-duplicate task to the filtered list
+			if (!isDuplicate && !isOrphan) {
 				filteredTaskTemplates.push(template);
+				return;
 			}
 		});
 

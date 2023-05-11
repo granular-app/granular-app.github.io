@@ -1,6 +1,6 @@
 import { Maybe } from 'purify-ts';
 import { TaskTemplate } from '../utils/task-template';
-import { Task } from './task';
+import { Task } from './task.entity';
 
 export class TaskManager {
 	allTasks: Task[] = [];

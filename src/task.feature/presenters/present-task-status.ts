@@ -1,4 +1,4 @@
-import { TaskStatus, taskStatuses } from '../core/task-status';
+import { TaskStatus, taskStatuses } from '../core/task-status.entity';
 
 export type TaskStatusUIModel = (typeof taskStatusesUIModel)[number];
 

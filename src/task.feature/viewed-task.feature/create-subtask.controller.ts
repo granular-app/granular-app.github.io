@@ -1,4 +1,4 @@
-import { TaskStatus } from '../core/task-status';
+import { TaskStatus } from '../core/task-status.entity';
 import { CreateSubtaskUseCase } from '../create-subtask.feature/create-subtask.use-case';
 import { ViewedTaskUIModel } from './viewed-task.presenter';
 

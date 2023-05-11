@@ -1,6 +1,9 @@
 import { Signal } from '@preact/signals-react';
 import { Just, Maybe } from 'purify-ts';
-import { TaskStatus, taskStatuses } from 'src/task.feature/core/task-status';
+import {
+	TaskStatus,
+	taskStatuses,
+} from 'src/task.feature/core/task-status.entity';
 import { presentTaskStatus } from 'src/task.feature/presenters/present-task-status';
 import {
 	KanbanColumnsUIModel,

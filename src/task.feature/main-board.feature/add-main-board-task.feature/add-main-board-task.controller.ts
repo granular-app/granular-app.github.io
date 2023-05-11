@@ -1,4 +1,4 @@
-import { TaskStatus } from 'src/task.feature/core/task-status';
+import { TaskStatus } from 'src/task.feature/core/task-status.entity';
 import { AddMainBoardTaskUseCase } from './add-main-board-task.use-case';
 
 export class AddMainBoardTaskController {

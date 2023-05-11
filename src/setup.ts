@@ -1,4 +1,4 @@
-import { TaskStatus } from './task.feature/core/task-status';
+import { TaskStatus } from './task.feature/core/task-status.entity';
 import { adapters } from './ui/setup/adapters';
 
 export function createExampleTasks() {

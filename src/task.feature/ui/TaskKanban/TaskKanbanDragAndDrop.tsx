@@ -11,7 +11,7 @@ import { useComputed, useSignal } from '@preact/signals-react';
 import { Just, Maybe, Nothing } from 'purify-ts';
 import { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-import { TaskStatus, taskStatuses } from '../../core/task-status';
+import { TaskStatus, taskStatuses } from '../../core/task-status.entity';
 import { SetStaticStatusController } from '../../set-static-status.feature/set-static-status.controller';
 import {
 	KanbanColumnsUIModel,

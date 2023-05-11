@@ -1,6 +1,6 @@
 import { Maybe } from 'purify-ts';
-import { Task } from '../core/task';
-import { TaskManager } from '../core/task-manager';
+import { TaskManager } from '../core/task-manager.entity';
+import { Task } from '../core/task.entity';
 
 export class ViewTaskUseCase {
 	constructor(

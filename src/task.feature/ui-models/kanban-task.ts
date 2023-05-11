@@ -1,6 +1,6 @@
 import { Just, Maybe, Nothing } from 'purify-ts';
-import { Task } from '../core/task';
-import { TaskStatus } from '../core/task-status';
+import { TaskStatus } from '../core/task-status.entity';
+import { Task } from '../core/task.entity';
 import { calculateTaskProgress } from '../presenters/calculate-task-progress';
 
 export type KanbanColumnsUIModel = Record<TaskStatus, KanbanTaskUIModel[]>;

@@ -1,4 +1,4 @@
-import { TaskStatus } from '../core/task-status';
+import { TaskStatus } from '../core/task-status.entity';
 import { SetStaticStatusController } from '../set-static-status.feature/set-static-status.controller';
 import { SetStaticStatusUseCase } from '../set-static-status.feature/set-static-status.use-case';
 import { RefreshViewedTaskController } from './refresh-viewed-task.controller';

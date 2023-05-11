@@ -1,5 +1,5 @@
 import { TasksRepository } from '../application/tasks-repository';
-import { TaskManager } from '../core/task-manager';
+import { TaskManager } from '../core/task-manager.entity';
 
 export class EditTaskUseCase {
 	constructor(

@@ -1,7 +1,7 @@
 import { TasksRepository } from '../application/tasks-repository';
 import { AttachSubtaskUseCase } from '../attach-subtask.feature/attach-subtask.use-case';
-import { TaskManager } from '../core/task-manager';
-import { TaskStatus } from '../core/task-status';
+import { TaskManager } from '../core/task-manager.entity';
+import { TaskStatus } from '../core/task-status.entity';
 
 export class CreateSubtaskUseCase {
 	constructor(

@@ -1,6 +1,6 @@
 import { useDroppable } from '@dnd-kit/core';
 import classNames from 'classnames';
-import { TaskStatus } from '../../core/task-status';
+import { TaskStatus } from '../../core/task-status.entity';
 import { DeleteTaskController } from '../../delete-task.feature/delete-task.controller';
 import { EditTaskController } from '../../edit-task.feature/edit-task.controller';
 import { TaskStatusUIModel } from '../../presenters/present-task-status';

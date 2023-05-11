@@ -1,5 +1,5 @@
-import { Task } from '../core/task';
-import { TaskStatus } from '../core/task-status';
+import { TaskStatus } from '../core/task-status.entity';
+import { Task } from '../core/task.entity';
 
 export type TaskTemplate = {
 	id: string;

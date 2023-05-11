@@ -1,9 +1,9 @@
-import { Task } from 'src/task.feature/core/task';
-import { TaskManager } from 'src/task.feature/core/task-manager';
+import { TaskManager } from 'src/task.feature/core/task-manager.entity';
 import {
 	deriveTaskStatus,
 	TaskStatus,
-} from 'src/task.feature/core/task-status';
+} from 'src/task.feature/core/task-status.entity';
+import { Task } from 'src/task.feature/core/task.entity';
 
 export class MainBoard {
 	constructor(private taskManager: TaskManager) {}

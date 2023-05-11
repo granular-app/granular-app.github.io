@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid';
 import { Maybe } from 'purify-ts';
-import { TaskManager } from './task-manager';
-import { deriveTaskStatus, TaskStatus } from './task-status';
+import { TaskManager } from './task-manager.entity';
+import { deriveTaskStatus, TaskStatus } from './task-status.entity';
 
 export class Task {
 	constructor(

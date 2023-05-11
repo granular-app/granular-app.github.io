@@ -1,5 +1,5 @@
 import { TasksRepository } from 'src/task.feature/application/tasks-repository';
-import { TaskManager } from 'src/task.feature/core/task-manager';
+import { TaskManager } from 'src/task.feature/core/task-manager.entity';
 import { TaskTemplate } from 'src/task.feature/utils/task-template';
 
 export class ImportDataUseCase {

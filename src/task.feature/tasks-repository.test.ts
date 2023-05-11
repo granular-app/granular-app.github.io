@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from 'vitest';
-import { TaskManager } from './core/task-manager';
+import { TaskManager } from './core/task-manager.entity';
 import { TasksRepositoryImpl } from './tasks-repository';
 
 // Mock localStorage

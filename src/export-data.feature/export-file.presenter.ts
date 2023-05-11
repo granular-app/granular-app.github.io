@@ -1,4 +1,4 @@
-import { Task } from 'src/task.feature/core/task';
+import { Task } from 'src/task.feature/core/task.entity';
 import {
 	serializeTaskTemplates,
 	tasksToTaskTemplates,

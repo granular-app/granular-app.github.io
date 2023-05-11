@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { TaskManager } from './task-manager';
+import { TaskManager } from './task-manager.entity';
 
 describe('Task Manager', () => {
 	let taskManager: TaskManager;

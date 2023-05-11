@@ -1,4 +1,4 @@
-import { TaskStatus } from '../../core/task-status';
+import { TaskStatus } from '../../core/task-status.entity';
 import { DeleteTaskController } from '../../delete-task.feature/delete-task.controller';
 import { EditTaskController } from '../../edit-task.feature/edit-task.controller';
 import { SetStaticStatusController } from '../../set-static-status.feature/set-static-status.controller';

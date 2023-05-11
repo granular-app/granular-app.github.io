@@ -1,4 +1,4 @@
-import { TaskManager } from './core/task-manager';
+import { TaskManager } from './core/task-manager.entity';
 import { TasksRepositoryImpl } from './tasks-repository';
 
 export const taskManager = new TaskManager();

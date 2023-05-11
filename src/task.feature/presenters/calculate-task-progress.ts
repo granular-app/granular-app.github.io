@@ -1,5 +1,5 @@
-import { Task } from '../core/task';
-import { TaskStatus } from '../core/task-status';
+import { TaskStatus } from '../core/task-status.entity';
+import { Task } from '../core/task.entity';
 
 export function calculateTaskProgress(task: Task) {
 	const allSubtasks = task.listAllSubtasks();

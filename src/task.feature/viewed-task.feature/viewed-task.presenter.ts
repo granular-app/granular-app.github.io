@@ -1,7 +1,7 @@
 import { Signal } from '@preact/signals-react';
 import { Just, Maybe, Nothing } from 'purify-ts';
-import { Task } from '../core/task';
-import { TaskStatus, taskStatuses } from '../core/task-status';
+import { TaskStatus, taskStatuses } from '../core/task-status.entity';
+import { Task } from '../core/task.entity';
 import { calculateTaskProgress } from '../presenters/calculate-task-progress';
 import { presentTaskStatus } from '../presenters/present-task-status';
 import {

@@ -11,10 +11,10 @@ describe('Task', () => {
 
 	it('creates a new subtask', () => {
 		const goToShopTask = taskManager.createTask('Go to shop');
-		expect(goToShopTask.subtasks).toHaveLength(0);
+		expect(goToShopTask.subtasks.get()).toHaveLength(0);
 		const buyMilkTask = goToShopTask.createSubtask('Buy milk');
-		expect(goToShopTask.subtasks).toHaveLength(1);
-		expect(buyMilkTask).toBe(goToShopTask.subtasks[0]);
+		expect(goToShopTask.subtasks.get()).toHaveLength(1);
+		expect(buyMilkTask).toBe(goToShopTask.subtasks.get()[0]);
 	});
 
 	it('has a default status of to-do', () => {

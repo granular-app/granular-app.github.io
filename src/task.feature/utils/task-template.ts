@@ -18,7 +18,7 @@ export function taskToTaskTemplate(task: Task): TaskTemplate {
 		id: task.id,
 		text: task.text,
 		staticStatus: task.staticStatus,
-		subtaskIDs: task.subtasks.map((subtask) => subtask.id),
+		subtaskIDs: task.subtasks.get().map((subtask) => subtask.id),
 		userPrefersAsMainBoardTask: task.userPrefersAsMainBoardTask,
 	};
 }

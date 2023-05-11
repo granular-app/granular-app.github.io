@@ -1,5 +1,6 @@
 import { Maybe } from 'purify-ts';
 import { TaskTemplate } from '../utils/task-template';
+import { Subtasks } from './subtasks.entity';
 import { Task } from './task.entity';
 
 export class TaskManager {
@@ -11,7 +12,7 @@ export class TaskManager {
 			throw new Error('Duplicate ID.');
 		}
 
-		const task: Task = new Task(taskID, text, this);
+		const task: Task = new Task(taskID, text, this, new Subtasks());
 		this.allTasks.push(task);
 		return task;
 	}
@@ -43,7 +44,7 @@ export class TaskManager {
 			template.subtaskIDs.forEach((subtaskID) => {
 				const subtask = tasks.find((task) => task.id === subtaskID);
 				if (subtask) {
-					tasks[index].subtasks.push(subtask);
+					tasks[index].subtasks.addSubtask(subtask);
 				}
 			});
 		});

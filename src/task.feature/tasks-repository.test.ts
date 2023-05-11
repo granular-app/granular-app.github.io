@@ -54,7 +54,7 @@ describe('TasksRepositoryImpl', () => {
 		expect(loadedSubtask1?.text).toEqual('Subtask 1');
 
 		// Verify subtask relationships
-		expect(loadedTask1?.subtasks.length).toEqual(1);
-		expect(loadedTask1?.subtasks[0]?.id).toEqual(subtask1.id);
+		expect(loadedTask1?.subtasks.get().length).toEqual(1);
+		expect(loadedTask1?.subtasks.get()[0]?.id).toEqual(subtask1.id);
 	});
 });

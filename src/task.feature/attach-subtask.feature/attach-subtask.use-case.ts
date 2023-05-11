@@ -10,7 +10,7 @@ export class AttachSubtaskUseCase {
 	run = (subtaskID: string, parentTaskID: string) => {
 		const parentTask = this.taskManager.getTask(parentTaskID);
 		const subtask = this.taskManager.getTask(subtaskID);
-		parentTask.subtasks.push(subtask);
+		parentTask.subtasks.addSubtask(subtask);
 		this.tasksRepo.save();
 	};
 }

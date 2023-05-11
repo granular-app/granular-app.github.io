@@ -1,7 +1,10 @@
 import { Just, Maybe, Nothing } from 'purify-ts';
 import { TaskStatus } from '../core/task-status.entity';
 import { Task } from '../core/task.entity';
-import { calculateTaskProgress } from '../presenters/calculate-task-progress';
+import {
+	DeepSubtasksUIModel,
+	presentDeepSubtasks,
+} from '../presenters/present-deep-subtasks';
 
 export type KanbanColumnsUIModel = Record<TaskStatus, KanbanTaskUIModel[]>;
 
@@ -14,7 +17,7 @@ export const emptyKanbanColumns: KanbanColumnsUIModel = {
 export type KanbanTaskUIModel = {
 	id: string;
 	text: string;
-	maybeProgress: Maybe<number>;
+	maybeDeepSubtasks: Maybe<DeepSubtasksUIModel>;
 };
 
 export const KanbanTaskUIModel = {
@@ -22,8 +25,8 @@ export const KanbanTaskUIModel = {
 		return {
 			id: task.id,
 			text: task.text,
-			maybeProgress: task.hasSubtasks
-				? Just(calculateTaskProgress(task))
+			maybeDeepSubtasks: task.hasSubtasks
+				? Just(presentDeepSubtasks(task.subtasks))
 				: Nothing,
 		};
 	},

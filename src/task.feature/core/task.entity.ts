@@ -1,5 +1,6 @@
 import { nanoid } from 'nanoid';
 import { Maybe } from 'purify-ts';
+import { Subtasks } from './subtasks.entity';
 import { TaskManager } from './task-manager.entity';
 import { deriveTaskStatus, TaskStatus } from './task-status.entity';
 
@@ -8,6 +9,7 @@ export class Task {
 		public readonly id: string,
 		public text: string,
 		public taskManager: TaskManager,
+		public subtasks: Subtasks,
 	) {}
 
 	static generateID = nanoid;
@@ -17,28 +19,14 @@ export class Task {
 		return this.userPrefersAsMainBoardTask || !this.hasParentTasks;
 	}
 
-	subtasks: Task[] = [];
-
 	get hasSubtasks() {
-		return this.subtasks.length > 0;
+		return this.subtasks.get().length > 0;
 	}
 
 	createSubtask(text: string) {
 		const newSubtask = this.taskManager.createTask(text);
-		this.subtasks.push(newSubtask);
+		this.subtasks.addSubtask(newSubtask);
 		return newSubtask;
-	}
-
-	private listAllSubtasksSet(): Set<Task> {
-		return new Set(
-			this.subtasks.flatMap((subtask) => {
-				return [subtask, ...subtask.listAllSubtasksSet()];
-			}),
-		);
-	}
-
-	listAllSubtasks() {
-		return [...this.listAllSubtasksSet()];
 	}
 
 	staticStatus: TaskStatus = TaskStatus.ToDo;
@@ -48,12 +36,14 @@ export class Task {
 	}
 
 	get derivedStatus(): Maybe<TaskStatus> {
-		return deriveTaskStatus(this.subtasks.map((subtask) => subtask.status));
+		return deriveTaskStatus(
+			this.subtasks.get().map((subtask) => subtask.status),
+		);
 	}
 
 	get parentTasks(): Task[] {
 		return this.taskManager.allTasks.filter((task) =>
-			task.subtasks.includes(this),
+			task.subtasks.get().includes(this),
 		);
 	}
 
@@ -62,11 +52,11 @@ export class Task {
 	}
 
 	findParentTaskCandidates(): Task[] {
-		const allSubtasks = this.listAllSubtasks();
+		const deepSubtasks = this.subtasks.deepList();
 		const isValidParentCandidate = (other: Task): boolean => {
 			const isThisTask = other === this;
 			const isAlreadyParent = this.parentTasks.includes(other);
-			const isSubtask = allSubtasks.includes(other);
+			const isSubtask = deepSubtasks.includes(other);
 
 			return (
 				!isThisTask && !isAlreadyParent && !isSubtask && other.hasUniqueText
@@ -86,20 +76,14 @@ export class Task {
 
 	delete() {
 		this.subtasks
+			.get()
 			.filter((subtask) => subtask.parentTasks.length === 1)
 			.forEach((subtask) => subtask.delete());
 
 		const index = this.taskManager.indexOf(this.id);
 		this.taskManager.allTasks.splice(index, 1);
-		this.parentTasks.forEach(
-			(parentTask) =>
-				(parentTask.subtasks = parentTask.subtasks.filter(
-					(subtask) => subtask !== this,
-				)),
+		this.parentTasks.forEach((parentTask) =>
+			parentTask.subtasks.removeSubtask(this.id),
 		);
-	}
-
-	detachSubtask(subtaskID: string) {
-		this.subtasks = this.subtasks.filter((subtask) => subtask.id !== subtaskID);
 	}
 }

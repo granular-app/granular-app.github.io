@@ -2,7 +2,10 @@ import { Signal } from '@preact/signals-react';
 import { Just, Maybe, Nothing } from 'purify-ts';
 import { TaskStatus, taskStatuses } from '../core/task-status.entity';
 import { Task } from '../core/task.entity';
-import { calculateTaskProgress } from '../presenters/calculate-task-progress';
+import {
+	DeepSubtasksUIModel,
+	presentDeepSubtasks,
+} from '../presenters/present-deep-subtasks';
 import { presentTaskStatus } from '../presenters/present-task-status';
 import {
 	KanbanColumnsUIModel,
@@ -60,28 +63,22 @@ function presentParentTaskCandidates(task: Task) {
 function presentSubtasks(task: Task): ViewedTaskUIModel['maybeSubtasks'] {
 	if (!task.hasSubtasks) return Nothing;
 
-	const directSubtasksCount = task.subtasks.length;
-	const directCompletedSubtasksCount = task.subtasks.filter(
+	const subtasks = task.subtasks.get();
+	const directSubtasksCount = subtasks.length;
+	const directSubtasksCompletedCount = subtasks.filter(
 		(subtask) => subtask.status === TaskStatus.Completed,
 	).length;
 
-	const allSubtasks = task.listAllSubtasks();
-	const allSubtasksCount = allSubtasks.length;
-	const allCompletedSubtasksCount = allSubtasks.filter(
-		(subtask) => subtask.status === TaskStatus.Completed,
-	).length;
-	const progress = calculateTaskProgress(task);
+	const deepSubtasks = presentDeepSubtasks(task.subtasks);
 
 	return Just({
 		directSubtasksCount,
-		directCompletedSubtasksCount,
-		allSubtasksCount,
-		allCompletedSubtasksCount,
-		progress,
+		directSubtasksCompletedCount,
+		deepSubtasks,
 		byStatus: Object.fromEntries(
 			taskStatuses.map((status) => [
 				status,
-				presentKanbanColumn(task.subtasks, status),
+				presentKanbanColumn(subtasks, status),
 			]),
 		) as Record<TaskStatus, KanbanTaskUIModel[]>,
 	});
@@ -103,12 +100,10 @@ export type ViewedTaskUIModel = {
 export type ParentTaskCandidateUIModel = { id: string; text: string };
 
 export type ViewedTaskSubtasksUIModel = {
-	progress: number;
 	byStatus: KanbanColumnsUIModel;
-	directCompletedSubtasksCount: number;
+	directSubtasksCompletedCount: number;
 	directSubtasksCount: number;
-	allCompletedSubtasksCount: number;
-	allSubtasksCount: number;
+	deepSubtasks: DeepSubtasksUIModel;
 };
 
 export type ParentTaskUIModel = {

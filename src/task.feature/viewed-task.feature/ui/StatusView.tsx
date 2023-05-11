@@ -57,13 +57,8 @@ function StaticStatusView() {
 }
 function SubtasksStatusView(props: { subtasks: ViewedTaskSubtasksUIModel }) {
 	const viewedTask = useViewedTask();
-	const {
-		progress,
-		directCompletedSubtasksCount,
-		allCompletedSubtasksCount,
-		allSubtasksCount,
-		directSubtasksCount,
-	} = props.subtasks;
+	const { deepSubtasks, directSubtasksCompletedCount, directSubtasksCount } =
+		props.subtasks;
 
 	return (
 		<>
@@ -73,18 +68,18 @@ function SubtasksStatusView(props: { subtasks: ViewedTaskSubtasksUIModel }) {
 				</span>
 				<SparklesIcon className="icon ml-2" />
 			</div>
-			<ProgressBar progress={progress} className="mb-2 h-1" />
+			<ProgressBar progress={deepSubtasks.progress} className="mb-2 h-1" />
 			<dl className="divide-y divide-gray-100 text-sm text-gray-600">
 				<div className="grid grid-cols-2 py-px">
 					<dt>Direct subtasks</dt>
 					<dd>
-						{directCompletedSubtasksCount} / {directSubtasksCount}
+						{directSubtasksCompletedCount} / {directSubtasksCount}
 					</dd>
 				</div>
 				<div className="grid grid-cols-2 py-px">
 					<dt>All subtasks</dt>
 					<dd>
-						{allCompletedSubtasksCount} / {allSubtasksCount}
+						{deepSubtasks.count} / {deepSubtasks.completedCount}
 					</dd>
 				</div>
 			</dl>
